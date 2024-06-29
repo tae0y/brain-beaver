@@ -2,9 +2,9 @@ from typing import Tuple
 from sqlalchemy import create_engine, insert, select
 from sqlalchemy.orm import sessionmaker
 from pgvector.sqlalchemy import Vector
-from model import Base, Concepts, Networks
-from llmroute import embedd_text
-from algebra import select_nearest_with_top_p, select_nearest_with_threshold
+from common.model import Base, Concepts, Networks
+from llm.llmroute import embedd_text
+from common.algebra import select_nearest_with_top_p, select_nearest_with_threshold
 import traceback
 
 """

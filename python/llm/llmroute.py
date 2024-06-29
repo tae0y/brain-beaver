@@ -1,5 +1,5 @@
 import requests
-from text import unmark
+from common.text import unmark
 import json
 
 CHUNK_SIZE = 1024

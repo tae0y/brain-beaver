@@ -1,8 +1,11 @@
 import json
 from tqdm import tqdm
-from llmroute import query_with_context
+from llm.llmroute import query_with_context
 
 def split_file_into_keyconcept(file_list: list, limit_file_count: int) -> list[dict]:
+    if limit_file_count == 0:
+        limit_file_count = len(file_list)
+
     idx = 0
     keyconcept_list = []
     for file_path in file_list:

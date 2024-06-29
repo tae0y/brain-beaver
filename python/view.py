@@ -1,4 +1,4 @@
-import db
+import common.db as db
 import streamlit as st
 from streamlit_agraph import agraph, Node, Edge, Config, TripleStore
 
@@ -11,10 +11,11 @@ print(f"networks: {len(networks)}, concepts: {len(concepts)}")
 nodes = []
 edges = []
 
+#TODO: 연결된 노드가 많으면 색상과 크기를 조정
 for concept in concepts:
     nodes.append(Node(
                         id=concept.id,              
-                        title=f"{concept.title} | {concept.summary}",      
+                        title=f"{concept.title} | \n{concept.summary.replace('.', '.\n')}",
                         label=concept.id,  
                         color='#ACDBC9',
                         shape='square',             

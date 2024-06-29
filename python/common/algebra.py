@@ -1,4 +1,4 @@
-from model import Concepts
+from common.model import Concepts
 from pgvector.sqlalchemy import Vector
 import numpy as np
 import time

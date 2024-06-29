@@ -1,21 +1,21 @@
-from file import get_file_list_recursively
-from db import create_keyconcept_into_tb_concepts, create_network_connections_tb_networks
-from split import split_file_into_keyconcept
-from weave import weave_keyconcept_into_networks
-from llmroute import embedd_text, count_tokens
-from testhelper import sample_file_list
+from common.file import get_file_list_recursively
+from common.db import create_keyconcept_into_tb_concepts, create_network_connections_tb_networks
+from core.split import split_file_into_keyconcept
+from core.weave import weave_keyconcept_into_networks
+from llm.llmroute import embedd_text, count_tokens
+from common.testhelper import sample_file_list
 
 # 1. 파일목록을 추출한다.
 root_dir = '/Users/bachtaeyeong/20_DocHub/TIL'
 ignore_dir_list = ['.git','Res','.obsidian','Chats','.DS_Store','.gitignore']
 file_list = get_file_list_recursively(root_dir, ignore_dir_list)
 file_list = [file for file in file_list if file.endswith('.md') ]
-file_list = sample_file_list(file_list=file_list, bucket_size=10) #테스트를 위해 10개 버킷으로 샘플링, 그중 하나만 반환
+file_list = sample_file_list(file_list=file_list, bucket_size=10) #파일 랜덤 샘플링
 for file in file_list:
     print(file)
 
 # 2. 파일에서 주요 컨셉을 추출하고 저장한다
-keyconcept_list = split_file_into_keyconcept(file_list=file_list, limit_file_count=10) #테스트를 위해 10개 파일만
+keyconcept_list = split_file_into_keyconcept(file_list=file_list, limit_file_count=0) #처리할 건수 지정
 keyconcept_list = [dict(
     title    = keyconcept.get('title',''),
     keywords = keyconcept.get('keywords',''),

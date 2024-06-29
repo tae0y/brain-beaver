@@ -1,8 +1,8 @@
 from typing import Tuple
-from model import Concepts
-import db
-import llmroute
-import algebra 
+from common.model import Concepts
+import common.db as db
+import llm.llmroute
+import common.algebra as algebra 
 import traceback
 
 def weave_keyconcept_into_networks(operation: str) -> Tuple[int, str]:
