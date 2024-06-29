@@ -63,10 +63,14 @@ def query_ollama_with_context(query, context, api_type='chat') -> list[dict]:
     for chunk in context_chunks:
         data = build_request_data(query, chunk, api_type)
         response = send_post_request(api_url, data)
-        if response:
-            ascii_contents = json.loads(parse_response(response, api_type))
-            print(f"{response.status_code} {'OK' if response.status_code == 200 else 'NG'}\n{ascii_contents}\n\n")
-            response_list.append(ascii_contents)
+        try:
+            if response:
+                ascii_contents = json.loads(parse_response(response, api_type))
+                print(f"{response.status_code} {'OK' if response.status_code == 200 else 'NG'}\n{ascii_contents}\n\n")
+                response_list.append(ascii_contents)
+        except Exception as e:
+            print(f"Error during response parsing: {e}")
+            continue
 
     print('> query_ollama_with_context :: '+str(response_list))
     return response_list
