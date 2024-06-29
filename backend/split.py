@@ -2,15 +2,13 @@ import json
 from tqdm import tqdm
 from llmroute import query_with_context
 
-TEST_COUNT = 5
-
-def split_file_into_keyconcept(file_list) -> list[dict]:
+def split_file_into_keyconcept(file_list: list, limit_file_count: int) -> list[dict]:
     idx = 0
     keyconcept_list = []
     for file_path in file_list:
         keyconcept_list.extend(extract_keyconcept(file_path))
         idx+=1
-        if idx >= TEST_COUNT:
+        if idx >= limit_file_count:
             break
 
     print('> split_file_into_keyconcept :: '+str(keyconcept_list))

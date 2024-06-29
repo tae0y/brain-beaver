@@ -70,34 +70,40 @@ def read_tb_concepts_by_id(concept_id : int) -> Concepts:
 def read_tb_concepts_nearest_by_embedding(source : Concepts, operation: str, limit: int) -> list[Concepts]:
     session = SessionLocal()
 
-    if operation == 'cosine_distance':
-        query_result = session.scalars(select(Concepts)
-                                       .filter(Concepts.id != source.id)
-                                       .order_by(Concepts.embedding.cosine_distance(source.embedding))
-                                       .limit(limit))
-    elif operation == 'max_inner_product':
-        query_result = session.scalars(select(Concepts)
-                                       .filter(Concepts.id != source.id)
-                                       .order_by(Concepts.embedding.max_inner_product(source.embedding))
-                                       .limit(limit))
-    elif operation == 'l1_distance':
-        query_result = session.scalars(select(Concepts)
-                                       .filter(Concepts.id != source.id)
-                                       .order_by(Concepts.embedding.l1_distance(source.embedding))
-                                       .limit(limit))
-    #elif operation == 'hamming_distance':
-    #    query_result = session.scalars(select(Concepts)
-    #                                   .filter(Concepts.id != source.id)
-    #                                   .order_by(Concepts.embedding.hamming_distance(source.embedding))
-    #                                   .limit(limit))
-    #elif operation == 'jaccard_distance':
-    #    query_result = session.scalars(select(Concepts)
-    #                                   .filter(Concepts.id != source.id)
-    #                                   .order_by(Concepts.embedding.jaccard_distance(source.embedding))
-    #                                   .limit(limit))
-    else:
-        raise Exception("operation is not supported")
-
+    try:
+        if operation == 'cosine_distance':
+            query_result = session.scalars(select(Concepts)
+                                           .filter(Concepts.id != source.id)
+                                           .order_by(Concepts.embedding.cosine_distance(source.embedding))
+                                           .limit(limit))
+        elif operation == 'max_inner_product':
+            query_result = session.scalars(select(Concepts)
+                                           .filter(Concepts.id != source.id)
+                                           .order_by(Concepts.embedding.max_inner_product(source.embedding))
+                                           .limit(limit))
+        elif operation == 'l1_distance':
+            query_result = session.scalars(select(Concepts)
+                                           .filter(Concepts.id != source.id)
+                                           .order_by(Concepts.embedding.l1_distance(source.embedding))
+                                           .limit(limit))
+        #elif operation == 'hamming_distance':
+        #    query_result = session.scalars(select(Concepts)
+        #                                   .filter(Concepts.id != source.id)
+        #                                   .order_by(Concepts.embedding.hamming_distance(source.embedding))
+        #                                   .limit(limit))
+        #elif operation == 'jaccard_distance':
+        #    query_result = session.scalars(select(Concepts)
+        #                                   .filter(Concepts.id != source.id)
+        #                                   .order_by(Concepts.embedding.jaccard_distance(source.embedding))
+        #                                   .limit(limit))
+        else:
+            raise Exception("operation is not supported")
+    except Exception as e:
+        traceback.print_exc()
+        rtndata = []
+    finally:
+        session.close()
+    
     rtndata = [concept for concept in query_result]
     return rtndata
 
