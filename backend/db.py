@@ -11,7 +11,7 @@ import traceback
 sqlalchemy session 생성
 """
 URL = "postgresql://root:root@localhost:5432/bwsdb"
-engine = create_engine(URL, echo=False)
+engine = create_engine(URL, echo=False, pool_size=50, max_overflow=0)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 #Base.metadata.dop_all(bind=engine)
@@ -69,6 +69,7 @@ def read_tb_concepts_by_id(concept_id : int) -> Concepts:
 
 def read_tb_concepts_nearest_by_embedding(source : Concepts, operation: str, limit: int) -> list[Concepts]:
     session = SessionLocal()
+    rtndata = []
 
     try:
         if operation == 'cosine_distance':
@@ -98,13 +99,12 @@ def read_tb_concepts_nearest_by_embedding(source : Concepts, operation: str, lim
         #                                   .limit(limit))
         else:
             raise Exception("operation is not supported")
+        rtndata = [concept for concept in query_result]
     except Exception as e:
         traceback.print_exc()
-        rtndata = []
     finally:
         session.close()
     
-    rtndata = [concept for concept in query_result]
     return rtndata
 
 def create_network_connections_tb_networks(source: str, target: str) -> Tuple[bool, str]:
