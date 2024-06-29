@@ -1,0 +1,26 @@
+services:
+
+  db:
+    container_name: bwsdb_container
+    build:
+      context: .
+      dockerfile: Dockerfile-bwsdb
+    restart: always
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: bwsdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./initdb.d:/docker-entrypoint-initdb.d
+
+  pgadmin:
+    container_name: bwsdb_pgadmin_container
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5050:80"
