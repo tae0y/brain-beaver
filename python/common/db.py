@@ -26,10 +26,10 @@ def create_keyconcept_into_tb_concepts(keyconcept_list: list[dict]) -> Tuple[int
 
     session = SessionLocal()
     try:
-        print(f"before insert cnt : {session.get(Concepts,1)}")
-        print(f"insert element cnt : {len(keyconcept_list)}")
+        #print(f"before insert cnt : {session.get(Concepts,1)}")
+        #print(f"insert element cnt : {len(keyconcept_list)}")
         session.execute(insert(Concepts), keyconcept_list)
-        print(f"after insert cnt  : {session.get(Concepts,1)}")
+        #print(f"after insert cnt  : {session.get(Concepts,1)}")
         rtncd = 200
         rtnmsg = '성공'
         session.commit()

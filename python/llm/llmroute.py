@@ -1,6 +1,7 @@
 import requests
 from common.text import unmark
 import json
+import time
 
 CHUNK_SIZE = 1024
 OVERLAP_SIZE = 200
@@ -62,7 +63,10 @@ def query_ollama_with_context(query, context, api_type='chat') -> list[dict]:
     
     for chunk in context_chunks:
         data = build_request_data(query, chunk, api_type)
+        begin = time.time()
         response = send_post_request(api_url, data)
+        end = time.time()
+        print(f"query_ollama_with_context elapsed time (chunk {len(chunk)}) : {end - begin}")
         try:
             if response:
                 ascii_contents = json.loads(parse_response(response, api_type))
@@ -72,7 +76,7 @@ def query_ollama_with_context(query, context, api_type='chat') -> list[dict]:
             print(f"Error during response parsing: {e}")
             continue
 
-    print('> query_ollama_with_context :: '+str(response_list))
+    #print('> query_ollama_with_context :: '+str(response_list))
     return response_list
             
 

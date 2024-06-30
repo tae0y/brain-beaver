@@ -32,6 +32,6 @@ def cosine_similarity(list1, list2) -> float:
     cosine_sim = dot_product / (norm1 * norm2)
 
     end_time = time.time()
-    print(f"cosine_similarity elapsed time: {end_time - begin_time} sec")
+    #print(f"cosine_similarity elapsed time: {end_time - begin_time} sec")
 
     return cosine_sim

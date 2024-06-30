@@ -10,9 +10,10 @@ root_dir = '/Users/bachtaeyeong/20_DocHub/TIL'
 ignore_dir_list = ['.git','Res','.obsidian','Chats','.DS_Store','.gitignore']
 file_list = get_file_list_recursively(root_dir, ignore_dir_list)
 file_list = [file for file in file_list if file.endswith('.md') ]
-file_list = sample_file_list(file_list=file_list, bucket_size=10) #파일 랜덤 샘플링
-for file in file_list:
-    print(file)
+file_list = sample_file_list(file_list=file_list, bucket_size=1) #파일 랜덤 샘플링
+#for file in file_list:
+#    print(file)
+print(f"file_list num : {len(file_list)}")
 
 # 2. 파일에서 주요 컨셉을 추출하고 저장한다
 keyconcept_list = split_file_into_keyconcept(file_list=file_list, limit_file_count=0) #처리할 건수 지정
@@ -25,9 +26,9 @@ keyconcept_list = [dict(
     embedding = embedd_text(keyconcept.get('summary',''))
 ) for keyconcept in keyconcept_list]
 rescd, resmsg = create_keyconcept_into_tb_concepts(keyconcept_list)
-print(f"{rescd}, {resmsg}")
+print(f"create_keyconcept_into_tb_concepts : {rescd}, {resmsg}")
 
 # 3. 주요 컨셉들간 네트워크 관계를 저장한다
 keyconcept_networks = weave_keyconcept_into_networks("vector,similarity,threshold")
 rescd, resmsg = create_network_connections_tb_networks(keyconcept_networks)
-print(f"{rescd}, {resmsg}")
+print(f"create_network_connections_tb_networks : {rescd}, {resmsg}")
