@@ -63,6 +63,9 @@ def query_ollama_with_context(file_path, query, context, api_type='chat') -> lis
     response_list = []
     
     for chunk in tqdm(context_chunks, desc=f'{file_path} '):
+        if (len(chunk) < 20): #한국어 문장 평균길이 40글자, 그 이하면 한 문장도 안됨
+            continue
+
         data = build_request_data(query, chunk, api_type)
         begin = time.time()
         response = send_post_request(api_url, data)
