@@ -1,18 +1,14 @@
 import json
 from tqdm import tqdm
 from llm.llmroute import query_with_context
+from concurrent.futures import ThreadPoolExecutor
 
-def split_file_into_keyconcept(file_list: list, limit_file_count: int) -> list[dict]:
-    if limit_file_count == 0:
-        limit_file_count = len(file_list)
-
-    idx = 0
+def split_file_into_keyconcept(file_list: list) -> list[dict]:
     keyconcept_list = []
-    for file_path in file_list:
-        keyconcept_list.extend(extract_keyconcept(file_path))
-        idx+=1
-        if idx >= limit_file_count:
-            break
+    with ThreadPoolExecutor(max_workers=50) as executor:
+        results = executor.map(extract_keyconcept, file_list)
+        for result in results:
+            keyconcept_list.extend(result)
 
     #print('> split_file_into_keyconcept :: '+str(keyconcept_list))
     return keyconcept_list
@@ -24,8 +20,8 @@ def extract_keyconcept(file_path):
         with open(file_path, 'r', encoding='utf-8') as file:
             file_content = file.read()
 
-        #print('------------------------------------------------------------------')
-        #print(f"{file_path} (len:{len(file_content)})")
+        print('------------------------------------------------------------------')
+        print(f"{file_path} (len:{len(file_content)})")
 
         role = """[ROLE]
         당신은 탁월한 문서 요약 전문가입니다.
@@ -45,7 +41,7 @@ def extract_keyconcept(file_path):
         }
         """
         context = ("# " + file_path + "\n\n" + file_content)
-        response_list = query_with_context(role + query, context) #파일경로(분류), 파일제목, 파일내용
+        response_list = query_with_context(file_path, role + query, context) #파일경로(분류), 파일제목, 파일내용
         #print('> extract_keyconcept :: '+str(response_list))
 
     except Exception as e:

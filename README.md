@@ -22,12 +22,13 @@ file_list = sample_file_list(file_list=file_list, bucket_size=10)
 keyconcept_list = split_file_into_keyconcept(file_list=file_list, limit_file_count=10)
 ```
 
-backend 폴더로 이동해서 main.py 파일을 실행합니다.
+python 폴더로 이동해서 app.py 파일을 실행합니다.  
+표준출력은 로그파일에 저장하고, tqdm 프로그레스바만 표시합니다.
 ```shell
-python main.py
+python app.py > logs/$(date +%Y%m%d%H%M%S).log
 ```
 
-동일하게 backend 폴더에서 streamlit을 실행합니다.
+동일하게 python 폴더에서 streamlit을 실행합니다.
 ```shell
 streamlit run view.py
 ```

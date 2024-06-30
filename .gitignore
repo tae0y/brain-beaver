@@ -1,11 +1,10 @@
 *.pyc
 __pychache__
-
 .venv
 
 .DS_Store
-
 *.ipynb
 .ipynb_checkpoints
 
-stack-of-sheets.png
+python/res/secret.properties
+python/logs

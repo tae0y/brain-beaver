@@ -11,18 +11,21 @@ class Concepts(Base):
     #id         = mapped_column(Integer, primary_key=True)
     id          = Column(Integer, primary_key=True, autoincrement=True)
     title       = Column(String)
+    datasource  = Column(String)
     keywords    = Column(String)
     category    = Column(String)
     summary     = Column(String)
     status      = Column(String)
     filepath    = Column(String)
+    source_num  = Column(Integer)
+    target_num  = Column(Integer)
     create_time = Column(DateTime)
     update_time = Column(DateTime)
     token_num   = Column(Integer)
     embedding   = Column(Vector(3072))
 
     def __str__(self):
-        return f"Concepts(id={self.id}, title={self.title}, keywords={self.keywords}, category={self.category}, summary={self.summary}, status={self.status}, filepath={self.filepath}, create_time={self.create_time}, update_time={self.update_time}, token_num={self.token_num}, embedding={self.embedding})"
+        return f"Concepts(id={self.id}, title={self.title}, keywords={self.keywords}, category={self.category}, summary={self.summary}, status={self.status}, filepath={self.filepath}, source_num={self.source_num}, target_num={self.target_num} create_time={self.create_time}, update_time={self.update_time}, token_num={self.token_num}, embedding={self.embedding})"
 
 class Networks(Base):
     __tablename__ = 'tb_networks'

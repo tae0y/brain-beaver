@@ -2,6 +2,7 @@ import requests
 from common.text import unmark
 import json
 import time
+from tqdm import tqdm
 
 CHUNK_SIZE = 1024
 OVERLAP_SIZE = 200
@@ -39,21 +40,21 @@ def embedd_text_ollama(text) -> list[float]:
     data = build_request_data(query=text, chunk='', api_type='embeddings')
     response = send_post_request(api_url, data)
     #print(response.json())
-    print(text)
+    #print(text)
     return response.json()['embedding']
 
 
 """
 Query (chat, completion, instruct, generate, etc)
 """
-def query_with_context(query, context) -> list[dict]:
-    response_list = query_ollama_with_context(query, context, api_type='generate')
+def query_with_context(file_path, query, context) -> list[dict]:
+    response_list = query_ollama_with_context(file_path, query, context, api_type='generate')
     return response_list
 #   query_ollama_with_context(query, context, api_type='chat')
 #   query_ollama_with_context(query, context, api_type='another_api')
 
 
-def query_ollama_with_context(query, context, api_type='chat') -> list[dict]:
+def query_ollama_with_context(file_path, query, context, api_type='chat') -> list[dict]:
     if api_type not in API_URLS:
         raise ValueError(f"Unsupported API type: {api_type}")
     
@@ -61,7 +62,7 @@ def query_ollama_with_context(query, context, api_type='chat') -> list[dict]:
     context_chunks = chunking_context(context)
     response_list = []
     
-    for chunk in context_chunks:
+    for chunk in tqdm(context_chunks, desc='처리할 청크 건수 '):
         data = build_request_data(query, chunk, api_type)
         begin = time.time()
         response = send_post_request(api_url, data)
@@ -70,6 +71,7 @@ def query_ollama_with_context(query, context, api_type='chat') -> list[dict]:
         try:
             if response:
                 ascii_contents = json.loads(parse_response(response, api_type))
+                ascii_contents['filepath'] = file_path
                 print(f"{response.status_code} {'OK' if response.status_code == 200 else 'NG'}\n{ascii_contents}\n\n")
                 response_list.append(ascii_contents)
         except Exception as e:

@@ -8,12 +8,6 @@ networks = db.read_tb_networks_all()
 concepts = db.read_tb_concepts_all()
 print(f"networks: {len(networks)}, concepts: {len(concepts)}")
 
-source_count_dict = {}
-target_count_dict = {}
-for network in networks:
-    source_count_dict[network.source] = source_count_dict.get(network.source, 0) + 1
-    target_count_dict[network.target] = target_count_dict.get(network.target, 0) + 1
-
 nodes = []
 edges = []
 
@@ -28,17 +22,17 @@ node_target_many = '#50808E'
 
 for concept in concepts:
     node_size = nodes_size = max(node_default_size, 
-                                 node_default_size*(source_count_dict.get(concept.id, 1)//node_multiple), 
-                                 node_default_size*(target_count_dict.get(concept.id, 1)//node_multiple))
+                                 node_default_size*(concept.source_num//node_multiple), 
+                                 node_default_size*(concept.target_num//node_multiple))
     node_color = node_neutral
-    if source_count_dict.get(concept.id, 1) > target_count_dict.get(concept.id, 1)*2:
+    if concept.source_num > concept.target_num*2:
         node_color = node_source_many
-    elif target_count_dict.get(concept.id, 1) > source_count_dict.get(concept.id, 1)*2:
+    elif concept.target_num > concept.source_num*2:
         node_color = node_target_many
     
     nodes.append(Node(
                         id=concept.id,              
-                        title=f"{concept.title} | \n{concept.summary.replace('.', '.\n')}",
+                        title=f"{concept.title} | \n{concept.summary.replace('.', '.\n')}\n* {concept.filepath}",
                         label=concept.id,  
                         color=node_color,
                         shape='circularImage', # image, circularImage, diamond, dot, star, triangle, triangleDown, hexagon, square and icon

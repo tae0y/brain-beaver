@@ -1,5 +1,5 @@
 from typing import Tuple
-from sqlalchemy import create_engine, insert, select
+from sqlalchemy import create_engine, insert, select, update
 from sqlalchemy.orm import sessionmaker
 from pgvector.sqlalchemy import Vector
 from common.model import Base, Concepts, Networks
@@ -107,7 +107,44 @@ def read_tb_concepts_nearest_by_embedding(source : Concepts, operation: str, lim
     
     return rtndata
 
-def create_network_connections_tb_networks(source: str, target: str) -> Tuple[bool, str]:
+def update_srctrgnum_tb_concepts_byid() -> Tuple[int, str]:
+    """
+    keyconcept_list의 source_num, target_num을 갱신한다
+    """
+    rtncd = 900
+    rtnmsg = '실패'
+    concept_list = read_tb_networks_all()
+    network_list = read_tb_networks_all()
+
+    session = SessionLocal()
+    try:
+        source_count_dict = {}
+        target_count_dict = {}
+        for network in network_list:
+            source_count_dict[network.source] = source_count_dict.get(network.source, 0) + 1
+            target_count_dict[network.target] = target_count_dict.get(network.target, 0) + 1
+
+        print(source_count_dict)
+        print(target_count_dict)
+        for keyconcept in concept_list:
+            session.execute(update(Concepts)
+                            .where(Concepts.id == keyconcept.id)
+                            .values(source_num = source_count_dict.get(keyconcept.id, 0), 
+                                    target_num = target_count_dict.get(keyconcept.id, 0)))
+        session.commit()
+        rtncd = 200
+        rtnmsg = '성공'
+    except Exception as e:
+        traceback.print_exc()
+        session.rollback()
+        rtncd = 900
+        rtnmsg = '실패'
+    finally:
+        session.close()
+
+    return rtncd, rtnmsg
+
+def create_network_connections_tb_networks(source, target) -> Tuple[bool, str]:
     """
     현재 tb_concepts를 기준으로 네트워크 관계를 tb_networks에 저장한다
 
