@@ -62,7 +62,7 @@ def query_ollama_with_context(file_path, query, context, api_type='chat') -> lis
     context_chunks = chunking_context(context)
     response_list = []
     
-    for chunk in tqdm(context_chunks, desc='처리할 청크 건수 '):
+    for chunk in tqdm(context_chunks, desc=f'{file_path} '):
         data = build_request_data(query, chunk, api_type)
         begin = time.time()
         response = send_post_request(api_url, data)

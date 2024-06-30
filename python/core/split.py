@@ -5,7 +5,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 def split_file_into_keyconcept(file_list: list) -> list[dict]:
     keyconcept_list = []
-    with ThreadPoolExecutor(max_workers=50) as executor:
+    with ThreadPoolExecutor(max_workers=10) as executor:
         results = executor.map(extract_keyconcept, file_list)
         for result in results:
             keyconcept_list.extend(result)
@@ -20,8 +20,8 @@ def extract_keyconcept(file_path):
         with open(file_path, 'r', encoding='utf-8') as file:
             file_content = file.read()
 
-        print('------------------------------------------------------------------')
-        print(f"{file_path} (len:{len(file_content)})")
+        #print('------------------------------------------------------------------')
+        #print(f"{file_path} (len:{len(file_content)})")
 
         role = """[ROLE]
         당신은 탁월한 문서 요약 전문가입니다.

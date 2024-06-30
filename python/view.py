@@ -21,13 +21,16 @@ node_target_many = '#50808E'
 #node_image = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTxEQr3SSOrrhOXpbVP0B_4T2OysRy7cGnqA&s'
 
 for concept in concepts:
-    node_size = nodes_size = max(node_default_size, 
-                                 node_default_size*(concept.source_num//node_multiple), 
-                                 node_default_size*(concept.target_num//node_multiple))
+    node_size = max(node_default_size, 
+                    node_default_size*(concept.source_num//node_multiple), 
+                    node_default_size*(concept.target_num//node_multiple))
+    #node_size = max(node_default_size,
+    #                node_default_size * (concept.source_num + concept.target_num) // node_multiple)
+
     node_color = node_neutral
-    if concept.source_num > concept.target_num*2:
+    if concept.source_num > concept.target_num * 2:
         node_color = node_source_many
-    elif concept.target_num > concept.source_num*2:
+    elif concept.target_num > concept.source_num * 2:
         node_color = node_target_many
     
     nodes.append(Node(
