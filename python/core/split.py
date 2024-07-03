@@ -1,5 +1,3 @@
-import json
-from tqdm import tqdm
 from llm.llmroute import query_with_context
 from concurrent.futures import ThreadPoolExecutor
 
@@ -39,9 +37,13 @@ def extract_keyconcept(file_path):
             "category" : "정보,감상,질문,착안 중에서 카테고리 선택",
             "summary"  : "기억해둘만한 주요 내용을 한 문단 이내 작성",
         }
+
+        [DOCUMENT]
         """
         context = ("# " + file_path + "\n\n" + file_content)
-        response_list = query_with_context(file_path, role + query, context) #파일경로(분류), 파일제목, 파일내용
+        response_list = query_with_context(role + query, context) #파일경로(분류), 파일제목, 파일내용
+        for response in response_list:
+            response['file_path'] = file_path
         #print('> extract_keyconcept :: '+str(response_list))
 
     except Exception as e:

@@ -22,16 +22,30 @@ class Concepts(Base):
     create_time = Column(DateTime)
     update_time = Column(DateTime)
     token_num   = Column(Integer)
+    #plaintext  = Column(String)
     embedding   = Column(Vector(3072))
 
     def __str__(self):
-        return f"Concepts(id={self.id}, title={self.title}, keywords={self.keywords}, category={self.category}, summary={self.summary}, status={self.status}, filepath={self.filepath}, source_num={self.source_num}, target_num={self.target_num} create_time={self.create_time}, update_time={self.update_time}, token_num={self.token_num}, embedding={self.embedding})"
+    #    return f"Concepts(id={self.id}, title={self.title}, keywords={self.keywords}, category={self.category}, summary={self.summary}, status={self.status}, filepath={self.filepath}, source_num={self.source_num}, target_num={self.target_num}, create_time={self.create_time}, update_time={self.update_time}, token_num={self.token_num}, plaintext={self.plaintext}, embedding={self.embedding})"
+        return f"Concepts(id={self.id}, title={self.title}, keywords={self.keywords}, category={self.category}, summary={self.summary}, status={self.status}, filepath={self.filepath}, source_num={self.source_num}, target_num={self.target_num}, create_time={self.create_time}, update_time={self.update_time}, token_num={self.token_num}, embedding={self.embedding})"
 
 class Networks(Base):
     __tablename__ = 'tb_networks'
     id          = Column(Integer, primary_key=True, autoincrement=True)
     source      = Column(String)
     target      = Column(String)
+    #source_concept_id      = Column(String)
+    #target_concept_id      = Column(String)
 
     def __str__(self):
         return f"Networks(id={self.id}, source={self.source}, target={self.target})"
+    
+
+class References(Base):
+    __tablename__ = 'tb_references'
+    id                     = Column(Integer, primary_key=True, autoincrement=True)
+    concept_id       = Column(String)
+    description      = Column(String)
+
+    def __str__(self):
+        return f"References(id={self.id}, source={self.concept_id}, target={self.description})"

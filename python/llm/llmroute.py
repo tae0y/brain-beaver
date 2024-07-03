@@ -3,6 +3,7 @@ from common.text import unmark
 import json
 import time
 from tqdm import tqdm
+import traceback
 
 CHUNK_SIZE = 1024
 OVERLAP_SIZE = 200
@@ -47,38 +48,44 @@ def embedd_text_ollama(text) -> list[float]:
 """
 Query (chat, completion, instruct, generate, etc)
 """
-def query_with_context(file_path, query, context) -> list[dict]:
-    response_list = query_ollama_with_context(file_path, query, context, api_type='generate')
+def query_with_context(query:str, context:str, options: dict = {'api_type':'generate', 
+                                                                'chunk_size':CHUNK_SIZE,
+                                                                'format':'json'}) -> list[dict]:
+    response_list = query_ollama_with_context(query, context, options=options)
     return response_list
 #   query_ollama_with_context(query, context, api_type='chat')
 #   query_ollama_with_context(query, context, api_type='another_api')
 
 
-def query_ollama_with_context(file_path, query, context, api_type='chat') -> list[dict]:
-    if api_type not in API_URLS:
-        raise ValueError(f"Unsupported API type: {api_type}")
+def query_ollama_with_context(query:str, context:str, options:dict) -> list[dict]:
+    if options['api_type'] not in API_URLS:
+        raise ValueError(f"Unsupported API type: {options['api_type']}")
     
-    api_url = API_URLS[api_type]
-    context_chunks = chunking_context(context)
+    api_url = API_URLS[options['api_type']]
+    context_chunks = chunking_context(context, options['chunk_size'])
     response_list = []
     
-    for chunk in tqdm(context_chunks, desc=f'{file_path} '):
+    for chunk in tqdm(context_chunks, desc=f'{context[:10]}/'):
         if (len(chunk) < 20): #한국어 문장 평균길이 40글자, 그 이하면 한 문장도 안됨
             continue
 
-        data = build_request_data(query, chunk, api_type)
+        data = build_request_data(query, chunk, options)
         begin = time.time()
         response = send_post_request(api_url, data)
         end = time.time()
         print(f"query_ollama_with_context elapsed time (chunk {len(chunk)}) : {end - begin}")
         try:
             if response:
-                ascii_contents = json.loads(parse_response(response, api_type))
-                ascii_contents['filepath'] = file_path
+                if options['format'] == 'json':
+                    ascii_contents = json.loads(parse_response(response, options['api_type']))
+                else:
+                    ascii_contents = parse_response(response, options['api_type'])
+
                 print(f"{response.status_code} {'OK' if response.status_code == 200 else 'NG'}\n{ascii_contents}\n\n")
                 response_list.append(ascii_contents)
         except Exception as e:
             print(f"Error during response parsing: {e}")
+            traceback.print_exc()
             continue
 
     #print('> query_ollama_with_context :: '+str(response_list))
@@ -88,24 +95,26 @@ def query_ollama_with_context(file_path, query, context, api_type='chat') -> lis
 """
 Common
 """
-def build_request_data(query: str, chunk: str="", api_type: str="generate"):
+def build_request_data(query:str, chunk:str, options:dict):
     data = {
-        'model': choose_model(query, chunk, api_type),
+        'model': choose_model(query, chunk, options['api_type']),
         'options': {}
     }
-    if api_type == 'generate':
+    if options['api_type'] == 'generate':
         data['prompt'] = f"{query} ``` {chunk} ```"
         data['stream'] = False
-        data['format'] = 'json'
-    elif api_type == 'chat':
+        if options['format'] is not None: 
+            data['format'] = options['format']
+    elif options['api_type'] == 'chat':
         data['messages'] = f"{query} ``` {chunk} ```"
         data['stream'] = False
-        data['format'] = 'json'
-    elif api_type == 'embeddings':
+        if options['format'] is not None: 
+            data['format'] = options['format']
+    elif options['api_type'] == 'embeddings':
         data['prompt'] = query
     return data
 
-def send_post_request(api_url, data):
+def send_post_request(api_url:str, data:str):
     try:
         response = requests.post(api_url, json=data)
         response.raise_for_status()
@@ -114,7 +123,7 @@ def send_post_request(api_url, data):
         print(f"Error during API call: {e}")
         return None
 
-def parse_response(response, api_type):
+def parse_response(response:str, api_type:str):
     if api_type == 'chat':
         return unmark(response.json().get('message', {}).get('content', ''))
         #return unmark(response.json().get('message', {}).get('content', '')).replace('\n', ' ')
@@ -123,13 +132,13 @@ def parse_response(response, api_type):
         #return unmark(response.json().get('response', '')).replace('\n', ' ')
     # 다른 API 유형에 대한 처리는 여기에 추가
 
-def choose_model(query, context, api_type):
+def choose_model(query:str, context:str, api_type:str):
     return 'gemma:latest'
 
-def chunking_context(context):
+def chunking_context(context:str, chunk_size:int):
     context_chunks = []
-    for index in range(len(context) // CHUNK_SIZE + 1):
-        start_index = max(0, index * CHUNK_SIZE - OVERLAP_SIZE)
-        end_index = (index + 1) * CHUNK_SIZE
+    for index in range(len(context) // chunk_size + 1):
+        start_index = max(0, index * chunk_size - OVERLAP_SIZE)
+        end_index = (index + 1) * chunk_size
         context_chunks.append(context[start_index:end_index])
     return context_chunks

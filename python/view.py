@@ -6,7 +6,8 @@ st.title('Brain Beaver 🦫')
 
 networks = db.read_tb_networks_all()
 concepts = db.read_tb_concepts_all()
-print(f"networks: {len(networks)}, concepts: {len(concepts)}")
+references = db.read_tb_references_all()
+print(f"networks: {len(networks)}, concepts: {len(concepts)}, references: {len(references)}")
 
 nodes = []
 edges = []
@@ -34,20 +35,37 @@ for concept in concepts:
         node_color = node_target_many
     
     nodes.append(Node(
-                        id=concept.id,              
-                        title=f"{concept.title} | \n{concept.summary.replace('.', '.\n')}\n* {concept.filepath}",
+                        id=f"C{concept.id}",              
+                        title=f"{concept.id} - {concept.title} | \n{concept.summary.replace('.', '.\n')}\n* {concept.filepath}",
                         label=concept.id,  
                         color=node_color,
                         shape='circularImage', # image, circularImage, diamond, dot, star, triangle, triangleDown, hexagon, square and icon
                         image='',
                         size=node_size
                     ))
+    
+for reference in references:
+    nodes.append(Node(
+                        id=f"R{reference.id}",              
+                        title=f"{reference.concept_id} : {reference.description[:200].replace('.','.\n')}",
+                        label=reference.id,  
+                        color='#FF0000',
+                        shape='star', # image, circularImage, diamond, dot, star, triangle, triangleDown, hexagon, square and icon
+                        image='',
+                        size=30
+                    ))
+    edges.append(Edge(
+                        source=f"R{reference.id}",      
+                        label='',  
+                        target=f"C{reference.concept_id}",
+                        color='#ced4da',      
+                    ))
 
 for network in networks:
     edges.append(Edge(
-                        source=network.source,      
+                        source=f"C{network.source}",      
                         label='',                   
-                        target=network.target,
+                        target=f"C{network.target}",
                         color='#ced4da',      
                     ))
 

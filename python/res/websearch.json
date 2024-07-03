@@ -1,0 +1,58 @@
+{
+	"lastBuildDate":"Wed, 03 Jul 2024 23:05:12 +0900",
+	"total":1132,
+	"start":1,
+	"display":10,
+	"items":[
+		{
+			"title":"이벤트 <b>루프,<\/b> 콜백<b>함수<\/b> (javascript)",
+			"link":"https:\/\/velog.io\/@saeame31\/%EC%9D%B4%EB%B2%A4%ED%8A%B8-%EB%A3%A8%ED%94%84-%EC%BD%9C%EB%B0%B1%ED%95%A8%EC%88%98-javascript",
+			"description":"이벤트 <b>루프<\/b> 이벤트 <b>루프<\/b> (Event Loop)는 JavaScript에서 비동기성을... 코드를 <b>효율<\/b>적으로 처리할 수 있으며, 사용자 <b>인터페이스<\/b>의 반응성을 유지할 수 있습니다. 콜백<b>함수<\/b> 콜백 <b>함수<\/b>는 다른 <b>함수<\/b>의 인자로... <b>조건문<\/b>)..."
+		},
+		{
+			"title":"[<b>Java<\/b>] - 자바 제어문(<b>조건문<\/b>\/<b>반복<\/b>문)에서 continue, break, return 사용시 차이점",
+			"link":"https:\/\/pingfanzhilu.tistory.com\/entry\/Java-%EC%9E%90%EB%B0%94-%EC%A0%9C%EC%96%B4%EB%AC%B8%EC%A1%B0%EA%B1%B4%EB%AC%B8%EB%B0%98%EB%B3%B5%EB%AC%B8%EC%97%90%EC%84%9C-continue-break-return-%EC%82%AC%EC%9A%A9%EC%8B%9C-%EC%B0%A8%EC%9D%B4%EC%A0%90",
+			"description":"#자바 제어문(<b>조건문<\/b>\/<b>반복<\/b>문)에서 continue, break, return 사용시 차이점 #continue -진행 중인 <b>루프<\/b>를 중단하고 다음 <b>루프<\/b>로 돌아가서 다시 <b>루프<\/b>가 시작됩니다. -예시... IT\/<b>Java<\/b> [<b>Java<\/b>] - 자바 제어문(<b>조건문<\/b>\/<b>반복<\/b>문)..."
+		},
+		{
+			"title":"<b>반복<\/b>문 - <b>Java<\/b>",
+			"link":"https:\/\/www.opentutorials.org\/module\/516\/5366",
+			"description":"<b>반복<\/b>문 안에서 break가 실행되면 <b>반복<\/b>문을 즉시 종료시킨다. 참고로 <b>조건문<\/b>에 의해서 실행되는 코드가 한 줄일 경우 예제와 같이 중괄호를 생략 할 수 있다. <b>반복<\/b>문도 <b>반복<\/b>적으로... <b>조건문<\/b>... <b>루프<\/b>식으로 <b>반복<\/b>..."
+		},
+		{
+			"title":"[Flutter] Dart 문법3 (제어문\/ <b>조건문<\/b>\/ <b>반복<\/b>문)",
+			"link":"https:\/\/datamoney.tistory.com\/305",
+			"description":"(상속\/ <b>인터페이스<\/b>\/ Cascade Operator) 이번에는 제어문을 정리해보겠다. 제어문에는 <b>조건문<\/b>과 <b>반복<\/b>문이 있다. <b>조건문<\/b>은 프로그램의... 않은 <b>반복<\/b>문이고 증감식이나 분기문을 통해 무한 <b>루프<\/b>를... JavaScript <b>JAVA<\/b> 백준..."
+		},
+		{
+			"title":"Iteration protocols - JavaScript | MDN",
+			"link":"https:\/\/developer.mozilla.org\/ko\/docs\/Web\/JavaScript\/Reference\/Iteration_protocols",
+			"description":"없는 <b>함수<\/b>. 객체를 순회해야 할 때마다(예: for...of <b>루프<\/b> 시작 시)... 반환하는 <b>함수<\/b>입니다. 프로미스는 IteratorResult <b>인터페이스<\/b>를 준수하는 객체로 이행되며, 속성은 동기 <b>반복<\/b>자와 동일한 의미... <b>반복<\/b> <b>함수<\/b>..."
+		},
+		{
+			"title":"시리즈 | Javascript - bami.log",
+			"link":"https:\/\/velog.io\/@bami\/series\/Javascript",
+			"description":"자바스크립트(Javascript)란, 넷스케이프에서 개발한 웹 전용 스크립트 언어입니다. 이름에 자바가 들어가긴 하지만, 자바와 연관성은 없고, C계열 언어입니다. 자바스크립트가 처음 나올 당시 가장 인기있는 언어였던 자바의 인기에 편승하고자 이름에 자바를 넣게된 것"
+		},
+		{
+			"title":"10년만에 다시하는 <b>JAVA<\/b> 1-7(<b>조건문<\/b>)~1-11(<b>반복<\/b>문 퀴즈)",
+			"link":"https:\/\/velog.io\/@liha_engineer\/10%EB%85%84%EB%A7%8C%EC%97%90-%EB%8B%A4%EC%8B%9C%ED%95%98%EB%8A%94-JAVA-1-7",
+			"description":"가지고 <b>반복<\/b>문을 쉽게 짤 수 있는 <b>함수<\/b>임 String[] days... i=0, sum=1인 무한<b>루프<\/b>에 빠지게 된다. intelliJ가 친절하게 i&lt;10... 동안 &lt;<b>반복<\/b>문-<b>조건문<\/b> 퀴즈!&gt; <b>반복<\/b>문을 써서 숫자 5부터... 다시하는 <b>JAVA<\/b> 1-7(<b>조건문<\/b>)~1-11(<b>반복<\/b>문..."
+		},
+		{
+			"title":"AI 인공지능 기술 활용 자바 파이썬 응용SW 및 실업자재취직과정 6개월과정 - 국비지원교육정보센터",
+			"link":"https:\/\/www.gukbi.com\/Course\/View.asp?idx=60973",
+			"description":"목표 ■ <b>JAVA<\/b> 및 Python 언어를 기반으로 컴퓨터가 스스로 학습하여... ① 응용소프트웨어 및 웹개발에 사용되는 컴퓨터 언어인 <b>JAVA<\/b>의 기본... 개발자, <b>JAVA<\/b>개발자, 웹개발자(프론트엔드&amp;백엔드), 빅데이터 플랫폼..."
+		},
+		{
+			"title":"“멈추지 않고 계속 전진한다” 자바가 여전히 힙한 11가지 이유 - ITWorld Korea",
+			"link":"https:\/\/www.itworld.co.kr\/news\/321780",
+			"description":"toLowerCase와 같은 <b>함수<\/b>를 호출하면 완전히 새로운 String이 생성됐다.... 선택이지만 <b>효율성<\/b>은 떨어질 수 있다. 마지막으로 병렬 수집기... 예를 들면, if-then-else <b>조건문<\/b> 스택을 만드는 데 사용되는 switch 키워드는... <b>Java<\/b>..."
+		},
+		{
+			"title":"<b>Java<\/b> 프로그래밍",
+			"link":"https:\/\/blog.naver.com\/itmaster1\/220030252884",
+			"description":"클래스와 <b>인터페이스<\/b> 등 자바 프로그래밍에 대해... <b>조건문<\/b> 02. <b>반복<\/b>문 03. 분기문 CHAPTER 05. 배열 01. 배열의 개요 02.... <b>함수<\/b> 01. <b>함수<\/b> 정의 02. <b>함수<\/b> 호출 CHAPTER 07. 클래스와 객체 01.... <b>Java<\/b>\nIT기술\nitmaster1님의..."
+		}
+	]
+}

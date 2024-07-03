@@ -14,6 +14,7 @@ CREATE TABLE tb_concepts (
             create_time timestamp,
             update_time timestamp,
             token_num integer,
+            plaintext text,
             embedding vector(3072)
 );
 
@@ -21,6 +22,12 @@ CREATE TABLE tb_networks (
             id serial primary key,
             source integer,
             target integer
+);
+
+CREATE TABLE tb_references (
+            id serial primary key,
+            concept_id integer,
+            description text
 );
 
 END;

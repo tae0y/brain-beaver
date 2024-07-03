@@ -2,7 +2,7 @@ from typing import Tuple
 from sqlalchemy import create_engine, insert, select, update
 from sqlalchemy.orm import sessionmaker
 from pgvector.sqlalchemy import Vector
-from common.model import Base, Concepts, Networks
+from common.model import Base, Concepts, Networks, References
 from llm.llmroute import embedd_text
 from common.algebra import select_nearest_with_top_p, select_nearest_with_threshold
 import traceback
@@ -17,6 +17,9 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 #Base.metadata.dop_all(bind=engine)
 #Base.metadata.create_all(bind=engine)
 
+"""
+Concepts 테이블 관련 함수
+"""
 def create_keyconcept_into_tb_concepts(keyconcept_list: list[dict]) -> Tuple[int, str]:
     """
     딕셔너리 리스트를 입력받아 tb_concepts 테이블에 모두 저장한다
@@ -144,6 +147,9 @@ def update_srctrgnum_tb_concepts_byid() -> Tuple[int, str]:
 
     return rtncd, rtnmsg
 
+"""
+Networks 테이블 관련 함수
+"""
 def create_network_connections_tb_networks(source, target) -> Tuple[bool, str]:
     """
     현재 tb_concepts를 기준으로 네트워크 관계를 tb_networks에 저장한다
@@ -179,6 +185,49 @@ def read_tb_networks_all() -> list[Networks]:
     session = SessionLocal()
     try:
         query = session.query(Networks)
+        rtndata = query.all()
+        rtncd = 200
+        rtnmsg = '성공'
+    except Exception as e:
+        traceback.print_exc()
+        session.rollback()
+        rtncd = 900
+        rtnmsg = '실패'
+    finally:
+        session.close()
+
+    return rtndata
+
+"""
+References 테이블 관련 함수
+"""
+def create_reference_into_tb_references(reference_list: list[dict]) -> Tuple[int, str]:
+    rtncd = 900
+    rtnmsg = '실패'
+
+    session = SessionLocal()
+    try:
+        session.execute(insert(References), reference_list)
+        session.commit()
+        rtncd = 200
+        rtnmsg = '성공'
+    except Exception as e:
+        traceback.print_exc()
+        session.rollback()
+        rtncd = 900
+        rtnmsg = '실패'
+    finally:
+        session.close()
+
+    return rtncd, rtnmsg
+
+def read_tb_references_all() -> list[References]:
+    rtncd = 900
+    rtnmsg = '실패'
+
+    session = SessionLocal()
+    try:
+        query = session.query(References)
         rtndata = query.all()
         rtncd = 200
         rtnmsg = '성공'
