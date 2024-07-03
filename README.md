@@ -19,7 +19,7 @@ root_dir = '/Users/bachtaeyeong/20_DocHub/TIL'
 file_list = sample_file_list(file_list=file_list, bucket_size=10)
 
 # 파일을 정해진 테스트건수만큼만 처리합니다.
-keyconcept_list = split_file_into_keyconcept(file_list=file_list, limit_file_count=10)
+keyconcept_list = split_file_into_keyconcept(file_list=file_list[:10])
 ```
 
 python 폴더로 이동해서 app.py 파일을 실행합니다.  

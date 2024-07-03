@@ -20,10 +20,16 @@ class Constants:
     google_pse_num :str
     google_pse_safe :str
 
+    # Naver API constants
+    naver_client_id :str
+    naver_client_secret :str
+    naver_webkr_url :str
+
     @staticmethod
     def get_instance():
         if Constants._instance is None:
-            Constants()
+            _instance = Constants()
+            _instance.load_constants()
         return Constants._instance
 
     def __init__(self):
@@ -35,7 +41,7 @@ class Constants:
 
     def load_constants(self):
         config = configparser.ConfigParser()
-        config.read('../res/secrets.properties')
+        config.read('./res/secret.properties') #app.py가 실행되는 위치 기준으로 설정
 
         # Google PSE
         self.google_pse_api_url = config.get('Google PSE', 'API_URL')

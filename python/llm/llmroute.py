@@ -38,7 +38,7 @@ def embedd_text(text) -> list[float]:
 
 def embedd_text_ollama(text) -> list[float]:
     api_url = API_URLS['embeddings']
-    data = build_request_data(query=text, chunk='', api_type='embeddings')
+    data = build_request_data(query=text, chunk='', options={'api_type':'embeddings'})
     response = send_post_request(api_url, data)
     #print(response.json())
     #print(text)

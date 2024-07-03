@@ -116,7 +116,7 @@ def update_srctrgnum_tb_concepts_byid() -> Tuple[int, str]:
     """
     rtncd = 900
     rtnmsg = '실패'
-    concept_list = read_tb_networks_all()
+    concept_list = read_tb_concepts_all()
     network_list = read_tb_networks_all()
 
     session = SessionLocal()
@@ -124,8 +124,8 @@ def update_srctrgnum_tb_concepts_byid() -> Tuple[int, str]:
         source_count_dict = {}
         target_count_dict = {}
         for network in network_list:
-            source_count_dict[network.source] = source_count_dict.get(network.source, 0) + 1
-            target_count_dict[network.target] = target_count_dict.get(network.target, 0) + 1
+            source_count_dict[network.source_concept_id] = source_count_dict.get(network.source_concept_id, 0) + 1
+            target_count_dict[network.target_concept_id] = target_count_dict.get(network.target_concept_id, 0) + 1
 
         print(source_count_dict)
         print(target_count_dict)
@@ -164,7 +164,7 @@ def create_network_connections_tb_networks(source, target) -> Tuple[bool, str]:
 
     session = SessionLocal()
     try:
-        session.execute(insert(Networks), {'source':source, 'target':target})
+        session.execute(insert(Networks), {'source_concept_id':source, 'target_concept_id':target})
         session.commit()
         rtncd = 200
         rtnmsg = '성공'

@@ -63,9 +63,9 @@ for reference in references:
 
 for network in networks:
     edges.append(Edge(
-                        source=f"C{network.source}",      
+                        source=f"C{network.source_concept_id}",      
                         label='',                   
-                        target=f"C{network.target}",
+                        target=f"C{network.target_concept_id}",
                         color='#ced4da',      
                     ))
 

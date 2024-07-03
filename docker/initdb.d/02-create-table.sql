@@ -20,8 +20,8 @@ CREATE TABLE tb_concepts (
 
 CREATE TABLE tb_networks (
             id serial primary key,
-            source integer,
-            target integer
+            source_concept_id integer,
+            target_concept_id integer
 );
 
 CREATE TABLE tb_references (
