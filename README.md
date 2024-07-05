@@ -1,9 +1,11 @@
 # Brain Beaver :beaver:
 
+[:bulb: Streamlit | DEMO](https://brainbeaver-ln633jukejyg3sladcvgha.streamlit.app/)  
+
 ![](demo.png)
 
 M1 맥북에어 기준으로 로컬에서 구동하는 방법을 설명드립니다.  
-이런 모습의 지식그래프를 만들 수 있습니다.
+이런 모습의 지식그래프를 만들 수 있습니다.  
 
 docker 폴더로 진입해서 db와 dbadmin을 구동합니다.
 ```shell
