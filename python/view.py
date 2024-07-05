@@ -1,6 +1,7 @@
 import common.db as db
 import streamlit as st
 from streamlit_agraph import agraph, Node, Edge, Config, TripleStore
+import math
 
 st.title('Brain Beaver 🦫')
 
@@ -22,9 +23,13 @@ node_target_many = '#50808E'
 #node_image = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTxEQr3SSOrrhOXpbVP0B_4T2OysRy7cGnqA&s'
 
 for concept in concepts:
-    node_size = max(node_default_size, 
-                    node_default_size*(concept.source_num//node_multiple), 
-                    node_default_size*(concept.target_num//node_multiple))
+    if concept.source_num * concept.target_num <= 0:
+        node_size = node_default_size
+    else:
+        node_size = node_default_size * math.log10(concept.source_num * concept.target_num)
+    #node_size = max(node_default_size, 
+    #                node_default_size*(concept.source_num//node_multiple), 
+    #                node_default_size*(concept.target_num//node_multiple))
     #node_size = max(node_default_size,
     #                node_default_size * (concept.source_num + concept.target_num) // node_multiple)
 
@@ -50,9 +55,9 @@ for reference in references:
                         title=f"{reference.concept_id} : {reference.description[:200].replace('.','.\n')}",
                         label=reference.id,  
                         color='#FF0000',
-                        shape='star', # image, circularImage, diamond, dot, star, triangle, triangleDown, hexagon, square and icon
+                        shape='dot', # image, circularImage, diamond, dot, star, triangle, dot, hexagon, square and icon
                         image='',
-                        size=30
+                        size=node_default_size*1.3
                     ))
     edges.append(Edge(
                         source=f"R{reference.id}",      

@@ -1,4 +1,6 @@
 import os
+import chardet
+import traceback
 
 def get_file_list_recursively(root_dir, ignore_dir_list) -> list[str]:
     """
@@ -26,3 +28,37 @@ def get_file_list_recursively(root_dir, ignore_dir_list) -> list[str]:
     #print(len(file_list))
 
     return file_list
+
+def get_plaintext_from_filepath(filepath: str) -> str:
+    """
+    파일경로를 입력받아 인코딩에 관계없이 텍스트를 반환한다.
+    """
+    with open(filepath, 'rb') as f:
+        raw_data = f.read()
+        encoding = chardet.detect(raw_data)['encoding']
+        text = ''
+
+        if encoding == 'utf-8':
+            try:
+                text = raw_data.decode('utf-8')
+            except UnicodeDecodeError:
+                pass  # utf-8 디코딩 실패 시 다음 단계로 넘어갑니다.
+        if not text:  # utf-8이 아니거나 utf-8 디코딩에 실패한 경우
+            try:
+                text = raw_data.decode(encoding or 'latin1')
+            except UnicodeDecodeError:  # 지정된 인코딩으로도 디코딩 실패 시
+                try:
+                    text = raw_data.decode('latin1')  # 'latin1'으로 시도
+                except UnicodeDecodeError:
+                    try:
+                        text = raw_data.decode('iso-8859-1')  # 'iso-8859-1'로 시도
+                    except UnicodeDecodeError:
+                        try:
+                            text = raw_data.decode('cp1252')  # 'cp1252'로 시도
+                        except Exception as e:
+                            print(f"get_plaintext_from_filepath error: {filepath} - {e}")
+                            traceback.print_exc()
+        
+        print(f"{encoding} (len:{len(text)}) / {filepath}")
+        
+    return text

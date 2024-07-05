@@ -1,23 +1,23 @@
 {
-	"lastBuildDate":"Thu, 04 Jul 2024 01:39:23 +0900",
-	"total":2,
+	"lastBuildDate":"Fri, 05 Jul 2024 12:48:00 +0900",
+	"total":3209,
 	"start":1,
 	"display":3,
 	"items":[
 		{
-			"title":"<b>로또번호<\/b> 무료 추첨 추출 <b>생성<\/b> 사이트 당첨 확률 높음 Best 6 총 정리",
-			"link":"https:\/\/lliamlisten.tistory.com\/entry\/%EB%A1%9C%EB%98%90%EB%B2%88%ED%98%B8-%EB%AC%B4%EB%A3%8C-%EC%B6%94%EC%B2%A8-%EC%B6%94%EC%B6%9C-%EC%83%9D%EC%84%B1-%EC%82%AC%EC%9D%B4%ED%8A%B8-%EB%8B%B9%EC%B2%A8-%ED%99%95%EB%A5%A0-%EB%86%92%EC%9D%8C-Best-6-%EC%B4%9D-%EC%A0%95%EB%A6%AC",
-			"description":"lotto <b>번호 생성<\/b>기 YOSEUM <b>로또<\/b> 조합기 <b>로또 번호<\/b> 추출기 웹툴 <b>로또<\/b>... <b>번호<\/b>를 빠르게 추출할 수 있다는 장점이 있는 사이트이며 <b>다양한<\/b>... 복권방 창업 자격 조건과 신청 방법 및 <b>로또<\/b>방 수익 <b>구조<\/b> 공개 복권방... <b>생성<\/b>..."
+			"title":"[Effective Java : Item 32] <b>제네릭<\/b>과 <b>가변인수<\/b>를 함께 쓸 때는 신중하라",
+			"link":"https:\/\/my-coding-notes.tistory.com\/714",
+			"description":"개요 <b>가변인수<\/b>(varargs)란 다음과 같이 명시한 <b>타입<\/b>의 <b>인수<\/b>를 0개 이상 받을 수 있는 것을 의미한다. static int sum(int... args) { int sum = 0; for (int arg : args) sum += arg; return sum; } 메서드가 호출되면 <b>인수<\/b>의 개수와 길이가 같은 <b>배열<\/b>을 생성한 뒤 <b>인수<\/b>들을 이 <b>배열<\/b>에 저..."
 		},
 		{
-			"title":"C언어 <b>로또번호 생성<\/b>하기 (당첨확률높이기)",
-			"link":"https:\/\/enter.tistory.com\/218",
-			"description":"_C언어 <b>로또번호 생성<\/b>하기 핵심요소 조건문, 반복문, 함수, 배열, 포인터, <b>구조<\/b>체 사용 정렬, 짝수&amp;홀수 판별... 해당 조건을 넣음으로써 <b>다양<\/b>하게 프로그래밍을 연습 할 수... C언어 <b>로또번호 생성<\/b>하기..."
+			"title":"[아이템 32] <b>제네릭<\/b>과 <b>가변인수<\/b>를 함께 쓸 때는 신중하라",
+			"link":"https:\/\/jaimemin.tistory.com\/2390",
+			"description":"<b>제네릭<\/b> <b>가변인수<\/b> 앞서 아이템 28에서 다루었다시피 <b>제네릭<\/b>의 불공변 특성으로 인해 <b>배열<\/b>과 어울리지 않습니다. 이로 인해 자바 컴파일러는 <b>제네릭<\/b> <b>배열<\/b>을 직접 정의하는 것을 막지만, <b>제네릭<\/b>과 <b>가변<\/b>인자를 함께 사용할 경우 <b>제네릭<\/b> <b>배열<\/b>을 만들 수 있으며 이때 비검사 경고만 발생하고 컴파일은 정상적으로 진행됩니다. <b>제네릭<\/b>을 사용하는 이유는 컴파일 타임에 <b>타입<\/b> 안..."
 		},
 		{
-			"title":"원스: 동행 복권 - <b>로또 번호 생성<\/b>기",
-			"link":"https:\/\/www.wonsdiary.com\/2024\/02\/Companion-Lottery-Lotto-Number-Generator.html",
-			"description":"동행 복권 <b>로또 번호 생성<\/b>기 ; <b>로또 번호 생성<\/b>기 입니다. 랜덤<b>번호생성<\/b> 버튼을 누르면 1~45번의 숫자 중 6개의 숫자를 총 6번에 걸쳐 랜덤으로 <b>생성<\/b>됩니다. 총 6 번의 랜덤<b>번호<\/b>를 추출한 후 최종<b>로또번호생성<\/b> 버튼을 누르면 <b>생성<\/b>된 36개의 숫자 중에서 최종 6개의 숫자를 얻으실 수 있습니다. 다들 부자되세요~!"
+			"title":"아이템 32. <b>제네릭<\/b>과 <b>가변인수<\/b>를 함께 쓸 때는 신중하라",
+			"link":"https:\/\/velog.io\/@banjjoknim\/%EC%95%84%EC%9D%B4%ED%85%9C-32.-%EC%A0%9C%EB%84%A4%EB%A6%AD%EA%B3%BC-%EA%B0%80%EB%B3%80%EC%9D%B8%EC%88%98%EB%A5%BC-%ED%95%A8%EA%BB%98-%EC%93%B8-%EB%95%8C%EB%8A%94-%EC%8B%A0%EC%A4%91%ED%95%98%EB%9D%BC",
+			"description":"이를 사용하면 결과 코드는 <b>배열<\/b> 없이 <b>제네릭<\/b>만 사용하게 되므로 <b>타입 안전<\/b>해진다. 핵심 정리 <b>가변인수<\/b>와 <b>제네릭<\/b>은 궁합이 좋지 않다. <b>가변인수<\/b> 기능은 <b>배열<\/b>을 노출하여 추상화가 완벽하지... <b>제네릭<\/b>과 <b>가변인수<\/b>를..."
 		}
 	]
 }

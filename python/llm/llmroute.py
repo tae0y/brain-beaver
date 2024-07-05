@@ -4,6 +4,7 @@ import json
 import time
 from tqdm import tqdm
 import traceback
+import ast
 
 CHUNK_SIZE = 1024
 OVERLAP_SIZE = 200
@@ -48,16 +49,16 @@ def embedd_text_ollama(text) -> list[float]:
 """
 Query (chat, completion, instruct, generate, etc)
 """
-def query_with_context(query:str, context:str, options: dict = {'api_type':'generate', 
+def query_with_context(query:str, title: str, context:str, options: dict = {'api_type':'generate', 
                                                                 'chunk_size':CHUNK_SIZE,
                                                                 'format':'json'}) -> list[dict]:
-    response_list = query_ollama_with_context(query, context, options=options)
+    response_list = query_ollama_with_context(query, title, context, options=options)
     return response_list
 #   query_ollama_with_context(query, context, api_type='chat')
 #   query_ollama_with_context(query, context, api_type='another_api')
 
 
-def query_ollama_with_context(query:str, context:str, options:dict) -> list[dict]:
+def query_ollama_with_context(query:str, title:str, context:str, options:dict) -> list[dict]:
     if options['api_type'] not in API_URLS:
         raise ValueError(f"Unsupported API type: {options['api_type']}")
     
@@ -65,11 +66,11 @@ def query_ollama_with_context(query:str, context:str, options:dict) -> list[dict
     context_chunks = chunking_context(context, options['chunk_size'])
     response_list = []
     
-    for chunk in tqdm(context_chunks, desc=f'{context[:10]}/'):
+    for chunk in tqdm(context_chunks, desc=f'{title[-30:]}/'):
         if (len(chunk) < 20): #한국어 문장 평균길이 40글자, 그 이하면 한 문장도 안됨
             continue
 
-        data = build_request_data(query, chunk, options)
+        data = build_request_data(query, f"{title}\n\n{chunk}", options)
         begin = time.time()
         response = send_post_request(api_url, data)
         end = time.time()
@@ -77,7 +78,9 @@ def query_ollama_with_context(query:str, context:str, options:dict) -> list[dict
         try:
             if response:
                 if options['format'] == 'json':
-                    ascii_contents = json.loads(parse_response(response, options['api_type']))
+                    # 홑따옴표 json을 처리하기 위해서, 먼저 dict로 변환한 다음 jsondump, jsonify
+                    ascii_contents = parse_response(response, options['api_type'])
+                    ascii_contents = json.loads(json.dumps(ast.literal_eval(ascii_contents)))
                 else:
                     ascii_contents = parse_response(response, options['api_type'])
 

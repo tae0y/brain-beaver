@@ -97,7 +97,7 @@ def expand_one_concept_with_websearch(concept: Concepts):
         }
 
         [OPINION]
-        """, context)
+        """, '', context)
         print('\n\n-------------------------------------------------------------------------------------------------')
         print(f">> 검색어\n {search_keyword_list}")
         opposition = search_keyword_list[0]['opposition']
@@ -159,7 +159,7 @@ def expand_one_concept_with_websearch(concept: Concepts):
                 """+opposition+"""" 
                 
                 [DOCUMENT]
-                """, f"{item["title"]} - {item["description"]}")
+                """, item["title"], item["description"])
                 print('result > {result}')
                 comparison_list.append(
                     {
@@ -189,7 +189,8 @@ def expand_one_concept_with_websearch(concept: Concepts):
         최종 결론를 두 문장으로 요약하여 제시하세요.
 
         [DOCUMENT]
-        """, str(comparison_list), options={'api_type':'generate', 
+        """, '', str(comparison_list), 
+        options={'api_type':'generate', 
                  'chunk_size':8000,
                  'format':None,})
 

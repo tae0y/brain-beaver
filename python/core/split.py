@@ -1,5 +1,6 @@
 from llm.llmroute import query_with_context
 from concurrent.futures import ThreadPoolExecutor
+from common.file import get_plaintext_from_filepath
 
 def split_file_into_keyconcept(file_list: list) -> list[dict]:
     keyconcept_list = []
@@ -14,9 +15,8 @@ def split_file_into_keyconcept(file_list: list) -> list[dict]:
 
 def extract_keyconcept(file_path):
     try:
-        file_content = ''
-        with open(file_path, 'r', encoding='utf-8') as file:
-            file_content = file.read()
+        #너무다 다양한 인코딩이 존재함 : None, ascii, windows-1254, windows-1253, euc-kr, utf-8 등
+        file_content = get_plaintext_from_filepath(file_path)
 
         #print('------------------------------------------------------------------')
         print(f"{file_path} (len:{len(file_content)})")
@@ -40,8 +40,8 @@ def extract_keyconcept(file_path):
 
         [DOCUMENT]
         """
-        context = ("# " + file_path + "\n\n" + file_content) #TIP: 맥락정보를 유지하기 위해 파일경로(분류) 및 제목 포함
-        response_list = query_with_context(role + query, context) #파일경로(분류), 파일제목, 파일내용
+        context = file_content #TIP: 맥락정보를 유지하기 위해 파일경로(분류) 및 제목 포함
+        response_list = query_with_context(role + query, file_path, context) #파일경로(분류), 파일제목, 파일내용
         for response in response_list:
             response['filepath'] = file_path
             response['plaintext'] = file_content

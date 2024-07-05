@@ -8,3 +8,4 @@ __pychache__
 
 python/res/secret.properties
 python/logs
+python/wandb/*
