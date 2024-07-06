@@ -119,14 +119,14 @@ def expand_one_concept_with_websearch(concept: Concepts):
         if(rescode==200):
             response_body = response.read()
             #print(response_body.decode('utf-8'))
-            with open('./res/websearch.json', 'w', encoding="utf-8") as f:
-                f.write(response_body.decode('utf-8'))
+            #with open('./res/websearch.json', 'w', encoding="utf-8") as f:
+            #    f.write(response_body.decode('utf-8'))
         else:
             print("Error Code:" + rescode)
 
-        with open('./res/websearch.json', 'r') as f:
-            jsonraw = f.read()
-        jsonobj = json.loads(jsonraw)
+        #with open('./res/websearch.json', 'r') as f:
+        #    jsonraw = f.read()
+        jsonobj = json.loads(response_body)
 
         print('\n\n-------------------------------------------------------------------------------------------------')
         print(f">> 웹검색 건수는! \n {len(jsonobj['items'])}")
