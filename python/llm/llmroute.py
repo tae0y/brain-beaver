@@ -5,6 +5,8 @@ import time
 from tqdm import tqdm
 import traceback
 import ast
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from common.constants import Constants
 
 CHUNK_SIZE = 1024
 OVERLAP_SIZE = 200
@@ -17,6 +19,7 @@ API_URLS = {
     # 'another_api': 'http://localhost:11434/api/another'
 }
 
+constants = Constants.get_instance()
 
 """
 Count Tokens
@@ -66,34 +69,44 @@ def query_ollama_with_context(query:str, title:str, context:str, options:dict) -
     context_chunks = chunking_context(context, options['chunk_size'])
     response_list = []
     
-    for chunk in tqdm(context_chunks, desc=f'{title[-30:]}/'):
-        if (len(chunk) < 20): #한국어 문장 평균길이 40글자, 그 이하면 한 문장도 안됨
-            continue
-
-        data = build_request_data(query, f"{title}\n\n{chunk}", options)
-        begin = time.time()
-        response = send_post_request(api_url, data)
-        end = time.time()
-        print(f"query_ollama_with_context elapsed time (chunk {len(chunk)}) : {end - begin}")
-        try:
-            if response:
-                if options['format'] == 'json':
-                    # 홑따옴표 json을 처리하기 위해서, 먼저 dict로 변환한 다음 jsondump, jsonify
-                    ascii_contents = parse_response(response, options['api_type'])
-                    ascii_contents = json.loads(json.dumps(ast.literal_eval(ascii_contents)))
-                else:
-                    ascii_contents = parse_response(response, options['api_type'])
-
-                print(f"{response.status_code} {'OK' if response.status_code == 200 else 'NG'}\n{ascii_contents}\n\n")
-                response_list.append(ascii_contents)
-        except Exception as e:
-            print(f"Error during response parsing: {e}")
-            traceback.print_exc()
-            continue
+    response_list = []
+    with ThreadPoolExecutor(max_workers=constants.ollama_looped_thread_count) as executor:
+        future_to_chunk = {executor.submit(process_chunk, chunk, query, title, options, api_url): chunk for chunk in context_chunks}
+        for future in as_completed(future_to_chunk):
+            chunk = future_to_chunk[future]
+            try:
+                result = future.result()
+                if result is not None:
+                    print(result)
+                    response_list.append(result)
+            except Exception as e:
+                print(f"Exception for chunk {len(chunk)}: {e}")
 
     #print('> query_ollama_with_context :: '+str(response_list))
     return response_list
-            
+
+def process_chunk(chunk, query, title, options, api_url):
+    if (len(chunk) < 20):
+        return None
+
+    data = build_request_data(query, f"{title}\n\n{chunk}", options)
+    begin = time.time()
+    response = send_post_request(api_url, data)
+    end = time.time()
+    print(f"query_ollama_with_context elapsed time (chunk {len(chunk)}) : {end - begin}")
+    try:
+        if response:
+            if options['format'] == 'json':
+                ascii_contents = parse_response(response, options['api_type'])
+                ascii_contents = json.loads(json.dumps(ast.literal_eval(ascii_contents)))
+            else:
+                ascii_contents = parse_response(response, options['api_type'])
+
+            print(f"{response.status_code} {'OK' if response.status_code == 200 else 'NG'}\n{ascii_contents}\n\n")
+            return ascii_contents
+    except Exception as e:
+        print(f"Error during response parsing: {e}")
+        return None    
 
 """
 Common

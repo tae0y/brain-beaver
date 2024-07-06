@@ -1,10 +1,13 @@
 from llm.llmroute import query_with_context
 from concurrent.futures import ThreadPoolExecutor
 from common.file import get_plaintext_from_filepath
+from common.constants import Constants
+
+constants = Constants.get_instance()
 
 def split_file_into_keyconcept(file_list: list) -> list[dict]:
     keyconcept_list = []
-    with ThreadPoolExecutor(max_workers=10) as executor:
+    with ThreadPoolExecutor(max_workers=constants.ollama_thread_count) as executor:
         results = executor.map(extract_keyconcept, file_list)
         for result in results:
             keyconcept_list.extend(result)

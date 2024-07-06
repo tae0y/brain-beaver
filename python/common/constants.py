@@ -25,6 +25,10 @@ class Constants:
     naver_client_secret :str
     naver_webkr_url :str
 
+    # Ollama constants
+    ollama_thread_count :int
+    ollama_looped_thread_count :int
+
     @staticmethod
     def get_instance():
         if Constants._instance is None:
@@ -40,20 +44,32 @@ class Constants:
             self.load_constants()
 
     def load_constants(self):
-        config = configparser.ConfigParser()
-        config.read('./res/secret.properties') #app.py가 실행되는 위치 기준으로 설정
+        """
+        Load constants from ../res/secrets.properties file
+        """
+        secret = configparser.ConfigParser()
+        secret.read('./res/secret.properties') #app.py가 실행되는 위치 기준으로 설정
 
         # Google PSE
-        self.google_pse_api_url = config.get('Google PSE', 'API_URL')
-        self.google_pse_api_key = config.get('Google PSE', 'API_KEY')
-        self.google_pse_cx = config.get('Google PSE', 'CX')
-        self.google_pse_datarestict = config.get('Google PSE', 'DATARESTRICT')
-        self.google_pse_filter = config.get('Google PSE', 'FILTER')
-        self.google_pse_h1 = config.get('Google PSE', 'H1')
-        self.google_pse_num = config.get('Google PSE', 'NUM')
-        self.google_pse_safe = config.get('Google PSE', 'SAFE')
+        self.google_pse_api_url = secret.get('Google PSE', 'API_URL')
+        self.google_pse_api_key = secret.get('Google PSE', 'API_KEY')
+        self.google_pse_cx = secret.get('Google PSE', 'CX')
+        self.google_pse_datarestict = secret.get('Google PSE', 'DATARESTRICT')
+        self.google_pse_filter = secret.get('Google PSE', 'FILTER')
+        self.google_pse_h1 = secret.get('Google PSE', 'H1')
+        self.google_pse_num = secret.get('Google PSE', 'NUM')
+        self.google_pse_safe = secret.get('Google PSE', 'SAFE')
 
         # Naver API
-        self.naver_client_id = config.get('Naver API', 'CLIENT_ID')
-        self.naver_client_secret = config.get('Naver API', 'CLIENT_SECRET')
-        self.naver_webkr_url = config.get('Naver API', 'WEBKR_URL')
+        self.naver_client_id = secret.get('Naver API', 'CLIENT_ID')
+        self.naver_client_secret = secret.get('Naver API', 'CLIENT_SECRET')
+        self.naver_webkr_url = secret.get('Naver API', 'WEBKR_URL')
+
+        """
+        Load constants from ../res/config.properties file
+        """
+        config = configparser.ConfigParser()
+        config.read('./res/config.properties') #app.py가 실행되는 위치 기준으로 설정
+
+        self.ollama_thread_count = int(config.get('Ollama', 'THREAD_COUNT'))
+        self.ollama_looped_thread_count = int(config.get('Ollama', 'LOOPED_THREAD_COUNT'))

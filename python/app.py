@@ -14,13 +14,12 @@ from common.constants import Constants
 """
 constans = Constants.get_instance()
 
-os.environ['WANDB_MODE'] = 'offline'
-#os.environ['WANDB_MODE'] = 'online'
+#os.environ['WANDB_MODE'] = 'offline' #wandb login --relogin host=
+os.environ['WANDB_MODE'] = 'online' #wandb login --cloud
 
-wandb.login() #모드에 맞는 API 키값 입력
+#wandb.login() #모드에 맞는 API 키값 입력
 wandb.init(
     project="brain-beaver",
-
     config={
     #"learning_rate": 0.02,
     #"architecture": "CNN",
@@ -40,7 +39,7 @@ try:
     ignore_dir_list = ['.git','Res','.obsidian','Chats','.DS_Store','.gitignore', '구직']
     file_list = get_file_list_recursively(root_dir, ignore_dir_list)
     file_list = [file for file in file_list if file.endswith('.md') ]
-    file_list = sample_file_list(file_list=file_list, bucket_size=1) #STAT: 파일 랜덤 샘플링
+    #file_list = sample_file_list(file_list=file_list, bucket_size=1) #STAT: 파일 랜덤 샘플링
     #for file in file_list:
     #    print(file)
     print(f"file_list num : {len(file_list)}")
@@ -48,7 +47,7 @@ try:
     # 2. 파일에서 주요 컨셉을 추출하고 저장한다
     #TODO: 로깅 파일로 저장, 로그파일명은 날짜시간으로, 각 로그는 날짜-시간-파일명-상태-메시지
     #TODO: checkpoints, 중단된 파일부터 다시 시작
-    keyconcept_list = split_file_into_keyconcept(file_list=file_list[:5]) #STAT: 처리할 건수 지정
+    keyconcept_list = split_file_into_keyconcept(file_list=file_list[:10]) #STAT: 처리할 건수 지정
     keyconcept_list = [dict(
         title    = keyconcept.get('title',''),
         keywords = keyconcept.get('keywords',''),

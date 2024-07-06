@@ -12,6 +12,8 @@ import traceback
 from typing import Tuple
 from concurrent.futures import ThreadPoolExecutor
 
+constants = Constants.get_instance()
+
 def expand_all_concept_with_websearch(action_type:str="all", limit:int=10) -> Tuple[int, str]:
     rescd = 900
     resmsg = '실패'
@@ -38,7 +40,7 @@ def expand_all_concept_with_websearch(action_type:str="all", limit:int=10) -> Tu
                 return None  # 실패한 경우 None 반환
 
         # 병렬 처리
-        with ThreadPoolExecutor(max_workers=10) as executor:
+        with ThreadPoolExecutor(max_workers=constants.ollama_thread_count) as executor:
             results = list(executor.map(expand_and_handle_exceptions, concpets_list))
 
         # 결과 처리 
@@ -59,8 +61,6 @@ def expand_all_concept_with_websearch(action_type:str="all", limit:int=10) -> Tu
 
 def expand_one_concept_with_websearch(concept: Concepts):
     try:
-        # Constants
-        constants = Constants.get_instance()
 
         #--------------------------------------------------------------------------------------------------------
         # 데이터 조회

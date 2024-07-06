@@ -26,7 +26,7 @@ for concept in concepts:
     if concept.source_num * concept.target_num <= 0:
         node_size = node_default_size
     else:
-        node_size = node_default_size * math.log10(concept.source_num * concept.target_num)
+        node_size = node_default_size * math.log(concept.source_num * concept.target_num,5)
     #node_size = max(node_default_size, 
     #                node_default_size*(concept.source_num//node_multiple), 
     #                node_default_size*(concept.target_num//node_multiple))
@@ -79,6 +79,7 @@ config = Config(
                     height=950,
                     directed=True, 
                     physics=True, 
+                    maxVelocity=60,
                     hierarchical=False
                 )
 
