@@ -36,6 +36,7 @@ numpy==2.0.0
 packaging==24.1
 pandas==2.2.2
 parso==0.8.4
+path==16.14.0
 pexpect==4.9.0
 pgvector==0.3.0
 pillow==10.3.0

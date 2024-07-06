@@ -3,7 +3,11 @@ import pandas as pd #db 대신 csv파일을 읽는다
 import streamlit as st
 from streamlit_agraph import agraph, Node, Edge, Config, TripleStore
 import math
+import path
+import sys
 
+dir = path.Path(__file__).abspath()
+sys.append.path(dir.parent.parent)
 
 st.title('Brain Beaver 🦫')
 
