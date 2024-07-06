@@ -43,7 +43,6 @@ platformdirs==4.2.2
 prompt_toolkit==3.0.47
 protobuf==5.27.2
 psutil==6.0.0
-psycopg2==2.9.9
 ptyprocess==0.7.0
 pure-eval==0.2.2
 pyarrow==16.1.0
