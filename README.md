@@ -1,8 +1,9 @@
 # Brain Beaver :beaver:
 
 ## 데모, 프로젝트 소개
-[:bulb: Streamlit | DEMO](https://brainbeaver.streamlit.app/)  
-  
+
+<a href="https://brainbeaver.streamlit.app/" target="_blank">:bulb: Streamlit | DEMO</a> 
+
 ![](demo.png)
   
 - 마크다운 파일을 지식단위로 분해하고 연관관계를 그래프화
