@@ -1,7 +1,7 @@
 # Brain Beaver :beaver:
 
 ## 데모, 프로젝트 소개
-[:bulb: Streamlit | DEMO](https://brainbeaver-ln633jukejyg3sladcvgha.streamlit.app/)  
+[:bulb: Streamlit | DEMO](https://brainbeaver.streamlit.app/)  
   
 ![](demo.png)
   
