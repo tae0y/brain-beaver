@@ -50,7 +50,7 @@ for concept in concepts.itertuples():
     
     nodes.append(Node(
                         id=f"C{concept.id}",              
-                        title=f"{concept.id} - {concept.title} | \n{concept.summary.replace('.', '.\n')}\n* {concept.filepath}",
+                        title=f"{concept.id} - {concept.title} | \n{concept.summary.replace('.', chr(10))}\n* {concept.filepath}",
                         label=concept.id,  
                         color=node_color,
                         shape='circularImage', # image, circularImage, diamond, dot, star, triangle, triangleDown, hexagon, square and icon
@@ -61,7 +61,7 @@ for concept in concepts.itertuples():
 for reference in references.itertuples():
     nodes.append(Node(
                         id=f"R{reference.id}",              
-                        title=f"{reference.concept_id} : {reference.description[:200].replace('.','.\n')}",
+                        title=f"{reference.concept_id} : {reference.description[:200].replace('.',chr(10))}",
                         label=reference.id,  
                         color='#FF0000',
                         shape='dot', # image, circularImage, diamond, dot, star, triangle, dot, hexagon, square and icon
