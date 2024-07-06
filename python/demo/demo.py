@@ -3,18 +3,18 @@ import pandas as pd #db 대신 csv파일을 읽는다
 import streamlit as st
 from streamlit_agraph import agraph, Node, Edge, Config, TripleStore
 import math
-import path
-import sys
+#import path
+#import sys
 
-dir = path.Path(__file__).abspath()
-sys.append.path(dir.parent.parent)
+#dir = path.Path(__file__).abspath()
+#sys.append.path(dir.parent.parent)
 
 st.title('Brain Beaver 🦫')
 
 # CSV 파일 경로 지정
-concepts_csv_path = './concepts.csv'
-networks_csv_path = './networks.csv'
-references_csv_path = './references.csv'
+concepts_csv_path = '/mount/src/brainbeaver/python/demo/concepts.csv'
+networks_csv_path = '/mount/src/brainbeaver/python/demo/networks.csv'
+references_csv_path = '/mount/src/brainbeaver/python/demo/references.csv'
 
 # pandas를 사용하여 CSV 파일 로드
 concepts = pd.read_csv(concepts_csv_path, dtype={'source_num': int, 'target_num': int, 'token_num':int})
