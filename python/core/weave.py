@@ -29,7 +29,7 @@ def weave_keyconcept_into_networks(operation: str) -> Tuple[int, str]:
         network_list = db.read_tb_networks_all()
         print(f"network_list num: {len(network_list)}")
         rtncd = 200
-        rtnmsg = f'성공 ({len(concept_list)}중 {success_cnt})건 처리됨)'
+        rtnmsg = f'성공 ({len(concept_list)}건 중 {success_cnt}건 처리됨)'
     elif operation == "vector,similarity,threshold":
         success_cnt = 0
         for concept in concept_list:
@@ -47,7 +47,7 @@ def weave_keyconcept_into_networks(operation: str) -> Tuple[int, str]:
         network_list = db.read_tb_networks_all()
         print(f"network_list num: {len(network_list)}")
         rtncd = 200
-        rtnmsg = f'성공 ({len(concept_list)}중 {success_cnt})건 처리됨)'
+        rtnmsg = f'성공 ({len(concept_list)}건 중 {success_cnt}건 처리됨)'
         pass
     elif operation == "vector,similarity,top_p":
         

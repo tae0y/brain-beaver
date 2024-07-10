@@ -2,15 +2,17 @@ from llm.llmroute import query_with_context
 from concurrent.futures import ThreadPoolExecutor
 from common.file import get_plaintext_from_filepath
 from common.constants import Constants
+from common.threadpool import get_global_thread_pool
 
 constants = Constants.get_instance()
 
 def split_file_into_keyconcept(file_list: list) -> list[dict]:
     keyconcept_list = []
-    with ThreadPoolExecutor(max_workers=constants.ollama_thread_count) as executor:
-        results = executor.map(extract_keyconcept, file_list)
-        for result in results:
-            keyconcept_list.extend(result)
+    executor = get_global_thread_pool()
+    #with get_global_thread_pool() as executor:
+    results = executor.map(extract_keyconcept, file_list)
+    for result in results:
+        keyconcept_list.extend(result)
 
     #print('> split_file_into_keyconcept :: '+str(keyconcept_list))
     return keyconcept_list
@@ -22,7 +24,7 @@ def extract_keyconcept(file_path):
         file_content = get_plaintext_from_filepath(file_path)
 
         #print('------------------------------------------------------------------')
-        print(f"{file_path} (len:{len(file_content)})")
+        #print(f"{file_path} (len:{len(file_content)})")
 
         role = """[ROLE]
         당신은 탁월한 문서 요약 전문가입니다.

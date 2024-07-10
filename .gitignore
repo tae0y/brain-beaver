@@ -10,3 +10,4 @@ python/res/secret.properties
 python/logs
 python/wandb/*
 python/demo/.demoenv/*
+python/tmp.txt

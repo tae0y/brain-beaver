@@ -59,6 +59,6 @@ def get_plaintext_from_filepath(filepath: str) -> str:
                             print(f"get_plaintext_from_filepath error: {filepath} - {e}")
                             traceback.print_exc()
         
-        print(f"{encoding} (len:{len(text)}) / {filepath}")
+        print(f"(len:{len(text)}) / {encoding}  / {filepath}")
         
     return text

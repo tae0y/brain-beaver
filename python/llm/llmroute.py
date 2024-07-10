@@ -7,6 +7,11 @@ import traceback
 import ast
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from common.constants import Constants
+import wandb
+import threading
+from typing import Tuple
+import threading
+from common.threadpool import get_global_thread_pool
 
 CHUNK_SIZE = 1024
 OVERLAP_SIZE = 200
@@ -70,17 +75,18 @@ def query_ollama_with_context(query:str, title:str, context:str, options:dict) -
     response_list = []
     
     response_list = []
-    with ThreadPoolExecutor(max_workers=constants.ollama_looped_thread_count) as executor:
-        future_to_chunk = {executor.submit(process_chunk, chunk, query, title, options, api_url): chunk for chunk in context_chunks}
-        for future in as_completed(future_to_chunk):
-            chunk = future_to_chunk[future]
-            try:
-                result = future.result()
-                if result is not None:
-                    print(result)
-                    response_list.append(result)
-            except Exception as e:
-                print(f"Exception for chunk {len(chunk)}: {e}")
+    executor = get_global_thread_pool()
+    #with get_global_thread_pool() as executor:
+    future_to_chunk = {executor.submit(process_chunk, chunk, query, title, options, api_url): chunk for chunk in context_chunks}
+    for future in as_completed(future_to_chunk):
+        chunk = future_to_chunk[future]
+        try:
+            result = future.result()
+            if result is not None:
+                #print(result)
+                response_list.append(result)
+        except Exception as e:
+            print(f"Exception for chunk {len(chunk)}: {e}")
 
     #print('> query_ollama_with_context :: '+str(response_list))
     return response_list
@@ -91,8 +97,15 @@ def process_chunk(chunk, query, title, options, api_url):
 
     data = build_request_data(query, f"{title}\n\n{chunk}", options)
     begin = time.time()
-    response = send_post_request(api_url, data)
+    thread_count_before = threading.active_count()
+    response, thread_count_during = send_post_request(api_url, data)
     end = time.time()
+    thread_count_after = threading.active_count()
+    wandb.log({'chunk_size':len(chunk), 
+               'elapsed_time':end - begin, 
+               'thread_count_before':thread_count_before,
+               'thread_count_during':thread_count_during,
+               'thread_count_after':thread_count_after})
     print(f"query_ollama_with_context elapsed time (chunk {len(chunk)}) : {end - begin}")
     try:
         if response:
@@ -102,7 +115,7 @@ def process_chunk(chunk, query, title, options, api_url):
             else:
                 ascii_contents = parse_response(response, options['api_type'])
 
-            print(f"{response.status_code} {'OK' if response.status_code == 200 else 'NG'}\n{ascii_contents}\n\n")
+            #print(f"{response.status_code} {'OK' if response.status_code == 200 else 'NG'}\n{ascii_contents}\n\n")
             return ascii_contents
     except Exception as e:
         print(f"Error during response parsing: {e}")
@@ -130,14 +143,15 @@ def build_request_data(query:str, chunk:str, options:dict):
         data['prompt'] = query
     return data
 
-def send_post_request(api_url:str, data:str):
+def send_post_request(api_url:str, data:str) -> Tuple[requests.Response, int]:
     try:
         response = requests.post(api_url, json=data)
+        thread_count_during = threading.active_count()
         response.raise_for_status()
-        return response
+        return response, thread_count_during
     except requests.RequestException as e:
         print(f"Error during API call: {e}")
-        return None
+        return None, None
 
 def parse_response(response:str, api_type:str):
     if api_type == 'chat':
@@ -149,7 +163,8 @@ def parse_response(response:str, api_type:str):
     # 다른 API 유형에 대한 처리는 여기에 추가
 
 def choose_model(query:str, context:str, api_type:str):
-    return 'gemma:latest'
+    #return 'gemma:latest'
+    return 'gemma2:9b-instruct-q2_K'
 
 def chunking_context(context:str, chunk_size:int):
     context_chunks = []

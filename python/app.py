@@ -8,6 +8,8 @@ from common.testhelper import sample_file_list
 import wandb
 import os
 from common.constants import Constants
+import traceback
+from common.threadpool import shutdown_global_thread_pool
 
 """
 로거 시작!
@@ -20,12 +22,6 @@ os.environ['WANDB_MODE'] = 'online' #wandb login --cloud
 #wandb.login() #모드에 맞는 API 키값 입력
 wandb.init(
     project="brain-beaver",
-    config={
-    #"learning_rate": 0.02,
-    #"architecture": "CNN",
-    #"dataset": "CIFAR-100",
-    #"epochs": 10,
-    }
 )
 
 """
@@ -47,7 +43,7 @@ try:
     # 2. 파일에서 주요 컨셉을 추출하고 저장한다
     #TODO: 로깅 파일로 저장, 로그파일명은 날짜시간으로, 각 로그는 날짜-시간-파일명-상태-메시지
     #TODO: checkpoints, 중단된 파일부터 다시 시작
-    keyconcept_list = split_file_into_keyconcept(file_list=file_list[:10]) #STAT: 처리할 건수 지정
+    keyconcept_list = split_file_into_keyconcept(file_list=file_list[:5]) #STAT: 처리할 건수 지정
     keyconcept_list = [dict(
         title    = keyconcept.get('title',''),
         keywords = keyconcept.get('keywords',''),
@@ -76,8 +72,12 @@ try:
 
 except Exception as e:
     print(f"error: {e}")
+    traceback.print_exc()
 finally:
-    """
-    로거 종료!
-    """
+    print('finally entered!')
+
+    # 로거 종료
     wandb.finish()
+
+    # 전역 스레드풀 종료
+    shutdown_global_thread_pool(wait_option=False, cancel_futures_option=True)

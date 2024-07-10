@@ -11,6 +11,7 @@ from common.constants import Constants
 import traceback
 from typing import Tuple
 from concurrent.futures import ThreadPoolExecutor
+from common.threadpool import get_global_thread_pool
 
 constants = Constants.get_instance()
 
@@ -40,14 +41,15 @@ def expand_all_concept_with_websearch(action_type:str="all", limit:int=10) -> Tu
                 return None  # 실패한 경우 None 반환
 
         # 병렬 처리
-        with ThreadPoolExecutor(max_workers=constants.ollama_thread_count) as executor:
-            results = list(executor.map(expand_and_handle_exceptions, concpets_list))
+        executor = get_global_thread_pool()
+        #with get_global_thread_pool() as executor:
+        results = list(executor.map(expand_and_handle_exceptions, concpets_list))
 
         # 결과 처리 
         successful_results = [result for result in results if result is not None]
 
         rescd = 200
-        resmsg = f'성공 ({len(concpets_list)}건 중 {len(successful_results)}건 성공)'
+        resmsg = f'성공 ({len(concpets_list)}건 중 {len(successful_results)}건 처리됨)'
     except Exception as e:
         concpets_list = []
         rescd = 900
@@ -73,8 +75,8 @@ def expand_one_concept_with_websearch(concept: Concepts):
         #finally:
         #    session.close()
         #concept = concpets_list[94]
-        print('\n\n-------------------------------------------------------------------------------------------------')
-        print(f">> 처리대상\n {concept}")
+        #print('\n\n-------------------------------------------------------------------------------------------------')
+        #print(f">> 처리대상\n {concept}")
 
 
         #--------------------------------------------------------------------------------------------------------
@@ -98,8 +100,8 @@ def expand_one_concept_with_websearch(concept: Concepts):
 
         [OPINION]
         """, '', context)
-        print('\n\n-------------------------------------------------------------------------------------------------')
-        print(f">> 검색어\n {search_keyword_list}")
+        #print('\n\n-------------------------------------------------------------------------------------------------')
+        #print(f">> 검색어\n {search_keyword_list}")
         opposition = search_keyword_list[0]['opposition']
         search_keyword = search_keyword_list[0]['keywords']
 
@@ -128,9 +130,9 @@ def expand_one_concept_with_websearch(concept: Concepts):
         #    jsonraw = f.read()
         jsonobj = json.loads(response_body)
 
-        print('\n\n-------------------------------------------------------------------------------------------------')
-        print(f">> 웹검색 건수는! \n {len(jsonobj['items'])}")
-        print(f">> 웹검색 전문은! \n {str(jsonobj['items'])}\n\n\n")
+        #print('\n\n-------------------------------------------------------------------------------------------------')
+        #print(f">> 웹검색 건수는! \n {len(jsonobj['items'])}")
+        #print(f">> 웹검색 전문은! \n {str(jsonobj['items'])}\n\n\n")
 
 
         #--------------------------------------------------------------------------------------------------------
@@ -160,7 +162,7 @@ def expand_one_concept_with_websearch(concept: Concepts):
                 
                 [DOCUMENT]
                 """, item["title"], item["description"])
-                print('result > {result}')
+                #print('result > {result}')
                 comparison_list.append(
                     {
                         "persona"  : result[0]['persona'],
@@ -172,8 +174,8 @@ def expand_one_concept_with_websearch(concept: Concepts):
                 print(f"Error during response parsing for comparison_list: {e}")
                 continue
             
-        print('\n\n-------------------------------------------------------------------------------------------------')
-        print(f">> 비교/검증\n {str(comparison_list)}")
+        #print('\n\n-------------------------------------------------------------------------------------------------')
+        #print(f">> 비교/검증\n {str(comparison_list)}")
 
 
         #--------------------------------------------------------------------------------------------------------
@@ -202,11 +204,11 @@ def expand_one_concept_with_websearch(concept: Concepts):
             else:
                 false_count += 1
 
-        print('\n\n-------------------------------------------------------------------------------------------------')
-        print(f">> 다수결\n {opposition} = {true_count > false_count}")
-        print(f">> 다중 전문가 모델\n {final_result[0]}")
+        #print('\n\n-------------------------------------------------------------------------------------------------')
+        #print(f">> 다수결\n {opposition} = {true_count > false_count}")
+        #print(f">> 다중 전문가 모델\n {final_result[0]}")
 
-        print('\n\n-------------------------------------------------------------------------------------------------')
+        #print('\n\n-------------------------------------------------------------------------------------------------')
         if true_count > false_count:
             reference_list = []
             reference_list.append({
@@ -215,7 +217,7 @@ def expand_one_concept_with_websearch(concept: Concepts):
             })
 
             rtncd, rtnmsg = create_reference_into_tb_references(reference_list)
-            print(f">> 결과 저장\n {rtncd} : {rtnmsg}")
+            #print(f">> 결과 저장\n {rtncd} : {rtnmsg}")
     except Exception as e:
         print(f"Error during response parsing for expand_concept_with_websearch: {e}")
         traceback.print_exc()

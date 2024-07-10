@@ -15,7 +15,7 @@ CREATE TABLE tb_concepts (
             update_time timestamp,
             token_num integer,
             plaintext text,
-            embedding vector(3072)
+            embedding vector(8000)
 );
 
 CREATE TABLE tb_networks (

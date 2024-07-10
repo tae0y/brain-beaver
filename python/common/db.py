@@ -127,8 +127,8 @@ def update_srctrgnum_tb_concepts_byid() -> Tuple[int, str]:
             source_count_dict[network.source_concept_id] = source_count_dict.get(network.source_concept_id, 0) + 1
             target_count_dict[network.target_concept_id] = target_count_dict.get(network.target_concept_id, 0) + 1
 
-        print(source_count_dict)
-        print(target_count_dict)
+        #print(source_count_dict)
+        #print(target_count_dict)
         for keyconcept in concept_list:
             session.execute(update(Concepts)
                             .where(Concepts.id == keyconcept.id)
