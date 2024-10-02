@@ -5,13 +5,12 @@ import time
 from tqdm import tqdm
 import traceback
 import ast
-from concurrent.futures import ThreadPoolExecutor, as_completed
+import ray
+from ray.util.multiprocessing import Pool
 from common.constants import Constants
 import wandb
 import threading
 from typing import Tuple
-import threading
-from common.threadpool import get_global_thread_pool
 
 CHUNK_SIZE = 1024
 OVERLAP_SIZE = 200
@@ -75,20 +74,13 @@ def query_ollama_with_context(query:str, title:str, context:str, options:dict) -
     response_list = []
     
     response_list = []
-    executor = get_global_thread_pool()
-    #with get_global_thread_pool() as executor:
-    future_to_chunk = {executor.submit(process_chunk, chunk, query, title, options, api_url): chunk for chunk in context_chunks}
-    for future in as_completed(future_to_chunk):
-        chunk = future_to_chunk[future]
-        try:
-            result = future.result()
+    ray.init()
+    with Pool() as pool:
+        results = pool.map(lambda chunk: process_chunk(chunk, query, title, options, api_url), context_chunks)
+        for result in results:
             if result is not None:
-                #print(result)
                 response_list.append(result)
-        except Exception as e:
-            print(f"Exception for chunk {len(chunk)}: {e}")
 
-    #print('> query_ollama_with_context :: '+str(response_list))
     return response_list
 
 def process_chunk(chunk, query, title, options, api_url):
@@ -115,7 +107,6 @@ def process_chunk(chunk, query, title, options, api_url):
             else:
                 ascii_contents = parse_response(response, options['api_type'])
 
-            #print(f"{response.status_code} {'OK' if response.status_code == 200 else 'NG'}\n{ascii_contents}\n\n")
             return ascii_contents
     except Exception as e:
         print(f"Error during response parsing: {e}")
@@ -156,14 +147,10 @@ def send_post_request(api_url:str, data:str) -> Tuple[requests.Response, int]:
 def parse_response(response:str, api_type:str):
     if api_type == 'chat':
         return unmark(response.json().get('message', {}).get('content', ''))
-        #return unmark(response.json().get('message', {}).get('content', '')).replace('\n', ' ')
     elif api_type == 'generate':
         return unmark(response.json().get('response', ''))
-        #return unmark(response.json().get('response', '')).replace('\n', ' ')
-    # 다른 API 유형에 대한 처리는 여기에 추가
 
 def choose_model(query:str, context:str, api_type:str):
-    #return 'gemma:latest'
     return 'gemma2:9b-instruct-q2_K'
 
 def chunking_context(context:str, chunk_size:int):

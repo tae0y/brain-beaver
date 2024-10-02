@@ -79,3 +79,4 @@ tzdata==2024.1
 urllib3==2.2.2
 wandb==0.17.4
 wcwidth==0.2.13
+ray==2.4.0

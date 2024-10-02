@@ -10,8 +10,8 @@ from llm.llmroute import query_with_context
 from common.constants import Constants
 import traceback
 from typing import Tuple
-from concurrent.futures import ThreadPoolExecutor
-from common.threadpool import get_global_thread_pool
+import ray
+import wandb
 
 constants = Constants.get_instance()
 
@@ -41,9 +41,9 @@ def expand_all_concept_with_websearch(action_type:str="all", limit:int=10) -> Tu
                 return None  # 실패한 경우 None 반환
 
         # 병렬 처리
-        executor = get_global_thread_pool()
-        #with get_global_thread_pool() as executor:
-        results = list(executor.map(expand_and_handle_exceptions, concpets_list))
+        ray.init()
+        with ray.util.multiprocessing.Pool() as pool:
+            results = list(pool.map(expand_and_handle_exceptions, concpets_list))
 
         # 결과 처리 
         successful_results = [result for result in results if result is not None]
@@ -84,12 +84,12 @@ def expand_one_concept_with_websearch(concept: Concepts):
         context = f"{concept.summary}"
         search_keyword_list = query_with_context("""
         [ROLE]
-        당신은 냉소적인 소프트웨어 엔지니어입니다.
+        당신은 �
         주니어 엔지니어의 허황된 목표를 비웃으며, 그들이 무엇을 잘못하고 있는지 지적하세요.
         정중한 태도로, 그들이 무엇을 더 배워야 하는지 알려주세요.
 
         [SYSTEM]
-        다음 제시된 [OPINION]을 냉소적이며 강하게 반대하는 opposition을 작성하고,
+        다음 제시된 [OPINION]을 �
         해당 주장을 검색하기 위한 keywords를 나열하세요.
 
         다음 응답포맷에 따라 JSON 형식으로 답변하세요.

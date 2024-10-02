@@ -1,3 +1,5 @@
+import ray
+from ray.util.multiprocessing import Pool
 from common.file import get_file_list_recursively
 from common.db import create_keyconcept_into_tb_concepts, update_srctrgnum_tb_concepts_byid
 from core.split import split_file_into_keyconcept
@@ -9,7 +11,6 @@ import wandb
 import os
 from common.constants import Constants
 import traceback
-from common.threadpool import shutdown_global_thread_pool
 
 """
 로거 시작!
@@ -35,13 +36,13 @@ try:
     ignore_dir_list = ['.git','Res','.obsidian','Chats','.DS_Store','.gitignore', '구직']
     file_list = get_file_list_recursively(root_dir, ignore_dir_list)
     file_list = [file for file in file_list if file.endswith('.md') ]
-    #file_list = sample_file_list(file_list=file_list, bucket_size=1) #STAT: 파일 랜덤 샘플링
+    #file_list = sample_file_list(file_list=file_list, bucket_size=1) #STAT: 파일 랜덤 �
     #for file in file_list:
     #    print(file)
     print(f"file_list num : {len(file_list)}")
 
     # 2. 파일에서 주요 컨셉을 추출하고 저장한다
-    #TODO: 로깅 파일로 저장, 로그파일명은 날짜시간으로, 각 로그는 날짜-시간-파일명-상태-메시지
+    #TODO: 로� 파일로 저장, 로그파일명은 날짜시간으로, 각 로그는 날짜-시간-파일명-상태-메시지
     #TODO: checkpoints, 중단된 파일부터 다시 시작
     keyconcept_list = split_file_into_keyconcept(file_list=file_list[:5]) #STAT: 처리할 건수 지정
     keyconcept_list = [dict(
@@ -78,6 +79,3 @@ finally:
 
     # 로거 종료
     wandb.finish()
-
-    # 전역 스레드풀 종료
-    shutdown_global_thread_pool(wait_option=False, cancel_futures_option=True)
