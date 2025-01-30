@@ -51,7 +51,7 @@ def embedd_text_ollama(text) -> list[float]:
     response = send_post_request(api_url, data)
     #print(response.json())
     #print(text)
-    return response.json()['embedding']
+    return response[0].json()['embeddings']
 
 
 """
