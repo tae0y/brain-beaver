@@ -76,7 +76,7 @@ def expand_one_concept_with_websearch(concept: Concepts):
         #    session.close()
         #concept = concpets_list[94]
         #print('\n\n-------------------------------------------------------------------------------------------------')
-        #print(f">> 처리대상\n {concept}")
+        print(f">> 처리대상\n {concept}")
 
 
         #--------------------------------------------------------------------------------------------------------
@@ -86,7 +86,7 @@ def expand_one_concept_with_websearch(concept: Concepts):
         [ROLE]
         당신은 냉소적인 소프트웨어 엔지니어입니다.
         주니어 엔지니어의 허황된 목표를 비웃으며, 그들이 무엇을 잘못하고 있는지 지적하세요.
-        정중한 태도로, 그들이 무엇을 더 배워야 하는지 알려주세요.
+        냉철하고 비판적인 태도로, 그들이 무엇을 더 배워야 하는지 알려주세요.
 
         [SYSTEM]
         다음 제시된 [OPINION]을 냉소적이며 강하게 반대하는 opposition을 작성하고,
@@ -101,7 +101,7 @@ def expand_one_concept_with_websearch(concept: Concepts):
         [OPINION]
         """, '', context)
         #print('\n\n-------------------------------------------------------------------------------------------------')
-        #print(f">> 검색어\n {search_keyword_list}")
+        print(f">> 검색어\n {search_keyword_list}")
         opposition = search_keyword_list[0]['opposition']
         search_keyword = search_keyword_list[0]['keywords']
 
@@ -175,7 +175,7 @@ def expand_one_concept_with_websearch(concept: Concepts):
                 continue
             
         #print('\n\n-------------------------------------------------------------------------------------------------')
-        #print(f">> 비교/검증\n {str(comparison_list)}")
+        print(f">> 비교/검증\n {str(comparison_list)}")
 
 
         #--------------------------------------------------------------------------------------------------------
@@ -205,8 +205,8 @@ def expand_one_concept_with_websearch(concept: Concepts):
                 false_count += 1
 
         #print('\n\n-------------------------------------------------------------------------------------------------')
-        #print(f">> 다수결\n {opposition} = {true_count > false_count}")
-        #print(f">> 다중 전문가 모델\n {final_result[0]}")
+        print(f">> 다수결\n {opposition} = {true_count > false_count}")
+        print(f">> 다중 전문가 모델\n {final_result[0]}")
 
         #print('\n\n-------------------------------------------------------------------------------------------------')
         if true_count > false_count:
@@ -217,7 +217,7 @@ def expand_one_concept_with_websearch(concept: Concepts):
             })
 
             rtncd, rtnmsg = create_reference_into_tb_references(reference_list)
-            #print(f">> 결과 저장\n {rtncd} : {rtnmsg}")
+            print(f">> 결과 저장\n {rtncd} : {rtnmsg}")
     except Exception as e:
         print(f"Error during response parsing for expand_concept_with_websearch: {e}")
         traceback.print_exc()

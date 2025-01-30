@@ -33,31 +33,34 @@ def get_plaintext_from_filepath(filepath: str) -> str:
     """
     파일경로를 입력받아 인코딩에 관계없이 텍스트를 반환한다.
     """
+    encodings_to_try = [
+        'utf-8',
+        'utf-8-sig',
+        'euc-kr',
+        'cp949',
+        'latin1',
+        'iso-8859-1',
+        'cp1252'
+    ]
+    
     with open(filepath, 'rb') as f:
         raw_data = f.read()
         encoding = chardet.detect(raw_data)['encoding']
         text = ''
 
-        if encoding == 'utf-8':
+        if encoding is not None:
             try:
-                text = raw_data.decode('utf-8')
+                text = raw_data.decode(encoding)
             except UnicodeDecodeError:
-                pass  # utf-8 디코딩 실패 시 다음 단계로 넘어갑니다.
-        if not text:  # utf-8이 아니거나 utf-8 디코딩에 실패한 경우
-            try:
-                text = raw_data.decode(encoding or 'latin1')
-            except UnicodeDecodeError:  # 지정된 인코딩으로도 디코딩 실패 시
+                pass
+        
+        if not text:
+            for encoding in encodings_to_try:
                 try:
-                    text = raw_data.decode('latin1')  # 'latin1'으로 시도
+                    text = raw_data.decode(encoding)
+                    break
                 except UnicodeDecodeError:
-                    try:
-                        text = raw_data.decode('iso-8859-1')  # 'iso-8859-1'로 시도
-                    except UnicodeDecodeError:
-                        try:
-                            text = raw_data.decode('cp1252')  # 'cp1252'로 시도
-                        except Exception as e:
-                            print(f"get_plaintext_from_filepath error: {filepath} - {e}")
-                            traceback.print_exc()
+                    pass
         
         print(f"(len:{len(text)}) / {encoding}  / {filepath}")
         

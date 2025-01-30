@@ -19,7 +19,7 @@ OVERLAP_SIZE = 200
 API_URLS = {
     'chat'      : 'http://localhost:11434/api/chat',
     'generate'  : 'http://localhost:11434/api/generate',
-    'embeddings': 'http://localhost:11434/api/embeddings',
+    'embeddings': 'http://localhost:11434/api/embed',
     # 추가 엔드포인트가 생길 경우 여기에 추가
     # 'another_api': 'http://localhost:11434/api/another'
 }
@@ -67,6 +67,11 @@ def query_with_context(query:str, title: str, context:str, options: dict = {'api
 
 
 def query_ollama_with_context(query:str, title:str, context:str, options:dict) -> list[dict]:
+    """
+    주어진 쿼리와 컨텍스트로 Ollama API를 호출한다.
+    - Ollama에서 기본적으로 병렬처리를 지원하지 않으므로 스레드풀 로직 제거
+    - 단일 머신에서 하나의 요청을 처리하는 데 최적화되어 있다고 함
+    """
     if options['api_type'] not in API_URLS:
         raise ValueError(f"Unsupported API type: {options['api_type']}")
     
@@ -74,21 +79,15 @@ def query_ollama_with_context(query:str, title:str, context:str, options:dict) -
     context_chunks = chunking_context(context, options['chunk_size'])
     response_list = []
     
-    response_list = []
-    executor = get_global_thread_pool()
-    #with get_global_thread_pool() as executor:
-    future_to_chunk = {executor.submit(process_chunk, chunk, query, title, options, api_url): chunk for chunk in context_chunks}
-    for future in as_completed(future_to_chunk):
-        chunk = future_to_chunk[future]
+    for chunk in context_chunks:
         try:
-            result = future.result()
+            result = process_chunk(chunk, query, title, options, api_url)
             if result is not None:
-                #print(result)
                 response_list.append(result)
         except Exception as e:
             print(f"Exception for chunk {len(chunk)}: {e}")
 
-    #print('> query_ollama_with_context :: '+str(response_list))
+    print('> query_ollama_with_context :: '+str(response_list))
     return response_list
 
 def process_chunk(chunk, query, title, options, api_url):
@@ -115,7 +114,7 @@ def process_chunk(chunk, query, title, options, api_url):
             else:
                 ascii_contents = parse_response(response, options['api_type'])
 
-            #print(f"{response.status_code} {'OK' if response.status_code == 200 else 'NG'}\n{ascii_contents}\n\n")
+            print(f"{response.status_code} {'OK' if response.status_code == 200 else 'NG'}\n{ascii_contents}\n\n")
             return ascii_contents
     except Exception as e:
         print(f"Error during response parsing: {e}")
@@ -126,8 +125,8 @@ Common
 """
 def build_request_data(query:str, chunk:str, options:dict):
     data = {
-        'model': choose_model(query, chunk, options['api_type']),
-        'options': {}
+        'model': choose_model(query, chunk, options['api_type'])
+        #, 'options': {}
     }
     if options['api_type'] == 'generate':
         data['prompt'] = f"{query} ``` {chunk} ```"
@@ -140,7 +139,7 @@ def build_request_data(query:str, chunk:str, options:dict):
         if options['format'] is not None: 
             data['format'] = options['format']
     elif options['api_type'] == 'embeddings':
-        data['prompt'] = query
+        data['input'] = query
     return data
 
 def send_post_request(api_url:str, data:str) -> Tuple[requests.Response, int]:
@@ -163,8 +162,14 @@ def parse_response(response:str, api_type:str):
     # 다른 API 유형에 대한 처리는 여기에 추가
 
 def choose_model(query:str, context:str, api_type:str):
+    """
+    모델을 선택하는 함수
+    - TODO: 향후 주어진 컨텍스트에 따라 알맞은 모델을 선택하도록 변경
+    """
     #return 'gemma:latest'
-    return 'gemma2:9b-instruct-q2_K'
+    #return 'gemma2:9b-instruct-q2_K'
+    return 'wizardlm2:7b-q5_K_M'
+    #return 'deepseek-r1:7b-qwen-distill-q4_K_M'
 
 def chunking_context(context:str, chunk_size:int):
     context_chunks = []

@@ -2,17 +2,18 @@ from llm.llmroute import query_with_context
 from concurrent.futures import ThreadPoolExecutor
 from common.file import get_plaintext_from_filepath
 from common.constants import Constants
-from common.threadpool import get_global_thread_pool
 
 constants = Constants.get_instance()
 
 def split_file_into_keyconcept(file_list: list) -> list[dict]:
+    """
+    파일을 청크단위로 나누어 주요개념을 추출한다.
+    - Ollama에서 기본적으로 병렬처리를 지원하지 않으므로 스레드풀 로직 제거
+    - 단일 머신에서 하나의 요청을 처리하는 데 최적화되어 있다고 함
+    """
     keyconcept_list = []
-    executor = get_global_thread_pool()
-    #with get_global_thread_pool() as executor:
-    results = executor.map(extract_keyconcept, file_list)
-    for result in results:
-        keyconcept_list.extend(result)
+    for file_path in file_list:
+        keyconcept_list.extend(extract_keyconcept(file_path))
 
     #print('> split_file_into_keyconcept :: '+str(keyconcept_list))
     return keyconcept_list

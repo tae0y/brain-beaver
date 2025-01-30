@@ -1,3 +1,5 @@
+secret.properties
+
 *.pyc
 __pychache__
 .venv
