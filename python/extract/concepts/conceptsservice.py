@@ -64,6 +64,7 @@ class ConceptsService:
         """
         주요개념 추출 및 DB 저장
         TODO: 메서드가 단일 책임을 져야한다면.. 추출/임베딩/DB저장 메서드를 분리해야할까?
+        TODO: OpenAI는 추론, 임베딩 모델의 종류가 다르니, 옵션으로 구분해서 받을 수 있도록 수정
         """
         model_client : BaseClient
         prompt : str

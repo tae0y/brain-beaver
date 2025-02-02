@@ -42,6 +42,7 @@ class NetworksService:
         keyconcepts = conceptService.read_concepts_all()
         for c in keyconcepts:
             try:
+                # TODO: 연관성을 검사하는 것은 아니고, 의미적 유사도를 측정하는 것임. 연관성, 찬/반을 따지려면 어떻게 해야할까??
                 nearest_list = conceptService.read_concepts_nearest_by_embedding(c, operation, 3)
                 for nearest in nearest_list:
                     if cosine_similarity(c.embedding, nearest.embedding) > 0.7:
