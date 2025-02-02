@@ -4,6 +4,12 @@ import math
 from extract.concepts.conceptsservice import ConceptsService
 from engage.networks.networksservice import NetworksService
 
+# 사이드바 상단 여백 조정
+detail_container = st.sidebar.container()
+detail_container.markdown('###### &nbsp;')
+detail_container.markdown('###### &nbsp;') # 여백 추가
+
+# 메인 타이틀
 st.title('Brain Beaver 🦫')
 
 # 서비스 객체 생성
