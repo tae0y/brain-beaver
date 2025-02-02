@@ -25,26 +25,32 @@ node_source_many = '#A3C9A8'
 node_neutral = '#69A297'
 node_target_many = '#50808E'
 
-#node_type = 'circularImage'
-#node_image = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTxEQr3SSOrrhOXpbVP0B_4T2OysRy7cGnqA&s'
+# 사이드바 컨테이너 생성
+detail_container = st.sidebar.container()
+
+# 노드 생성 부분에서 데이터 저장
+concepts_dict = {}
 
 for concept in concepts:
     node_size = node_default_size
-    #if concept.source_num * concept.target_num <= 0:
-    #    node_size = node_default_size
-    #else:
-    #    node_size = node_default_size * math.log(concept.source_num * concept.target_num,5)
-    #node_size = max(node_default_size, 
-    #                node_default_size*(concept.source_num//node_multiple), 
-    #                node_default_size*(concept.target_num//node_multiple))
-    #node_size = max(node_default_size,
-    #                node_default_size * (concept.source_num + concept.target_num) // node_multiple)
 
     node_color = node_neutral
     if concept.source_num > concept.target_num * 2:
         node_color = node_source_many
     elif concept.target_num > concept.source_num * 2:
         node_color = node_target_many
+
+    # concepts_dict에 개념 정보 저장
+    concepts_dict[f"C{concept.id}"] = {
+        "title": concept.title,
+        "id": concept.id,
+        "keywords": concept.keywords,
+        "category": concept.category,
+        "summary": concept.summary,
+        "data_name": concept.data_name,
+        "source_num": concept.source_num,
+        "target_num": concept.target_num
+    }
 
     nodes.append(Node(
                         id=f"C{concept.id}",
@@ -90,4 +96,23 @@ config = Config(
                     hierarchical=False
                 )
 
-rtnmsg = agraph(nodes=nodes, edges=edges, config=config)
+# 그래프 렌더링 및 클릭 이벤트 받기
+clicked_node = agraph(nodes=nodes, edges=edges, config=config)
+
+# 클릭된 노드 정보 표시
+if clicked_node:
+    with detail_container:
+        st.header("상세 정보")
+        if clicked_node.startswith('C'):
+            node_info = concepts_dict.get(clicked_node)
+            if node_info:
+                st.write("**Title:**", node_info["title"])
+                st.write("**ID:**", node_info["id"])
+                st.write("**Keywords:**", node_info["keywords"])
+                st.write("**Category:**", node_info["category"])
+                st.write("**Summary:**", node_info["summary"].replace('\n', ' '))
+                st.write("**Data name:**", node_info["data_name"])
+                st.write("**Source connections:**", node_info["source_num"])
+                st.write("**Target connections:**", node_info["target_num"])
+        elif clicked_node.startswith('R'):
+            st.write("Reference node details will be displayed here")
