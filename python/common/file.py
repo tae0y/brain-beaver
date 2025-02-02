@@ -62,6 +62,6 @@ def get_plaintext_from_filepath(filepath: str) -> str:
                 except UnicodeDecodeError:
                     pass
         
-        print(f"(len:{len(text)}) / {encoding}  / {filepath}")
+        #print(f"(len:{len(text)}) / {encoding}  / {filepath}")
         
     return text

@@ -51,7 +51,7 @@ def embedd_text_ollama(text) -> list[float]:
     response = send_post_request(api_url, data)
     #print(response.json())
     #print(text)
-    return response[0].json()['embeddings']
+    return response[0].json()['embeddings'][0]
 
 
 """
@@ -87,7 +87,7 @@ def query_ollama_with_context(query:str, title:str, context:str, options:dict) -
         except Exception as e:
             print(f"Exception for chunk {len(chunk)}: {e}")
 
-    print('> query_ollama_with_context :: '+str(response_list))
+    #print('> query_ollama_with_context :: '+str(response_list))
     return response_list
 
 def process_chunk(chunk, query, title, options, api_url):
@@ -100,12 +100,12 @@ def process_chunk(chunk, query, title, options, api_url):
     response, thread_count_during = send_post_request(api_url, data)
     end = time.time()
     thread_count_after = threading.active_count()
-    wandb.log({'chunk_size':len(chunk), 
-               'elapsed_time':end - begin, 
-               'thread_count_before':thread_count_before,
-               'thread_count_during':thread_count_during,
-               'thread_count_after':thread_count_after})
-    print(f"query_ollama_with_context elapsed time (chunk {len(chunk)}) : {end - begin}")
+    #wandb.log({'chunk_size':len(chunk), 
+    #           'elapsed_time':end - begin, 
+    #           'thread_count_before':thread_count_before,
+    #           'thread_count_during':thread_count_during,
+    #           'thread_count_after':thread_count_after})
+    #print(f"query_ollama_with_context elapsed time (chunk {len(chunk)}) : {end - begin}")
     try:
         if response:
             if options['format'] == 'json':
@@ -114,7 +114,7 @@ def process_chunk(chunk, query, title, options, api_url):
             else:
                 ascii_contents = parse_response(response, options['api_type'])
 
-            print(f"{response.status_code} {'OK' if response.status_code == 200 else 'NG'}\n{ascii_contents}\n\n")
+            print(f"{response.status_code} {'OK' if response.status_code == 200 else 'NG'} : {ascii_contents}\n")
             return ascii_contents
     except Exception as e:
         print(f"Error during response parsing: {e}")

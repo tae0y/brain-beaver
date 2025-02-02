@@ -1,3 +1,7 @@
+docker_new/**
+python_new/**
+docker_bak/**
+python_bak/**
 secret.properties
 
 *.pyc

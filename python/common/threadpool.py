@@ -1,5 +1,5 @@
 from concurrent.futures import ThreadPoolExecutor
-from .constants import Constants
+from common.constants import Constants
 
 # 전역 스레드풀 초기화
 # 예를 들어, 최대 스레드 개수를 7로 설정

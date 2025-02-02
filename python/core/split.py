@@ -24,8 +24,8 @@ def extract_keyconcept(file_path):
         #너무다 다양한 인코딩이 존재함 : None, ascii, windows-1254, windows-1253, euc-kr, utf-8 등
         file_content = get_plaintext_from_filepath(file_path)
 
-        #print('------------------------------------------------------------------')
-        #print(f"{file_path} (len:{len(file_content)})")
+        print('------------------------------------------------------------------')
+        print(f"{file_path} (len:{len(file_content)})")
 
         role = """[ROLE]
         당신은 탁월한 문서 요약 전문가입니다.
