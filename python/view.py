@@ -60,7 +60,7 @@ for concept in concepts:
 
     nodes.append(Node(
                         id=f"C{concept.id}",
-                        title=f"{concept.title[:20]}",
+                        title=f"{concept.title[:50]}",
                         label=concept.id,  
                         color=node_color,
                         shape='circularImage', # image, circularImage, diamond, dot, star, triangle, triangleDown, hexagon, square and icon
