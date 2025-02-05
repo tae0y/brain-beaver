@@ -54,7 +54,7 @@ class Markdown():
                     elif next_path.endswith('.md'): #마크다운 파일만 목록에 추가
                         self.file_list.append(next_path)
 
-        print(f"LOG-DEBUG: File list loaded - {len(self.file_list)} (load_file_list_recursively)")
+        print(f"\nLOG-DEBUG: File list loaded - {len(self.file_list)} (load_file_list_recursively)")
 
 
     def get_data_list(self, shuffle_flag: bool, ignore_dir_list: list[str]):
@@ -133,6 +133,6 @@ class Markdown():
 
             if not text:
                 if len(raw_data) > 0:
-                    print(f"LOG-ERROR: Failed to decode the file - {filepath} (get_plaintext_from_filepath)")
+                    print(f"\nLOG-ERROR: Failed to decode the file - {filepath} (get_plaintext_from_filepath)")
 
         return text

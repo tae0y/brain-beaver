@@ -3,6 +3,7 @@ from streamlit_agraph import agraph, Node, Edge, Config, TripleStore
 import math
 from extract.concepts.conceptsservice import ConceptsService
 from engage.networks.networksservice import NetworksService
+from expand.references.referencesservice import ReferencesService
 
 # 사이드바 상단 여백 조정
 detail_container = st.sidebar.container()
@@ -15,11 +16,12 @@ st.title('Brain Beaver 🦫')
 # 서비스 객체 생성
 concepts_service = ConceptsService()
 networks_service = NetworksService()
+references_service = ReferencesService()
 
 # 데이터 조회
 networks = networks_service.read_networks_all()
 concepts = concepts_service.read_concepts_all()
-references = [] #concepts_service.repository.read_tb_references_all()
+references = references_service.read_references_all()
 print(f"networks: {len(networks)}, concepts: {len(concepts)}, references: {len(references)}")
 
 nodes = []

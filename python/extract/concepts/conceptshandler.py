@@ -47,7 +47,7 @@ class ConceptsHandler:
         cost_testnum = self.service.assume_total_cost(lazy_list, {'max_file_num' : max_file_num})
         cost_total = self.service.assume_total_cost(lazy_list, {})
         if cost_testnum > max_budget_won or cost_total > max_budget_won:
-            print(f"LOG-DEBUG: cost_testnum {cost_testnum} cost_total {cost_total}")
+            print(f"\nLOG-DEBUG: cost_testnum {cost_testnum} cost_total {cost_total}")
             raise ValueError("Cost is too high. Please check the cost.")
 
 
@@ -64,7 +64,7 @@ class ConceptsHandler:
                         'embed_model_name' : embed_model_name
                     })
             except Exception as e:
-                print(f"LOG-ERROR: error reading {data_name} - {str(e)}")
+                print(f"\nLOG-ERROR: error reading {data_name} - {str(e)}")
 
         pass
 

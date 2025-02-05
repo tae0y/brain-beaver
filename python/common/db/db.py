@@ -50,6 +50,6 @@ class DB():
             autoflush=False, 
             bind=engine
         )
-        print("LOG-DEBUG: DB session created. (load_db)")
+        print("\nLOG-DEBUG: DB session created. (load_db)")
 
         pass

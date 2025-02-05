@@ -15,7 +15,7 @@ class ReferencesService:
     """
     def __init__(self):
         self.repository = ReferencesRepository()
-        self.constanst = Constants.get_instance()
+        self.constants = Constants.get_instance()
         self.llmroute = LLMRouter()
 
     def reset_expand_keyconcpts(self):
@@ -25,6 +25,12 @@ class ReferencesService:
         self.repository.delete_tb_references_all()
         pass
 
+    def read_references_all(self):
+        """
+        모든 references를 조회한다.
+        """
+        return self.repository.read_tb_references_all()
+
     def expand_keyconcepts_with_websearch(self, options: dict):
         """
         주요개념 확장을 위해 웹검색을 수행하고 저장한다
@@ -32,7 +38,7 @@ class ReferencesService:
         from extract.concepts.conceptsservice import ConceptsService
         conceptService = ConceptsService()
         action_type = options['action_type'] if 'action_type' in options else 'all'
-        action_limit = options['action_limit'] if 'limit' in options else 10
+        action_limit = options['action_limit'] if 'action_limit' in options else 10
 
         concepts = []
         if action_type == 'top':
@@ -44,11 +50,15 @@ class ReferencesService:
         reason_model_name = options['reason_model_name'] if 'reason_model_name' in options else 'gemma2:9b-instruct-q5_K_M'
         llmclient = self.llmroute.get_client_by_modelname(reason_model_name)
         pool = ThreadPoolExecutor(max_workers=self.constants.thread_global_thread_pool)
-        results = list(pool.map(self.expand_one_concept_with_websearch, concepts, llmclient))
+        results = list(
+                pool.map(
+                    lambda concept: self.expand_one_concept_with_websearch(concept, llmclient), concepts
+                )
+            )
 
         # 결과 확인
         successful_results = [result for result in results if result is not None]
-        print(f"LOG-DEBUG {len(successful_results)}건 처리됨)")
+        print(f"\nLOG-DEBUG {len(successful_results)}건 처리됨)")
 
 
     def expand_one_concept_with_websearch(self, concept : Concepts, llmclient : BaseClient):
@@ -99,7 +109,7 @@ class ReferencesService:
                         }
                     }
                 }
-            )
+            ).data
 
             opposition : str
             search_keyword : str
@@ -110,7 +120,7 @@ class ReferencesService:
                     return None
             else:
                 return None
-            print(f"LOG-DEBUG : 반대의견 및 검색어 생성결과 - {keyword_gen_results}")
+            print(f"\nLOG-DEBUG : 반대의견 및 검색어 생성결과 - {keyword_gen_results}")
 
             #--------------------------------------------------------------------------------------------------------
             # 웹 검색
@@ -131,7 +141,7 @@ class ReferencesService:
                 #with open('websearch_results.json', 'w', encoding="utf-8") as f:
                 #    f.write(response_body.decode('utf-8'))
             else:
-                print(f"LOG-ERROR : {rescode} in expand_one_concept_with_websearch")
+                print(f"\nLOG-ERROR : {rescode} in expand_one_concept_with_websearch")
             jsonobj = json.loads(response_body)
 
             #--------------------------------------------------------------------------------------------------------
@@ -185,7 +195,7 @@ class ReferencesService:
                             }
                         }
                     }
-                )
+                ).data
                 comparison_list.append(
                     {
                         "persona"  : result['persona'],
@@ -193,7 +203,7 @@ class ReferencesService:
                         "detailed" : result['detailed']
                     }
                 )
-            print(f"LOG-DEBUG : 검색결과/주장 부합여부 - {str(comparison_list)}")
+            print(f"\nLOG-DEBUG : 검색결과/주장 부합여부 - {str(comparison_list)}")
 
             # 검색결과의 내용을 종합
             final_result = llmclient.generate(
@@ -205,8 +215,8 @@ class ReferencesService:
                 [DOCUMENT]
                 """ + str(comparison_list),
                 options = {}
-            )['text']
-            print(f"LOG-DEBUG : 검색결과 종합결과 - {final_result}")
+            ).data['text']
+            print(f"\nLOG-DEBUG : 검색결과 종합결과 - {final_result}")
 
             # 다수결로 인용 결정
             true_count = 0
@@ -226,5 +236,6 @@ class ReferencesService:
                 })
                 self.repository.create_reference_into_tb_references(reference_list)
 
+            return final_result
         except Exception as e:
             traceback.print_exc()

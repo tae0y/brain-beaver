@@ -50,13 +50,13 @@ class ConceptsService:
                 reasoning_sum += reasoning_cost
                 embedding_sum += embedding_cost
 
-                #print(f"LOG-DEBUG: {filepath} - {len(data)}")
-                #print(f"LOG-DEBUG: text_length {len(data)}\t reasoning_cost {round(reasoning_cost,2)}\t embedding_cost {round(embedding_cost,2)}\t reasoning_sum {round(reasoning_sum,2)}\t embedding_sum {round(embedding_sum,2)}")
+                #print(f"\nLOG-DEBUG: {filepath} - {len(data)}")
+                #print(f"\nLOG-DEBUG: text_length {len(data)}\t reasoning_cost {round(reasoning_cost,2)}\t embedding_cost {round(embedding_cost,2)}\t reasoning_sum {round(reasoning_sum,2)}\t embedding_sum {round(embedding_sum,2)}")
                 #data_list.append(data)
             except Exception as e:
-                print(f"LOG-ERROR: error reading {filepath} - {str(e)}")
+                print(f"\nLOG-ERROR: error reading {filepath} - {str(e)}")
 
-        print(f"LOG-DEBUG: OpenAI processing {num} files costs (KRW) :\t reasoning {round(reasoning_sum,2)}, embedding {round(embedding_sum,2)}")
+        print(f"\nLOG-DEBUG: OpenAI processing {num} files costs (KRW) :\t reasoning {round(reasoning_sum,2)}, embedding {round(embedding_sum,2)}")
         return reasoning_sum + embedding_sum
 
 
@@ -149,7 +149,7 @@ class ConceptsService:
                 }
             )
             data_extracted.append(response.data)
-            print(f"LOG-DEBUG: {i} - {response.data}")
+            print(f"\nLOG-DEBUG: {i} - {response.data}")
 
         # 임베딩
         batch_size : int

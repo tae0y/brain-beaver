@@ -91,7 +91,7 @@ class OpenAIClient(BaseClient):
                 self.currency_rates = float(df.iloc[-1]['Close'])
         except:
             self.currency_rates = 1500.0
-            print("LOG-ERROR: 환율 조회 실패, 1500원으로 가정합니다!!")
+            print("\nLOG-ERROR: 환율 조회 실패, 1500원으로 가정합니다!!")
 
 
     def generate(self, prompt: str, options: dict) -> ResponseDTO:
@@ -203,7 +203,7 @@ class OpenAIClient(BaseClient):
         try:
             return len(self.load_tokenizer().encode(text))
         except:
-            print("LOG-ERROR: get_token_count() failed")
+            print("\nLOG-ERROR: get_token_count() failed")
 
     def get_cost_per_token(self) -> float:
         return self.cost_per_token
