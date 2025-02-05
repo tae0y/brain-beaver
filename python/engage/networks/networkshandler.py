@@ -3,8 +3,9 @@ from engage.networks.networksservice import NetworksService
 class NetworksHandler:
     """
     주요개념 추출과 관련된 요청을 처리한다.
+
+    TODO: Controller, Service 레이어 분리
     """
-    # TODO: Controller, Service 레이어 분리
 
     service : NetworksService
 
@@ -15,6 +16,8 @@ class NetworksHandler:
     def engage_keyconcepts_into_networks(self, options: dict):
         """
         주요개념을 네트워크로 연결한다
+
+        TODO 2 : 코사인유사도 임계값 조정, 유사도 비교하는 로직 변경 등으로 지식간 '연관관계'를 잘 표현할 수 있도록 개선
 
         - options
             - operation : str
