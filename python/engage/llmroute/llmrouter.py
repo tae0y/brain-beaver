@@ -51,3 +51,15 @@ class LLMRouter:
         모든 클라이언트 반환
         """
         return self.clients
+
+    def get_client_by_budget(self, budget, lazy_list):
+        """
+        TODO: 예산에 맞는 클라이언트 반환
+        """
+        raise NotImplementedError
+
+    def get_client_by_category(self, input):
+        """
+        TODO: 카테고리에 맞는 클라이언트 반환
+        """
+        raise NotImplementedError

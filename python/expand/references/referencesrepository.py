@@ -2,9 +2,9 @@ from typing import Tuple
 import traceback
 from sqlalchemy import insert, select
 from common.db.db import DB
-from expand.references.referencesmodel import References
+from expand.references.referencesmodel import References, ReferencesResult
 
-class ReferencesRepository():
+class ReferencesRepository:
     """
     tb_references 테이블 관련 함수
     """
