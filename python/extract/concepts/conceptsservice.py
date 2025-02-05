@@ -146,7 +146,7 @@ class ConceptsService:
         data_size = len(data)
         chunk_size =  model_client.get_chunk_size()
         chunk_count = data_size // chunk_size
-        for i in range(chunk_count, chunk_count+1):
+        for i in range(0, chunk_count+1):
             chunk = data[i*chunk_size:(i+1)*chunk_size]
             response = model_client.generate(
                 prompt = f"{prompt} data_name : {data_name}\n {chunk}",

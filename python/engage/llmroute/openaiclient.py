@@ -184,8 +184,9 @@ class OpenAIClient(BaseClient):
         - 모델이름을 기준으로 tiktoken 토크나이저를 로드
         - 토큰당비용은 모델클라이언트 생성시 옵션으로 직접지정
         - 환율은 오늘 최고가 혹은 전날 종가 기준으로 계산
+        - 산식 : 토큰수 * 토큰당비용 * 환율 * 2 (input, output)
         """
-        return self.get_token_count(text) * self.get_cost_per_token() * self.currency_rates
+        return self.get_token_count(text) * self.get_cost_per_token() * self.currency_rates * 2
 
     def get_token_count(self, text) -> int:
         try:
