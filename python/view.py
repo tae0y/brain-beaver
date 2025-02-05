@@ -38,6 +38,7 @@ detail_container = st.sidebar.container()
 
 # 노드 생성 부분에서 데이터 저장
 concepts_dict = {}
+references_dict = {}
 
 for concept in concepts:
     # 노드 크기 설정
@@ -52,7 +53,6 @@ for concept in concepts:
     elif concept.target_num > concept.source_num * 2:
         node_color = node_target_many
 
-    # concepts_dict에 개념 정보 저장
     concepts_dict[f"C{concept.id}"] = {
         "title": concept.title,
         "id": concept.id,
@@ -91,6 +91,12 @@ for reference in references:
                         color='#ced4da',
                     ))
 
+    references_dict[f"R{reference.id}"] = {
+        "id": reference.id,
+        "description": reference.description,
+        "concept_id": reference.concept_id
+    }
+
 for network in networks:
     edges.append(Edge(
                         source=f"C{network.source_concept_id}",
@@ -127,4 +133,16 @@ if clicked_node:
                 st.write("**Source connections:**", node_info["source_num"])
                 st.write("**Target connections:**", node_info["target_num"])
         elif clicked_node.startswith('R'):
-            st.write("Reference node details will be displayed here")
+            node_info = references_dict.get(clicked_node)
+            if node_info:
+                st.write(
+                    "**Description:**", 
+                    node_info["description"].replace('.', '.\n')
+                                            .replace('종합의견', '\n😎 종합의견')
+                                            .replace('상세의견', '\n\🔍 상세의견')
+                                            .replace('[{', '\n[{')
+                )
+                st.write(
+                    "**Concept ID:**", 
+                    node_info["concept_id"]
+                )
