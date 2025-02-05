@@ -36,7 +36,7 @@ class ConceptsHandler:
         if 'max_file_num' in options:
             max_file_num = options['max_file_num']
         else:
-            max_file_num = 10
+            max_file_num = len(lazy_list)
 
         max_budget_won: int
         if 'max_budget_won' in options:
@@ -52,14 +52,17 @@ class ConceptsHandler:
 
 
         # 주요개념 추출, 저장
-        model_name: str
-        if 'model_name' in options:
-            model_name = options['model_name']
-        else:
-            model_name = 'gemma2:9b-instruct-q5_K_M'
+        reason_model_name = options['reason_model_name'] if 'reason_model_name' in options else 'gemma2:9b-instruct-q5_K_M'
+        embed_model_name = options['embed_model_name'] if 'embed_model_name' in options else 'gemma2:9b-instruct-q5_K_M'
         for data_name, data_loader in lazy_list[:max_file_num]:
             try:
-                self.service.extract_keyconcepts(data_name, data_loader, {'model_name' : model_name})
+                self.service.extract_keyconcepts(
+                    data_name, 
+                    data_loader, 
+                    {
+                        'reason_model_name' : reason_model_name,
+                        'embed_model_name' : embed_model_name
+                    })
             except Exception as e:
                 print(f"LOG-ERROR: error reading {data_name} - {str(e)}")
 

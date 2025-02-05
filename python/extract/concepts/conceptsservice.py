@@ -66,7 +66,8 @@ class ConceptsService:
         TODO: 메서드가 단일 책임을 져야한다면.. 추출/임베딩/DB저장 메서드를 분리해야할까?
         TODO: OpenAI는 추론, 임베딩 모델의 종류가 다르니, 옵션으로 구분해서 받을 수 있도록 수정
         """
-        model_client : BaseClient
+        reason_model_client : BaseClient
+        embed_model_client : BaseClient
         prompt : str
         format : dict
 
@@ -76,15 +77,9 @@ class ConceptsService:
         if data is None or len(data) == 0:
             return
 
-        if 'model_name' in options:
-            model_client = self.llmclients[options['model_name']]
-        else:
-            model_client = self.llmclients['gemma2:9b-instruct-q5_K_M']
-
-        if 'prompt' in options:
-            prompt = options['prompt']
-        else:
-            prompt = """
+        reason_model_client = self.llmclients[options['model_name']] if 'model_name' in options else self.llmclients['gemma2:9b-instruct-q5_K_M']
+        embed_model_client = self.llmclients[options['model_name']] if 'model_name' in options else self.llmclients['gemma2:9b-instruct-q5_K_M']
+        prompt = options['prompt'] if 'prompt' in options else """
             [요청]
             당신은 문서 요약의 대가입니다.
 
@@ -136,19 +131,19 @@ class ConceptsService:
                     "schema": format_headless
                 }
             }
-            if isinstance(model_client, OpenAIClient):
+            if isinstance(reason_model_client, OpenAIClient):
                 format = format_full
-            elif isinstance(model_client, OllamaClient):
+            elif isinstance(reason_model_client, OllamaClient):
                 format = format_headless
 
         # 추출
         data_extracted = []
         data_size = len(data)
-        chunk_size =  model_client.get_chunk_size()
+        chunk_size =  reason_model_client.get_chunk_size()
         chunk_count = data_size // chunk_size
         for i in range(0, chunk_count+1):
             chunk = data[i*chunk_size:(i+1)*chunk_size]
-            response = model_client.generate(
+            response = reason_model_client.generate(
                 prompt = f"{prompt} data_name : {data_name}\n {chunk}",
                 options = {
                     "format" : format
@@ -160,14 +155,14 @@ class ConceptsService:
         # 임베딩
         batch_size : int
         max_embedding_size = 4096
-        if isinstance(model_client, OpenAIClient):
+        if isinstance(embed_model_client, OpenAIClient):
             batch_size = 1
-        elif isinstance(model_client, OllamaClient):
+        elif isinstance(embed_model_client, OllamaClient):
             batch_size = 10
         for i in range(0, len(data_extracted), batch_size):
             batch = data_extracted[i:i+batch_size]
             texts_to_embed = [f"{data.get('title','')} {data.get('summary','')}" for data in batch]
-            embeddings = model_client.embed(texts_to_embed, {}, 'batch').data
+            embeddings = embed_model_client.embed(texts_to_embed, {}, 'batch').data
 
             for extracted, embedding in zip(batch, embeddings):
                 extracted['embedding']   = self.pad_embedding_with_zero_until_4096(embedding)

@@ -101,6 +101,9 @@ class OpenAIClient(BaseClient):
             ResponseDTO : 응답 객체
             - data: json : 생성 결과 (options['format']에 따라 다름)
         """
+        if self.model_name not in ["gpt-4o-mini"]:
+            raise ValueError(f"지원되지 않는 모델입니다: {self.model_name}")
+
         try:
             # refer to https://platform.openai.com/docs/guides/text-generation?example=json
             default_format = {
@@ -153,6 +156,9 @@ class OpenAIClient(BaseClient):
               - operation이 batch인 경우 -> list[list[float]]
               - 그외 -> list[float]
         """
+        if self.model_name not in ["text-embedding-3-small"]:
+            raise ValueError(f"지원되지 않는 모델입니다: {self.model_name}")
+
         try:
             response = self.client.embeddings.create(
                 model = self.model_name,
