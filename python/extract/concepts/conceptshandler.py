@@ -54,6 +54,7 @@ class ConceptsHandler:
         # 주요개념 추출, 저장
         reason_model_name = options['reason_model_name'] if 'reason_model_name' in options else 'gemma2:9b-instruct-q5_K_M'
         embed_model_name = options['embed_model_name'] if 'embed_model_name' in options else 'gemma2:9b-instruct-q5_K_M'
+        #TODO : 프로그레스바 추가
         for data_name, data_loader in lazy_list[:max_file_num]:
             try:
                 self.service.extract_keyconcepts(

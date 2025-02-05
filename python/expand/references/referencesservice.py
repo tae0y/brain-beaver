@@ -49,6 +49,8 @@ class ReferencesService:
         # 검색 병렬 처리
         reason_model_name = options['reason_model_name'] if 'reason_model_name' in options else 'gemma2:9b-instruct-q5_K_M'
         llmclient = self.llmroute.get_client_by_modelname(reason_model_name)
+        #TODO : 프로그레스바 추가
+        #TODO : 비용추계 추가
         pool = ThreadPoolExecutor(max_workers=self.constants.thread_global_thread_pool)
         results = list(
                 pool.map(
