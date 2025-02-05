@@ -15,9 +15,9 @@ def main():
         datasourcetype='markdown',
         datasourcepath='/Users/bachtaeyeong/20_DocHub/TIL',
         options={
-            #'reason_model_name' : 'gemma2:9b-instruct-q5_K_M',
-            'reason_model_name' : 'gpt-4o-mini',
-            'embed_model_name' : 'text-embedding-3-small',
+            'reason_model_name' : 'gemma2:9b-instruct-q5_K_M',
+            #'reason_model_name' : 'gpt-4o-mini',
+            #'embed_model_name' : 'text-embedding-3-small',
             'max_file_num' : 1,
             'max_budget_won' : 1000
         }
@@ -35,8 +35,8 @@ def main():
     referenceHandler.reset_expand_keyconcpts()
     referenceHandler.expand_keyconcepts_with_websearch(
         options = {
-            #'reason_model_name' : 'gemma2:9b-instruct-q5_K_M',
-            'reason_model_name' : 'gpt-4o-mini',
+            'reason_model_name' : 'gemma2:9b-instruct-q5_K_M',
+            #'reason_model_name' : 'gpt-4o-mini',
             'action_type' : 'top',
             'action_limit' : concepts_count_after//10
         }

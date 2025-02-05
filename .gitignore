@@ -1,3 +1,6 @@
+docker/postgresql/**
+docker/pgadmin/**
+
 docker_new/**
 python_new/**
 docker_bak/**
