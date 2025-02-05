@@ -57,6 +57,7 @@ class ConceptsHandler:
         #TODO : 프로그레스바 추가
         for data_name, data_loader in lazy_list[:max_file_num]:
             try:
+                print(f"\nLOG-INFO: extracting {data_name}")
                 self.service.extract_keyconcepts(
                     data_name, 
                     data_loader, 
