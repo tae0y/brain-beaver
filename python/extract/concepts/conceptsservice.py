@@ -80,10 +80,9 @@ class ConceptsService:
         reason_model_client = self.llmclients[options['model_name']] if 'model_name' in options else self.llmclients['gemma2:9b-instruct-q5_K_M']
         embed_model_client = self.llmclients[options['model_name']] if 'model_name' in options else self.llmclients['gemma2:9b-instruct-q5_K_M']
         prompt = options['prompt'] if 'prompt' in options else """
-            [요청]
             당신은 문서 요약의 대가입니다.
 
-            다음 제시된 문서는 소프트웨어 개발자가 개인적으로 학습한 내용을 정리한 마크다운 문서입니다.
+            다음 제시된 [DOCUMENT]는 소프트웨어 개발자가 개인적으로 학습한 내용을 정리한 마크다운 문서입니다.
             학습한 지식을 복습하고 확장할 수 있도록, 주요 내용을 추출하여 정리하고자 합니다.
             다음 제시된 문서의 내용을 기준으로, 주어진 기준과 형식에 맞춰 답변을 생성해주세요.
 
@@ -92,7 +91,7 @@ class ConceptsService:
             3. category : information, sentiment, question, insight 중에서 의미상 가장 가까운 카테고리를 하나만 선택
             4. summary : 주요 내용을 한 문단 이내로 요약하여 작성
 
-            [문서]
+            [DOCUMENT]
             """
 
         if 'format' in options:
@@ -204,3 +203,9 @@ class ConceptsService:
         concept_id_list = source_count_dict.keys() | target_count_dict.keys()
         for id in concept_id_list:
             self.repository.update_tb_concepts_source_target_count(id, source_count_dict.get(id, 0), target_count_dict.get(id, 0))
+
+    def get_concepts_all_count(self) -> int:
+        return len(self.repository.read_tb_concepts_all_idonly())
+
+    def read_concepts_top(self, limit: int) -> list:
+        return self.repository.read_tb_concepts_top(limit)

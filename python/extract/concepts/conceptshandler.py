@@ -74,3 +74,9 @@ class ConceptsHandler:
         """
         self.service.update_concepts_source_target_count()
         pass
+
+    def get_concepts_all_count(self):
+        """
+        주요개념의 전체 개수를 반환한다.
+        """
+        return self.service.get_concepts_all_count()

@@ -80,13 +80,18 @@ class OpenAIClient(BaseClient):
         #self.tokenizer_callable = self.load_tokenizer()
         self.cost_per_token = options['cost_per_token'] if 'cost_per_token' in options else float('inf')
 
-        df = fdr.DataReader('USD/KRW')[-7:] # 최근 7일 환율
-        today = datetime.datetime.today().strftime('%Y-%m-%d')
-        if today in df.index: # 오늘 최고가
-            today_row = df.loc[today]
-            self.currency_rates = float(today_row['Close'] if np.isnan(today_row['Close']) else today_row['High'])
-        else: # 전날 종가
-            self.currency_rates = float(df.iloc[-1]['Close'])
+        # 환율 계산
+        try:
+            df = fdr.DataReader('USD/KRW')[-7:] # 최근 7일 환율
+            today = datetime.datetime.today().strftime('%Y-%m-%d')
+            if today in df.index: # 오늘 최고가
+                today_row = df.loc[today]
+                self.currency_rates = float(today_row['Close'] if np.isnan(today_row['Close']) else today_row['High'])
+            else: # 전날 종가
+                self.currency_rates = float(df.iloc[-1]['Close'])
+        except:
+            self.currency_rates = 1500.0
+            print("LOG-ERROR: 환율 조회 실패, 1500원으로 가정합니다!!")
 
 
     def generate(self, prompt: str, options: dict) -> ResponseDTO:

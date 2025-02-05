@@ -1,6 +1,6 @@
 from typing import Tuple
 import traceback
-from sqlalchemy import insert, select, update
+from sqlalchemy import insert, select, update, desc
 from common.db.db import DB
 from extract.concepts.conceptsmodel import Concepts
 
@@ -42,6 +42,21 @@ class ConceptsRepository():
         session = self.db.get_session()
         try:
             query = session.query(Concepts)
+            rtndata = query.all()
+        except Exception as e:
+            traceback.print_exc()
+            rtndata = []
+        finally:
+            session.close()
+        return rtndata
+
+    def read_tb_concepts_top(self, limit: int) -> list[Concepts]:
+        """
+        tb_concepts 테이블에서 상위 limit개의 데이터를 읽어온다
+        """
+        session = self.db.get_session()
+        try:
+            query = session.query(Concepts).order_by(desc(Concepts.source_num+Concepts.target_num)).limit(limit)
             rtndata = query.all()
         except Exception as e:
             traceback.print_exc()

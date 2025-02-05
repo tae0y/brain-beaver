@@ -51,3 +51,23 @@ class ReferencesRepository:
             session.close()
 
         return rtndata
+
+    def delete_tb_references_all(self) -> Tuple[int, str]:
+        rtncd = 900
+        rtnmsg = '실패'
+
+        session = self.db.get_session()
+        try:
+            session.query(References).delete()
+            session.commit()
+            rtncd = 200
+            rtnmsg = '성공'
+        except Exception as e:
+            traceback.print_exc()
+            session.rollback()
+            rtncd = 900
+            rtnmsg = '실패'
+        finally:
+            session.close()
+
+        return rtncd, rtnmsg
