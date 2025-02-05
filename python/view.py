@@ -26,7 +26,7 @@ nodes = []
 edges = []
 
 node_default_size = 10
-node_multiple = 5
+node_multiple = 1.7
 node_source_many = '#A3C9A8'
 node_neutral = '#69A297'
 node_target_many = '#50808E'
@@ -38,7 +38,11 @@ detail_container = st.sidebar.container()
 concepts_dict = {}
 
 for concept in concepts:
-    node_size = node_default_size
+    # 노드 크기 설정
+    if len(concepts) < 10 :
+        node_size = node_default_size
+    else:
+        node_size = node_default_size * math.log(concept.source_num + concept.target_num) #* node_multiple
 
     node_color = node_neutral
     if concept.source_num > concept.target_num * 2:
