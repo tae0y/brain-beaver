@@ -28,7 +28,10 @@ docker compose up
 python -m venv .venv
 . .venv/bin/activate
 pip install -r python/requirements
-python python/app.py
+
+# 앱 구동은 python에서 - 일부 상대경로를 참조함
+cd python
+python app.py
 ```
   
 - 마크다운 데이터 경로, 모델 종류 등은 `app.py`에서 설정한다.

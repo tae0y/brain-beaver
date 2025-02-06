@@ -8,6 +8,8 @@ from engage.llmroute.llmrouter import LLMRouter
 from engage.llmroute.baseclient import BaseClient
 from common.system.constants import Constants
 from concurrent.futures import ThreadPoolExecutor
+from engage.llmroute.openaiclient import OpenAIClient
+from engage.llmroute.ollamaclient import OllamaClient
 
 class ReferencesService:
     """
@@ -70,6 +72,33 @@ class ReferencesService:
         try:
             #--------------------------------------------------------------------------------------------------------
             # 검색어 준비
+            headless_format_keyword = {
+                                "type" : "object",
+                                "properties" : {
+                                    "opposition" : {
+                                        "description" : "opposition text",
+                                        "type" : "string"
+                                    },
+                                    "keywords" : {
+                                        "description" : "search keywords separated with comma. it will be used for junior engineer to search web and understand opposition text.",
+                                        "type" : "string"
+                                    },
+                                },
+                                "required" : ["opposition", "keywords"],
+                                "additionalProperties" : False
+                            }
+            full_format_keyword = {
+                        "type" : "json_schema",
+                        "json_schema" : {
+                            "name" : "response_schema",
+                            "schema" : headless_format_keyword
+                        }
+                    }
+            if isinstance(llmclient, OpenAIClient):
+                format = full_format_keyword
+            elif isinstance(llmclient, OllamaClient):
+                format = headless_format_keyword
+
             keyword_gen_results = llmclient.generate(
                 prompt = """
                         당신은 최고의 기술기업에서 기술의사결정을 책임지는 CTO입니다.
@@ -88,28 +117,7 @@ class ReferencesService:
                         [DOCUMENT]
                         """ + concept.summary,
                 options = {
-                    'format' : {
-                        "type" : "json_schema",
-                        "json_schema" : {
-                            "name" : "response_schema",
-                            "schema" : {
-                                "type" : "object",
-                                "properties" : {
-                                    "opposition" : {
-                                        "description" : "opposition text",
-                                        "type" : "string"
-                                    },
-                                    "keywords" : {
-                                        "description" : "search keywords separated with comma. it will be used for junior engineer to search web and understand opposition text.",
-                                        "type" : "string"
-                                    },
-                                    "additionalProperties" : False
-                                },
-                                "required" : ["opposition", "keywords"],
-                                "additionalProperties" : False
-                            }
-                        }
-                    }
+                    'format' : format
                 }
             ).data
 
@@ -151,6 +159,37 @@ class ReferencesService:
             comparison_list = []
             for item in jsonobj['items']:
                 # 검색결과가 주장에 부합하는지
+                headless_format_compare = {
+                                    "type" : "object",
+                                    "properties" : {
+                                        "persona" : {
+                                            "description" : "persona of the document writer",
+                                            "type" : "string"
+                                        },
+                                        "decision" : {
+                                            "description" : "True or False",
+                                            "type" : "string"
+                                        },
+                                        "detailed" : {
+                                            "description" : "detailed description of the decision",
+                                            "type" : "string"
+                                        },
+                                    },
+                                    "required" : ["persona", "decision", "detailed"],
+                                    "additionalProperties" : False
+                                }
+                full_format_compare = {
+                            "type" : "json_schema",
+                            "json_schema" : {
+                                "name" : "response_schema",
+                                "schema" : headless_format_compare
+                            }
+                        }
+                if isinstance(llmclient, OpenAIClient):
+                    format = full_format_compare
+                elif isinstance(llmclient, OllamaClient):
+                    format = headless_format_compare
+
                 result = llmclient.generate(
                     prompt = """
                             당신은 최고의 기술기업에서 기술의사결정을 책임지는 CTO입니다.
@@ -170,32 +209,7 @@ class ReferencesService:
                             [DOCUMENT]
                             """ + item['title'] + " " + item['description'],
                     options = {
-                        'format' : {
-                            "type" : "json_schema",
-                            "json_schema" : {
-                                "name" : "response_schema",
-                                "schema" : {
-                                    "type" : "object",
-                                    "properties" : {
-                                        "persona" : {
-                                            "description" : "persona of the document writer",
-                                            "type" : "string"
-                                        },
-                                        "decision" : {
-                                            "description" : "True or False",
-                                            "type" : "string"
-                                        },
-                                        "detailed" : {
-                                            "description" : "detailed description of the decision",
-                                            "type" : "string"
-                                        },
-                                        "additionalProperties" : False
-                                    },
-                                    "required" : ["persona", "decision", "detailed"],
-                                    "additionalProperties" : False
-                                }
-                            }
-                        }
+                        'format' : format
                     }
                 ).data
                 comparison_list.append(
