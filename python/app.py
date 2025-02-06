@@ -18,6 +18,7 @@ def main():
         datasourcepath='/Users/bachtaeyeong/20_DocHub/TIL',
         options={
             'reason_model_name' : 'gemma2:9b-instruct-q5_K_M',
+            'embed_model_name' : 'gemma2:9b-instruct-q5_K_M',
             #'reason_model_name' : 'gpt-4o-mini',
             #'embed_model_name' : 'text-embedding-3-small',
             'max_file_num' : 2,

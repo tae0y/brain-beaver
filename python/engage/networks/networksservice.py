@@ -27,11 +27,9 @@ class NetworksService:
                 - 'max_inner_product' : 내적을 이용한 유사도 측정
                 - 'l1_distance' : L1 거리를 이용한 유사도 측정
         """
-        #TODO 의존성 자동 주입으로 변경
         from extract.concepts.conceptsservice import ConceptsService
         conceptService = ConceptsService()
 
-        #TODO 이런 필수값 체크는 어디서 하는게 맞는걸까
         operation : str
         if 'operation' in options:
             operation = options['operation']

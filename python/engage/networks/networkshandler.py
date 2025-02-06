@@ -4,7 +4,6 @@ class NetworksHandler:
     """
     주요개념 추출과 관련된 요청을 처리한다.
 
-    TODO: Controller, Service 레이어 분리
     """
 
     service : NetworksService
