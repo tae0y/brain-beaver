@@ -1,5 +1,6 @@
-docker/postgresql/**
-docker/pgadmin/**
+postgresql/**
+pgadmin/**
+portainer/**
 
 docker_new/**
 python_new/**
