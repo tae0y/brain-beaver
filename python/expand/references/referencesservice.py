@@ -53,12 +53,16 @@ class ReferencesService:
         llmclient = self.llmroute.get_client_by_modelname(reason_model_name)
         #TODO : 프로그레스바 추가
         #TODO : 비용추계 추가
-        pool = ThreadPoolExecutor(max_workers=self.constants.thread_global_thread_pool)
-        results = list(
-                pool.map(
-                    lambda concept: self.expand_one_concept_with_websearch(concept, llmclient), concepts
-                )
-            )
+        results = []
+        for concept in concepts:
+            results.append(self.expand_one_concept_with_websearch(concept, llmclient))
+        #TODO : OpenAI의 경우 병렬호출, 그외에는 웹검색만 병렬호출
+        #pool = ThreadPoolExecutor(max_workers=self.constants.thread_global_thread_pool)
+        #results = list(
+        #        pool.map(
+        #            lambda concept: self.expand_one_concept_with_websearch(concept, llmclient), concepts
+        #        )
+        #    )
 
         # 결과 확인
         successful_results = [result for result in results if result is not None]
