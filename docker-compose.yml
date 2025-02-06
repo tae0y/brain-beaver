@@ -1,0 +1,51 @@
+services:
+
+  docker_admin:
+    image: portainer/portainer-ce:latest
+    container_name: docker_admin
+    restart: always
+    ports:
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./portainer:/data
+
+  bwsdb:
+    container_name: bwsdb
+    build:
+      context: .
+      dockerfile: Dockerfile-bwsdb
+    restart: always
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: bwsdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgresql:/var/lib/postgresql/data
+      - ./initdb.d:/docker-entrypoint-initdb.d
+
+  bwsdb_admin:
+    container_name: bwsdb_admin
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: root@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5050:80"
+    volumes:
+      - ./pgadmin:/var/lib/pgadmin
+
+  #bws_service:
+  #  container_name: bws_service
+  #  build:
+  #    context: .
+  #    dockerfile: Dockerfile-python
+  #  restart: always
+  #  volumes:
+  #    - ./app:/app
+  #  depends_on:
+  #    - db
+  #  command: bash -c "python /app/manage.py runserver
