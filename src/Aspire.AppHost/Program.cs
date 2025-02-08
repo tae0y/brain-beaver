@@ -49,6 +49,7 @@ var pgadminContainer = builder.AddDockerfile(
     .WithContainerName("bwsdbadmin")
     .WithEnvironment("PGADMIN_DEFAULT_EMAIL", "admin@ta0y.com")
     .WithEnvironment("PGADMIN_DEFAULT_PASSWORD", "admin")
+    .WithHttpEndpoint(5050, 80)
     .WithVolume(justdirectory_pgadmin_volume, "/var/lib/pgadmin");
 
 
@@ -64,7 +65,7 @@ var portValueInt = int.TryParse(portValueStr, out int portParsed) ? portParsed :
 #pragma warning disable ASPIREHOSTINGPYTHON001
 var uvicornApp = builder.AddUvicornApp(
         name: "python",                        // Name of the Python project
-        projectDirectory: "../Python.FastApi", // Path to the Python project
+        projectDirectory: "../Python.FastAPI", // Path to the Python project
         appName: "app:app",                    // {FILE_NAME}:{APP_VARIABLE_NAME}
         args: new[] { 
             "--reload"

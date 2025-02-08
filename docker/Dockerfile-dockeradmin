@@ -1,1 +1,15 @@
-FROM portainer/portainer-ce:latest
+FROM portainer/portainer-ce:alpine-sts
+
+RUN apk update && apk add wget unzip bash
+
+# 한글 폰트 설치
+RUN apk add fontconfig
+RUN mkdir -p /usr/share/fonts/nanumfont
+RUN wget http://cdn.naver.com/naver/NanumFont/fontfiles/NanumFont_TTF_ALL.zip
+RUN unzip NanumFont_TTF_ALL.zip -d /usr/share/fonts/nanumfont
+RUN fc-cache -f && rm -rf /var/cache/*
+
+# 시간대 설정
+RUN apk add tzdata && \
+        cp /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
+        echo "Asia/Seoul" > /etc/timezone

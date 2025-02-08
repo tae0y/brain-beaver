@@ -1,9 +1,10 @@
 FROM postgres:15.10-bookworm
 
-RUN apt update && apt install -y wget unzip
+RUN apt update && apt install -y wget unzip bash
 
 # 한글 폰트 설치
 RUN apt install -y fonts-nanum
+#RUN apt install -y fontconfig #for alpine
 #RUN mkdir -p /usr/share/fonts/nanumfont
 #RUN wget http://cdn.naver.com/naver/NanumFont/fontfiles/NanumFont_TTF_ALL.zip
 #RUN unzip NanumFont_TTF_ALL.zip -d /usr/share/fonts/nanumfont

@@ -26,9 +26,19 @@ pip install -r python/requirements
 ```
 
 - AppHost를 통해 도커 및 파이썬 기동
-```
-# 도커 빌드를 위해 sudo 권한이 필요하다
-sudo dotnet run --project src/Aspire.AppHost/Aspire.AppHost.csproj
+```bash
+# 개발용 SSL
+cd src/Aspire.AppHost
+dotnet dev-certs https --clean && dotnet dev-certs https --trust
+
+# 권한설정 (아래 명령어 실행후 도커데몬 재시작)
+sudo chown -R $USER ~/.docker
+sudo chmod -R 775 ~/.docker
+cd src/Aspire.AppHost
+dotnet run --project Aspire.AppHost.csproj
+
+# 혹은 환경변수 유지한채 root 실행
+sudo -E dotnet run --project Aspire.AppHost/Aspire.AppHost.csproj
 ```
 
 ### Without Aspire/AppHost
@@ -48,11 +58,12 @@ pip install -r python/requirements
 ```
 
 - 파이썬 앱 기동
-```
+```bash
 cd src/Python.FastApi
 python app.py
 ```
-  
+
+## Notice
 - 그외 설정사항
   - 마크다운 데이터 경로, 모델 종류 등은 `app.py`에서 설정
   - OpenAI, Naver 검색 키 등은 `config.properties`, `secret.properties`에서 설정
