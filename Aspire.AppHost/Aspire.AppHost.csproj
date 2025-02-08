@@ -14,10 +14,7 @@
   <ItemGroup>
     <PackageReference Include="Aspire.Hosting.AppHost" Version="9.0.0" />
     <PackageReference Include="Aspire.Hosting.Python" Version="9.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Aspire.ServiceDefaults\Aspire.ServiceDefaults.csproj" />
+    <PackageReference Include="CommunityToolkit.Aspire.Hosting.Python.Extensions" Version="9.1.0" />
   </ItemGroup>
 
 </Project>
