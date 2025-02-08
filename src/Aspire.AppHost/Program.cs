@@ -8,9 +8,9 @@ var portValueInt = int.TryParse(portValueStr, out int portParsed) ? portParsed :
 // Python Hosting은 실험적 기능으로, 추가 방법이 바뀔 수 있어 Warning을 띄움. 테스트 용도로만 사용이 권장됨.
 #pragma warning disable ASPIREHOSTINGPYTHON001
 var uvicornApp = builder.AddUvicornApp(
-        name: "python",                // Name of the Python project
-        projectDirectory: "../python", // Path to the Python project
-        appName: "app:app",            // {FILE_NAME}:{APP_VARIABLE_NAME}
+        name: "python",                        // Name of the Python project
+        projectDirectory: "../Python.FastApi", // Path to the Python project
+        appName: "app:app",                    // {FILE_NAME}:{APP_VARIABLE_NAME}
         args: new[] { 
             "--reload"
         }
