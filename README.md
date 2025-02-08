@@ -22,7 +22,7 @@ sudo docker compose build
 docker compose up
 ```
   
-- 파이썬 의존성을 설치하고 앱을 기동한다.
+- 파이썬 의존성을 설치하고 앱을 기동한다
 ```bash
 # 프로젝트 루트경로에서 - vscode python 환경을 편하게 사용하기 위함
 python -m venv .venv
@@ -35,3 +35,10 @@ python app.py
 ```
   
 - 마크다운 데이터 경로, 모델 종류 등은 `app.py`에서 설정한다.
+
+
+
+## Etc
+
+- 제 로컬환경은 Python 3.12, Mac M1임. Python 3.13에서 일부 의존성 충돌 있음.
+- Debian OS는 psycopg2 대신 apt 등으로 psycopg2-binary 패키지 설치 필요.
