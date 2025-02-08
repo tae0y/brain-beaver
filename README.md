@@ -18,20 +18,25 @@
   
 - DB와 관련 컨테이너를 빌드하고 기동한다.
 ```bash
+cd bb_docker
 sudo docker compose build
 docker compose up
 ```
   
-- 파이썬 의존성을 설치하고 앱을 기동한다.
+- 파이썬 의존성을 설치
 ```bash
-# 프로젝트 루트경로에서 - vscode python 환경을 편하게 사용하기 위함
+cd bb_src/Python.FastApi
 python -m venv .venv
 . .venv/bin/activate
 pip install -r python/requirements
+```
 
-# 앱 구동은 python에서 - 일부 상대경로를 참조함
-cd python
+- 파이썬 앱 기동
+```
+cd bb_src/Python.FastApi
 python app.py
 ```
   
 - 마크다운 데이터 경로, 모델 종류 등은 `app.py`에서 설정한다.
+- OpenAI, Naver 검색 키 등은 `config.properties`, `secret.properties`에서 설정한다.
+  - `secret.properties`는 `secret.sample.properties`을 참고해 작성하면 된다.
