@@ -37,6 +37,9 @@ cd bb_src/Python.FastApi
 python app.py
 ```
   
-- 마크다운 데이터 경로, 모델 종류 등은 `app.py`에서 설정한다.
-- OpenAI, Naver 검색 키 등은 `config.properties`, `secret.properties`에서 설정한다.
-  - `secret.properties`는 `secret.sample.properties`을 참고해 작성하면 된다.
+- 그외 설정사항
+  - 마크다운 데이터 경로, 모델 종류 등은 `app.py`에서 설정
+  - OpenAI, Naver 검색 키 등은 `config.properties`, `secret.properties`에서 설정
+  - `secret.properties`는 `secret.sample.properties`을 참고해 작성
+  - `Python 3.12`, `Mac M1`에서 작업함. `Python 3.13`에서 일부 의존성 충돌 있음
+  - Debian OS는 `psycopg2` 대신 apt 등으로 `psycopg2-binary` 패키지 설치 필요
