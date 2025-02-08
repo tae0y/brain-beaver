@@ -2,11 +2,11 @@ import os
 import logging
 import uvicorn
 from fastapi import FastAPI
-#from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 
 app = FastAPI()
 
-#FastAPIInstrumentor().instrument_app(app)
+FastAPIInstrumentor().instrument_app(app)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
