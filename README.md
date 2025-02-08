@@ -16,16 +16,32 @@
   
 ## Getting Started
   
+### With Aspire/AppHost
+- 파이썬 의존성을 설치
+```bash
+cd src/Python.FastApi
+python -m venv .venv
+. .venv/bin/activate
+pip install -r python/requirements
+```
+
+- AppHost를 통해 도커 및 파이썬 기동
+```
+# 도커 빌드를 위해 sudo 권한이 필요하다
+sudo dotnet run --project src/Aspire.AppHost/Aspire.AppHost.csproj
+```
+
+### Without Aspire/AppHost
 - DB와 관련 컨테이너를 빌드하고 기동한다.
 ```bash
-cd bb_docker
+cd docker
 sudo docker compose build
 docker compose up
 ```
   
 - 파이썬 의존성을 설치
 ```bash
-cd bb_src/Python.FastApi
+cd src/Python.FastApi
 python -m venv .venv
 . .venv/bin/activate
 pip install -r python/requirements
@@ -33,7 +49,7 @@ pip install -r python/requirements
 
 - 파이썬 앱 기동
 ```
-cd bb_src/Python.FastApi
+cd src/Python.FastApi
 python app.py
 ```
   

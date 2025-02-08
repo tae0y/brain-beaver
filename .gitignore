@@ -1,8 +1,8 @@
 # --------------------------------------------
 # Docker volume
-bb_docker/postgresql/**
-bb_docker/pgadmin/**
-bb_docker/portainer/**
+postgresql_volume/**
+pgadmin_volume/**
+portainer_volume/**
 
 
 # --------------------------------------------
