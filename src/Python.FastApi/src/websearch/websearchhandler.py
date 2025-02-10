@@ -1,4 +1,4 @@
-from expand.websearch.websearchservice import WebSearchService
+from websearch.websearchservice import WebSearchService
 
 class WebSearchHandler:
     """

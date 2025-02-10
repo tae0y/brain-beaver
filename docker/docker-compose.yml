@@ -10,7 +10,7 @@ services:
       - "9000:9000"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./portainer:/data
+      - ./portainer_volume:/data
 
   bwsdb:
     container_name: bwsdb
@@ -25,7 +25,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./postgresql:/var/lib/postgresql/data
+      - ./postgresql_volume:/var/lib/postgresql/data
       - ./initdb.d:/docker-entrypoint-initdb.d
 
   bwsdb_admin:
@@ -40,7 +40,19 @@ services:
     ports:
       - "5050:80"
     volumes:
-      - ./pgadmin:/var/lib/pgadmin
+      - ./pgadmin_volume:/var/lib/pgadmin
+
+  bwsmq:
+    container_name: bwsmq
+    build:
+      context: .
+      dockerfile: Dockerfile-bwsmq
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - ./rabbitmq_volume:/var/lib/rabbitmq
 
   #bwswas:
   #  container_name: bwswas

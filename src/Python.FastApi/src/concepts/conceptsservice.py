@@ -1,4 +1,6 @@
 import datetime
+import pika
+import json
 from typing import Tuple
 from common.datasources.markdown import Markdown
 from concepts.conceptsreposigory import ConceptsRepository
@@ -8,6 +10,9 @@ from llmroute.baseclient import BaseClient
 from llmroute.openaiclient import OpenAIClient
 from llmroute.ollamaclient import OllamaClient
 
+RABBITMQ_HOST = 'localhost'
+QUEUE_NAME = 'extract_dataloader_queue'
+
 class ConceptsService:
     repository : ConceptsRepository
     llmclients : dict
@@ -16,12 +21,50 @@ class ConceptsService:
     def __init__(self):
         self.repository = ConceptsRepository()
         #self.networkService = NetworksService()
+        self.start_consumer()
 
         llmrouter = LLMRouter()
         self.llmclients = llmrouter.get_clients_all()
         pass
 
+    # ---------------------------------------------------
+    # BASE CRUD
+    def create_concepts(self, concepts_list: list[dict]) -> dict:
+        self.repository.create_tb_concepts_list(concepts_list)
+        return {"status": "success"}
 
+    def update_concepts(self, concepts_list: list[dict]) -> dict:
+        self.repository.update_tb_concepts_list(concepts_list)
+        return {"status": "success"}
+
+    def get_concepts(self) -> dict:
+        concept_list = self.repository.read_tb_concepts_all()
+        return {"status": "success", "data": concept_list}
+
+    def get_concept(self, concept_id: int) -> dict:
+        concept = self.repository.read_tb_concepts(concept_id)
+        return {"status": "success", "data": concept}
+
+    def get_concepts_count(self) -> dict:
+        count = self.repository.read_tb_concepts_count()
+        return {"status": "success", "data": count}
+
+    # ---------------------------------------------------
+    # RABBITMQ
+    def callback(self, channel, method, properties, body):
+        concepts = json.loads(body)
+        for concept in concepts:
+            self.create_concepts(concept)
+        channel.basic_ack(delivery_tag=method.delivery_tag)
+
+    def start_consumer(self):
+        with pika.BlockingConnection(pika.ConnectionParameters(RABBITMQ_HOST)) as connection:
+            channel = connection.channel()
+            channel.queue_declare(queue=QUEUE_NAME, durable=True)
+            channel.basic_consume(queue=QUEUE_NAME, on_message_callback=self.callback)
+            channel.start_consuming()
+
+    # ---------------------------------------------------
     def get_markdown_lazy_list(self, datasourcepath: str) -> list:
         MarkdownLoader = Markdown(datasourcepath)
         lazy_list = MarkdownLoader.get_lazy_list(

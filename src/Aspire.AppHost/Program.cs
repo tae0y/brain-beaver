@@ -52,6 +52,16 @@ var pgadminContainer = builder.AddDockerfile(
     .WithHttpEndpoint(5050, 80)
     .WithVolume(justdirectory_pgadmin_volume, "/var/lib/pgadmin");
 
+var rabbitMQContainer = builder.AddDockerfile(
+        "rabbitmq",
+        "../../docker",
+        "Dockerfile-bwsmq"
+    )
+    .WithContainerName("bwsmq")
+    .WithHttpEndpoint(5672, 5672)
+    .WithHttpEndpoint(15672, 15672)
+    .WithVolume("rabbitmq_volume", "/var/lib/rabbitmq");
+
 
 /****************************************************************************************
  * 
