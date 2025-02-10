@@ -1,4 +1,6 @@
-class ResponseDTO:
+from pydantic import BaseModel
+
+class ResponseDTO(BaseModel):
     def __init__(self, status, message, data):
         self.status = status
         self.message = message

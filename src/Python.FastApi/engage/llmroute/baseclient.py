@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from engage.llmroute.responseDTO import ResponseDTO
+from common.standard.responseDTO import ResponseDTO
 
 class BaseClient(ABC):
     """

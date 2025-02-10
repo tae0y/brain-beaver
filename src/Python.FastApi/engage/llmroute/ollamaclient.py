@@ -1,5 +1,5 @@
 from engage.llmroute.baseclient import BaseClient
-from engage.llmroute.responseDTO import ResponseDTO
+from common.standard.responseDTO import ResponseDTO
 import ollama
 from transformers import AutoTokenizer
 import json

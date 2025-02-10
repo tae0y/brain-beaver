@@ -1,6 +1,7 @@
 from typing import Annotated
 from fastapi import APIRouter
 from extract.concepts.conceptsservice import ConceptsService
+from common.standard.responseDTO import ResponseDTO
 
 router = APIRouter(
     prefix="/api/concepts",
@@ -17,13 +18,15 @@ class ConceptsHandler:
         self.service = ConceptsService()
         pass
 
-    @router.post("/extract_keyconcepts_from_datasource")
+    @router.post(
+        "/extract_keyconcepts_from_datasource",
+    )
     def extract_keyconcepts_from_datasource(
         self, 
         datasourcetype, 
         datasourcepath, 
         options: dict
-    ):
+    ) -> ResponseDTO:
         """
         데이터소스로부터 주요개념을 추출한다.
         """
@@ -84,7 +87,7 @@ class ConceptsHandler:
     @router.put("/update_concepts_source_target_count")
     def update_concepts_source_target_count(
         self
-    ):
+    ) -> ResponseDTO:
         """
         주요개념의 소스/타겟 개수를 갱신한다.
         """
@@ -94,7 +97,7 @@ class ConceptsHandler:
     @router.get("/get_concepts_all_count")
     def get_concepts_all_count(
         self
-    ):
+    ) -> ResponseDTO:
         """
         주요개념의 전체 개수를 반환한다.
         """

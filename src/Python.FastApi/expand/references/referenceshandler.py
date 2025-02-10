@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 from expand.references.referencesservice import ReferencesService
+from common.standard.responseDTO import ResponseDTO
 
 router = APIRouter(
     prefix="/api/references",
@@ -16,7 +17,7 @@ class ReferencesHandler:
     @router.delete("/reset_expand_keyconcpts")
     def reset_expand_keyconcpts(
         self
-    ):
+    ) -> ResponseDTO:
         """
         expand_keyconcpts 테이블을 초기화한다.
         """
@@ -27,7 +28,7 @@ class ReferencesHandler:
     def expand_keyconcepts_with_websearch(
         self, 
         options: dict
-    ):
+    ) -> ResponseDTO:
         """
         주요개념 확장을 위해 웹검색을 수행하고 저장한다.
         """

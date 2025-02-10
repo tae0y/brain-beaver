@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 from engage.networks.networksservice import NetworksService
+from common.standard.responseDTO import ResponseDTO
 
 router = APIRouter(
     prefix="/api/networks",
@@ -21,7 +22,7 @@ class NetworksHandler:
     def engage_keyconcepts_into_networks(
         self, 
         options: dict
-    ):
+    ) -> ResponseDTO:
         """
         주요개념을 네트워크로 연결한다
 
