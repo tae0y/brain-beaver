@@ -1,4 +1,9 @@
+from fastapi import APIRouter
 from engage.networks.networksservice import NetworksService
+
+router = APIRouter(
+    prefix="/api/networks",
+)
 
 class NetworksHandler:
     """
@@ -12,7 +17,11 @@ class NetworksHandler:
         self.service = NetworksService()
         pass
 
-    def engage_keyconcepts_into_networks(self, options: dict):
+    @router.post("/engage_keyconcepts_into_networks")
+    def engage_keyconcepts_into_networks(
+        self, 
+        options: dict
+    ):
         """
         주요개념을 네트워크로 연결한다
 
