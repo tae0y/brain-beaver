@@ -1,7 +1,7 @@
 #from extract.concepts.conceptsservice import ConceptsService #순환참조 발생으로 각주처리
-from engage.networks.networksrepository import NetworksRepository
-from engage.llmroute.llmrouter import LLMRouter
-from engage.algebra.algebra import cosine_similarity
+from networks.networksrepository import NetworksRepository
+from llmroute.llmrouter import LLMRouter
+from common.algebra.algebra import cosine_similarity
 import traceback
 
 class NetworksService:
@@ -27,7 +27,7 @@ class NetworksService:
                 - 'max_inner_product' : 내적을 이용한 유사도 측정
                 - 'l1_distance' : L1 거리를 이용한 유사도 측정
         """
-        from extract.concepts.conceptsservice import ConceptsService
+        from concepts.conceptsservice import ConceptsService
         conceptService = ConceptsService()
 
         operation : str

@@ -1,7 +1,7 @@
 from typing import Annotated
 from fastapi import APIRouter
-from extract.concepts.conceptsservice import ConceptsService
-from common.standard.responseDTO import ResponseDTO
+from concepts.conceptsservice import ConceptsService
+from common.models.responseDTO import ResponseDTO
 
 router = APIRouter(
     prefix="/api/concepts",

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from common.standard.responseDTO import ResponseDTO
+from common.models.responseDTO import ResponseDTO
 
 class BaseClient(ABC):
     """

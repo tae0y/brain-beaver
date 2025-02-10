@@ -36,9 +36,6 @@ sudo chown -R $USER ~/.docker
 sudo chmod -R 775 ~/.docker
 cd src/Aspire.AppHost
 dotnet run --project Aspire.AppHost.csproj
-
-# 혹은 환경변수 유지한채 root 실행
-sudo -E dotnet run --project Aspire.AppHost/Aspire.AppHost.csproj
 ```
 
 ### Without Aspire/AppHost

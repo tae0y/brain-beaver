@@ -1,6 +1,6 @@
 from fastapi import APIRouter
-from expand.references.referencesservice import ReferencesService
-from common.standard.responseDTO import ResponseDTO
+from references.referencesservice import ReferencesService
+from common.models.responseDTO import ResponseDTO
 
 router = APIRouter(
     prefix="/api/references",

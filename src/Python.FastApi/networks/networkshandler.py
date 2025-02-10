@@ -1,6 +1,6 @@
 from fastapi import APIRouter
-from engage.networks.networksservice import NetworksService
-from common.standard.responseDTO import ResponseDTO
+from networks.networksservice import NetworksService
+from common.models.responseDTO import ResponseDTO
 
 router = APIRouter(
     prefix="/api/networks",

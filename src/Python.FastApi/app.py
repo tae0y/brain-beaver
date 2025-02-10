@@ -4,15 +4,15 @@ import uvicorn
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 #from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
-from extract.concepts.conceptshandler import router as concepts_router
-from engage.networks.networkshandler import router as networks_router
-from expand.references.referenceshandler import router as references_router
+from concepts.conceptshandler import router as concepts_router
+from networks.networkshandler import router as networks_router
+from references.referenceshandler import router as references_router
 
 
 app = FastAPI(
-    swagger_ui_parameters={
-        "dom_id": "#swagger-ui"
-    }
+    #swagger_ui_parameters={
+    #    "dom_id": "#swagger-ui"
+    #}
 )
 
 origins = [
@@ -36,7 +36,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 @app.get("/")
-def rootPage():
+def rootPage() -> str:
     logger.info("HOME PAGE ACCESS")
     return "Python.FastAPI Backend Server"
 

@@ -4,8 +4,8 @@ from pydantic import BaseModel
 from openai import OpenAI
 import FinanceDataReader as fdr
 import numpy as np
-from engage.llmroute.baseclient import BaseClient
-from common.standard.responseDTO import ResponseDTO
+from llmroute.baseclient import BaseClient
+from common.models.responseDTO import ResponseDTO
 import json
 
 class OpenAIClient(BaseClient):
