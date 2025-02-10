@@ -66,7 +66,7 @@ class ReferencesService:
 
         # 결과 확인
         successful_results = [result for result in results if result is not None]
-        print(f"\nLOG-DEBUG {len(successful_results)}건 처리됨)")
+        print(f"LOG-DEBUG {len(successful_results)}건 처리됨)")
 
 
     def expand_one_concept_with_websearch(self, concept : Concepts, llmclient : BaseClient):
@@ -134,7 +134,7 @@ class ReferencesService:
                     return None
             else:
                 return None
-            print(f"\nLOG-DEBUG : 반대의견 및 검색어 생성결과 - {keyword_gen_results}")
+            print(f"LOG-DEBUG : 반대의견 및 검색어 생성결과 - {keyword_gen_results}")
 
             #--------------------------------------------------------------------------------------------------------
             # 웹 검색
@@ -155,7 +155,7 @@ class ReferencesService:
                 #with open('websearch_results.json', 'w', encoding="utf-8") as f:
                 #    f.write(response_body.decode('utf-8'))
             else:
-                print(f"\nLOG-ERROR : {rescode} in expand_one_concept_with_websearch")
+                print(f"LOG-ERROR : {rescode} in expand_one_concept_with_websearch")
             jsonobj = json.loads(response_body)
 
             #--------------------------------------------------------------------------------------------------------
@@ -223,7 +223,7 @@ class ReferencesService:
                         "detailed" : result['detailed']
                     }
                 )
-            print(f"\nLOG-DEBUG : 검색결과/주장 부합여부 - {str(comparison_list)}")
+            print(f"LOG-DEBUG : 검색결과/주장 부합여부 - {str(comparison_list)}")
 
             # 검색결과의 내용을 종합
             final_result = llmclient.generate(
@@ -236,7 +236,7 @@ class ReferencesService:
                 """ + str(comparison_list),
                 options = {}
             ).data['text']
-            print(f"\nLOG-DEBUG : 검색결과 종합결과 - {final_result}")
+            print(f"LOG-DEBUG : 검색결과 종합결과 - {final_result}")
 
             # 다수결로 인용 결정
             true_count = 0

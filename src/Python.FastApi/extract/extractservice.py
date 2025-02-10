@@ -52,9 +52,9 @@ class ExtractService:
             reason_model_client = self.llmclients[reason_model_name]
             embed_model_client = self.llmclients[embed_model_name]
             if isinstance(reason_model_client, OllamaClient):
-                print(f"\nLOG-INFO: reasoning with OllamaClient is free!! Fell free to use it.")
+                print(f"LOG-INFO: reasoning with OllamaClient is free!! Fell free to use it.")
             if isinstance(embed_model_client, OllamaClient):
-                print(f"\nLOG-INFO: embedding with OllamaClient is free!! Fell free to use it.")
+                print(f"LOG-INFO: embedding with OllamaClient is free!! Fell free to use it.")
 
             max_data_num = options['max_file_num'] if 'max_file_num' in options else len(lazy_list)
             for filepath, loader_func in lazy_list[:max_data_num]:
@@ -65,7 +65,7 @@ class ExtractService:
                     reasoning_sum += reasoning_cost
                     embedding_sum += embedding_cost
                 except Exception as e:
-                    print(f"\nLOG-ERROR: error reading {filepath} - {str(e)}")
+                    print(f"LOG-ERROR: error reading {filepath} - {str(e)}")
             reasoning_cost *= 2 # for output token
             embedding_cost *= 2
 
@@ -75,7 +75,7 @@ class ExtractService:
                 'embedding_sum': embedding_sum
             }
         except Exception as e:
-            print(f"\nLOG-ERROR: error reading {datasourcetype}, {datasourcepath} - {str(e)}")
+            print(f"LOG-ERROR: error reading {datasourcetype}, {datasourcepath} - {str(e)}")
             traceback.print_exc()
 
             status = 'error'
@@ -113,7 +113,7 @@ class ExtractService:
             embed_model_name = options['embed_model_name']
             for data_name, data_loader in lazy_list[:max_data_num]: # TODO: 프로그레스바 추가
                 try:
-                    print(f"\nLOG-INFO: extracting {data_name}")
+                    print(f"LOG-INFO: extracting {data_name}")
 
                     # extract keyconcepts from data
                     concepts_list = self.extract_keyconcepts_from_data(
@@ -129,14 +129,14 @@ class ExtractService:
                         self.publish_extracted_dataloader(concepts_list)
 
                 except Exception as e:
-                    print(f"\nLOG-ERROR: error reading {data_name} - {str(e)}")
+                    print(f"LOG-ERROR: error reading {data_name} - {str(e)}")
 
 
             status = 'success'
             data = ''
 
         except Exception as e:
-            print(f"\nLOG-ERROR: error reading {datasourcetype}, {datasourcepath} - {str(e)}")
+            print(f"LOG-ERROR: error reading {datasourcetype}, {datasourcepath} - {str(e)}")
             traceback.print_exc()
 
             status = 'error'
@@ -246,7 +246,7 @@ class ExtractService:
                     }
                 )
                 concepts_list.append(response.data)
-                print(f"\nLOG-DEBUG: {i} - {response.data}")
+                print(f"LOG-DEBUG: {i} - {response.data}")
 
             # embed
             batch_size : int
@@ -272,7 +272,7 @@ class ExtractService:
             data = concepts_list
 
         except Exception as e:
-            print(f"\nLOG-ERROR: error reading {data_name} - {str(e)}")
+            print(f"LOG-ERROR: error reading {data_name} - {str(e)}")
             traceback.print_exc()
 
             status = 'error'

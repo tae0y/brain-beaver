@@ -63,10 +63,10 @@ class Constants:
 
     def load_constants(self):
         """
-        secret.properties 파일 로드
+        secret.properties 파일 로드 (app.py가 실행되는 위치 기준으로 설정)
         """
         secret = configparser.ConfigParser()
-        secret.read('../properties/secret.properties') #app.py가 실행되는 위치 기준으로 설정
+        secret.read('properties/secret.properties') #app.py가 실행되는 위치 기준으로 설정
 
         # DB
         self.db_connection_string = secret.get('DB', 'CONNECTION_STRING')
@@ -90,10 +90,10 @@ class Constants:
         self.openai_api_key = secret.get('OpenAI', 'API_KEY')
 
         """
-        config.properties 파일 로드
+        config.properties 파일 로드 (app.py가 실행되는 위치 기준으로 설정)
         """
         config = configparser.ConfigParser()
-        config.read('../properties/config.properties') #app.py가 실행되는 위치 기준으로 설정
+        config.read('properties/config.properties') #app.py가 실행되는 위치 기준으로 설정
 
         # Thread
         self.thread_global_thread_pool = int(config.get('Thread', 'GLOBAL_THREAD_POOL'))

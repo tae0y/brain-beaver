@@ -141,12 +141,12 @@ class OllamaClient(BaseClient):
         #elif "gemma" in [self.mode_architecture, self.tokenizer_type, self.model_name]:
         #    self.tokenizer_callable = AutoTokenizer.from_pretrained("google/gemma-7B")
         #else:
-        #    print(f"\nLOG-ERROR Error during tokenizer loading. cannot find proper tokenizer")
+        #    print(f"LOG-ERROR Error during tokenizer loading. cannot find proper tokenizer")
         pass
 
     def get_how_much_cost(self, text) -> float:
         #return self.get_token_count(text) * self.cost_per_token()
-        print("\nLOG-DEBUG : Ollama is free!! Fell free to use it.")
+        print("LOG-DEBUG : Ollama is free!! Fell free to use it.")
         return 0.0
 
     def get_token_count(self, text) -> int:

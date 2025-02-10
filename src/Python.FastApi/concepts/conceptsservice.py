@@ -1,6 +1,7 @@
 import datetime
 import pika
 import json
+import logging
 from typing import Tuple
 from common.datasources.markdown import Markdown
 from concepts.conceptsreposigory import ConceptsRepository
@@ -8,6 +9,9 @@ from concepts.conceptsreposigory import ConceptsRepository
 
 RABBITMQ_HOST = 'localhost'
 QUEUE_NAME = 'extract_dataloader_queue'
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 class ConceptsService:
     repository : ConceptsRepository
@@ -52,10 +56,13 @@ class ConceptsService:
         for concept in concepts:
             self.create_concepts(concept)
         channel.basic_ack(delivery_tag=method.delivery_tag)
+        logger.info("callback end")
 
     def start_consumer(self):
+        logger.info("start_consumer called")
         with pika.BlockingConnection(pika.ConnectionParameters(RABBITMQ_HOST)) as connection:
             channel = connection.channel()
             channel.queue_declare(queue=QUEUE_NAME, durable=True)
             channel.basic_consume(queue=QUEUE_NAME, on_message_callback=self.callback)
             channel.start_consuming()
+            logger.info("start_consumer ongoing")
