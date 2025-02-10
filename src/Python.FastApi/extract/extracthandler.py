@@ -19,9 +19,9 @@ def get_service():
     description="데이터타입에 따라 데이터소스로부터 데이터를 읽어들인다. 데이터 양에 따라 필요한 토큰 값을 추정한다.",
     responses={
         status.HTTP_200_OK:                    {"description":"데이터 추출 성공", "content":{ "application/json": { "example": { "status": "success", "message": "data extracted", "data": { "reasoning_sum": 1000, "embedding_sum": 1000, } } } }, "model": ResponseDTO},
-        status.HTTP_400_BAD_REQUEST:           {"description":"데이터 추출 실패", "content":{ "application/json": { "example": { "status": "error", "message": "essential input missing", "data": "datatype" } } }, "model": str},
-        status.HTTP_422_UNPROCESSABLE_ENTITY:  {"description":"데이터 추출 실패", "content":{ "application/json": { "example": { "status": "error", "message": "input validation error", "data": "" } } }, "model": str},
-        status.HTTP_500_INTERNAL_SERVER_ERROR: {"description":"데이터 추출 실패", "content":{ "application/json": { "example": { "status": "error", "message": "internal server error", "data": "XXXException occured during ..." } } }, "model": str}
+        status.HTTP_400_BAD_REQUEST:           {"description":"데이터 추출 실패", "content":{ "application/json": { "example": { "status": "error", "message": "essential input missing", "data": "datatype" } } }, "model": ResponseDTO},
+        status.HTTP_422_UNPROCESSABLE_ENTITY:  {"description":"데이터 추출 실패", "content":{ "application/json": { "example": { "status": "error", "message": "input validation error", "data": "" } } }, "model": ResponseDTO},
+        status.HTTP_500_INTERNAL_SERVER_ERROR: {"description":"데이터 추출 실패", "content":{ "application/json": { "example": { "status": "error", "message": "internal server error", "data": "XXXException occured during ..." } } }, "model": ResponseDTO}
     },
     tags=["Extract"],
 )

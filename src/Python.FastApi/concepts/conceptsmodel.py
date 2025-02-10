@@ -21,4 +21,4 @@ class Concepts(Base):
     embedding   = Column(Vector(4096))
 
     def __str__(self):
-        return f"Concepts(id={self.id}, title={self.title}, keywords={self.keywords}, category={self.category}, summary={self.summary}, status={self.status}, filepath={self.filepath}, source_num={self.source_num}, target_num={self.target_num}, create_time={self.create_time}, update_time={self.update_time}, token_num={self.token_num}, plaintext={self.plaintext[:40]}, embedding={self.embedding[:10]})"
+        return f"Concepts(id={self.id}, title={self.title}, keywords={self.keywords}, category={self.category}, summary={self.summary}, status={self.status}, data_name={self.data_name}, source_num={self.source_num}, target_num={self.target_num}, create_time={self.create_time}, update_time={self.update_time}, embedding={self.embedding[:10]})"
