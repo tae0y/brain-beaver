@@ -1,7 +1,7 @@
 import ollama
 from common.system.constants import Constants
-from engage.llmroute.ollamaclient import OllamaClient
-from engage.llmroute.openaiclient import OpenAIClient
+from common.llmroute.ollamaclient import OllamaClient
+from common.llmroute.openaiclient import OpenAIClient
 
 class LLMRouter:
     """

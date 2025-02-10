@@ -1,9 +1,9 @@
 import streamlit as st
 from streamlit_agraph import agraph, Node, Edge, Config, TripleStore
 import math
-from extract.concepts.conceptsservice import ConceptsService
-from engage.networks.networksservice import NetworksService
-from expand.references.referencesservice import ReferencesService
+from concepts.conceptsservice import ConceptsService
+from networks.networksservice import NetworksService
+from references.referencesservice import ReferencesService
 
 # 사이드바 상단 여백 조정
 detail_container = st.sidebar.container()

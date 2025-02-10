@@ -5,10 +5,10 @@ from typing import Tuple
 from common.datasources.markdown import Markdown
 from concepts.conceptsreposigory import ConceptsRepository
 #from networks.networksservice import NetworksService #순환참조 발생으로 각주처리
-from llmroute.llmrouter import LLMRouter
-from llmroute.baseclient import BaseClient
-from llmroute.openaiclient import OpenAIClient
-from llmroute.ollamaclient import OllamaClient
+from common.llmroute.llmrouter import LLMRouter
+from common.llmroute.baseclient import BaseClient
+from common.llmroute.openaiclient import OpenAIClient
+from common.llmroute.ollamaclient import OllamaClient
 
 RABBITMQ_HOST = 'localhost'
 QUEUE_NAME = 'extract_dataloader_queue'

@@ -38,6 +38,18 @@ class ConceptsHandler:
         """
         return self.service.update_concepts(concepts_list)
 
+    @router.put("/{concept_id}/source-target-count")
+    def update_concept_source_target_count(
+        self,
+        concept_id: int,
+        source_num: int,
+        target_num: int
+    ) -> ResponseDTO:
+        """
+        주요개념의 출처와 대상 개수만 갱신한다.
+        """
+        return self.service.update_concepts_source_target_count(concept_id, source_num, target_num)
+
     @router.get("")
     def get_concepts(
         self

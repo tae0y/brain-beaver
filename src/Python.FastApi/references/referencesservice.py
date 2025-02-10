@@ -2,14 +2,14 @@ import traceback
 import urllib.request
 import certifi
 import json
-from extract.concepts.conceptsmodel import Concepts
-from expand.references.referencesrepository import ReferencesRepository
-from engage.llmroute.llmrouter import LLMRouter
-from engage.llmroute.baseclient import BaseClient
+from concepts.conceptsmodel import Concepts
+from references.referencesrepository import ReferencesRepository
+from common.llmroute.llmrouter import LLMRouter
+from common.llmroute.baseclient import BaseClient
 from common.system.constants import Constants
 from concurrent.futures import ThreadPoolExecutor
-from engage.llmroute.openaiclient import OpenAIClient
-from engage.llmroute.ollamaclient import OllamaClient
+from common.llmroute.openaiclient import OpenAIClient
+from common.llmroute.ollamaclient import OllamaClient
 
 class ReferencesService:
     """
@@ -37,7 +37,7 @@ class ReferencesService:
         """
         주요개념 확장을 위해 웹검색을 수행하고 저장한다
         """
-        from extract.concepts.conceptsservice import ConceptsService
+        from concepts.conceptsservice import ConceptsService
         conceptService = ConceptsService()
         action_type = options['action_type'] if 'action_type' in options else 'all'
         action_limit = options['action_limit'] if 'action_limit' in options else 10

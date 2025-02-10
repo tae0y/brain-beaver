@@ -28,6 +28,8 @@ class ExtractHandler:
         # check, prepare
         self.check_essential_input(datasourcetype, datasourcepath)
         self.stuff_default_options(datasourcetype, options)
+        if 'max_budget' not in options:
+            raise ValueError("max_budget(KRW) is required")
 
         # process
         result = self.service.check_budget(

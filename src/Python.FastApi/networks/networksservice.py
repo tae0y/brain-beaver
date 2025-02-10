@@ -1,6 +1,6 @@
 #from extract.concepts.conceptsservice import ConceptsService #순환참조 발생으로 각주처리
 from networks.networksrepository import NetworksRepository
-from llmroute.llmrouter import LLMRouter
+from common.llmroute.llmrouter import LLMRouter
 from common.algebra.algebra import cosine_similarity
 import traceback
 

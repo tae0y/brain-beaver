@@ -2,7 +2,7 @@ from typing import Tuple
 import traceback
 from sqlalchemy import insert, select, update, desc
 from common.db.db import DB
-from extract.concepts.conceptsmodel import Concepts
+from concepts.conceptsmodel import Concepts
 
 class ConceptsRepository():
     """
@@ -46,6 +46,35 @@ class ConceptsRepository():
         except Exception as e:
             traceback.print_exc()
             rtndata = []
+        finally:
+            session.close()
+        return rtndata
+
+    def read_tb_concepts_by_id(self, concpet_id : str) -> Concepts:
+        """
+        tb_concepts 테이블에서 concpet_id로 데이터를 읽어온다
+        """
+        session = self.db.get_session()
+        try:
+            query = session.query(Concepts).filter(Concepts.id == concpet_id)
+            rtndata = query.first()
+        except Exception as e:
+            traceback.print_exc()
+        finally:
+            session.close()
+        return rtndata
+
+    def read_tb_concepts_count(self) -> int:
+        """
+        tb_concepts 테이블의 데이터 수를 읽어온다
+        """
+        session = self.db.get_session()
+        try:
+            query = session.query(Concepts)
+            rtndata = query.count()
+        except Exception as e:
+            traceback.print_exc()
+            rtndata = 0
         finally:
             session.close()
         return rtndata
