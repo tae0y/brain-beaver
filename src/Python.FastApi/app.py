@@ -7,12 +7,17 @@ from starlette.middleware.cors import CORSMiddleware
 from concepts.conceptshandler import router as concepts_router
 from networks.networkshandler import router as networks_router
 from references.referenceshandler import router as references_router
+from extract.extracthandler import router as extract_router
 
-
+tags_metadata = [
+    {"name":"Extract", "description":"데이터 추출과 관련된 요청을 처리한다."},
+    {"name":"Networks", "description":"네트워크 관련 CRUD 요청을 처리한다."},
+    {"name":"References", "description":"참조자료 관련 CRUD 요청을 처리한다."},
+    {"name":"Concepts", "description":"개념관련 CRUD 요청을 처리한다."}
+]
 app = FastAPI(
-    #swagger_ui_parameters={
-    #    "dom_id": "#swagger-ui"
-    #}
+    openapi_tags= tags_metadata,
+    #root_path="/swagger"
 )
 
 origins = [
@@ -29,6 +34,7 @@ app.add_middleware(
 app.include_router(concepts_router)
 app.include_router(networks_router)
 app.include_router(references_router)
+app.include_router(extract_router)
 
 #FastAPIInstrumentor().instrument_app(app)
 

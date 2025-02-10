@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import Body, APIRouter
 from common.models.responseDTO import ResponseDTO
 from extract.extractservice import ExtractService
 
@@ -18,9 +18,28 @@ class ExtractHandler:
     @router.post("/check-budget")
     def check_budget(
         self, 
-        datasourcetype: str,
-        datasourcepath: str,
-        options: dict
+        datasourcetype: str = Body( ..., examples=[ { "value": "markdown", "summary": "data type" } ] ),
+        datasourcepath: str = Body( ..., examples=[ { "value": "/Users/bachtaeyeong/20_DocHub/TIL", "summary": "data path" } ] ),
+        options: dict = Body(
+            examples=[
+                {
+                    "value": {
+                        "ignore_dir_list": [".git", ".vscode", ".obsidian", "assets", "images", "img", "media", "pictures", "static", "uploads", "node_modules", "res", "resources", "scripts", "styles", "stylesheets", "test", "tests", "tmp"],
+                        "reason_model_name": "gemma2:9b-instruct-q5_K_M",
+                        "embed_model_name": "gemma2:9b-instruct-q5_K_M",
+                        "max_budget": 1000,
+                        "shuffle_flag" : True,
+                        "max_file_num": 10,
+                        "prompt": "prompt text for generate output from llm",
+                        "format": "json schema for structured output from llm"
+                    }, 
+                    "summary": "options, usually not required"
+                }
+            ]
+        ),
+        summary="데이터소스로부터 데이터를 읽고 예산을 추정한다.",
+        description="데이터타입과 데이터경로를 입력받아, 지연로딩 방식으로 데이터를 조회한다. 데이터 양을 기준으로 LLM 토큰 비용을 추정한다.",
+        tags=["Extract"]
     ) -> ResponseDTO:
         """
         데이터소스로부터 데이터를 읽고 예산을 추정한다.
@@ -55,9 +74,28 @@ class ExtractHandler:
     @router.post("")
     def extract(
         self, 
-        datasourcetype: str,
-        datasourcepath: str,
-        options: dict
+        datasourcetype: str = Body( ..., examples=[ { "value": "markdown", "summary": "data type" } ] ),
+        datasourcepath: str = Body( ..., examples=[ { "value": "/Users/bachtaeyeong/20_DocHub/TIL", "summary": "data path" } ] ),
+        options: dict = Body(
+            examples=[
+                {
+                    "value": {
+                        "ignore_dir_list": [".git", ".vscode", ".obsidian", "assets", "images", "img", "media", "pictures", "static", "uploads", "node_modules", "res", "resources", "scripts", "styles", "stylesheets", "test", "tests", "tmp"],
+                        "reason_model_name": "gemma2:9b-instruct-q5_K_M",
+                        "embed_model_name": "gemma2:9b-instruct-q5_K_M",
+                        "max_budget": 1000,
+                        "shuffle_flag" : True,
+                        "max_file_num": 10,
+                        "prompt": "prompt text for generate output from llm",
+                        "format": "json schema for structured output from llm"
+                    }, 
+                    "summary": "options, usually not required"
+                }
+            ]
+        ),
+        summary="데이터소스로부터 주요개념을 추출한다",
+        description="데이터타입과 데이터경로를 입력받아, 지연로딩 방식으로 데이터를 조회한다. 정해진 프롬프트와 포맷으로 LLM을 사용해 주요개념을 추출한다. 추출결과는 메시지큐로 발송한다.",
+        tags=["Extract"]
     ) -> ResponseDTO:
         """
         데이터소스로부터 주요개념을 추출한다
