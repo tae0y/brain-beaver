@@ -60,10 +60,20 @@ cd src/Python.FastApi
 python app.py
 ```
 
-## Notice
+
+### Notice
 - 그외 설정사항
   - 마크다운 데이터 경로, 모델 종류 등은 `app.py`에서 설정
   - OpenAI, Naver 검색 키 등은 `config.properties`, `secret.properties`에서 설정
   - `secret.properties`는 `secret.sample.properties`을 참고해 작성
   - `Python 3.12`, `Mac M1`에서 작업함. `Python 3.13`에서 일부 의존성 충돌 있음
   - Debian OS는 `psycopg2` 대신 apt 등으로 `psycopg2-binary` 패키지 설치 필요
+
+
+## 앱 구조
+- `Dotnet.BlazorUI` : 데이터소스를 입력해 데이터추출, 예상비용 확인, 결제 및 진행
+- `Java.SpringBFF` : extract, engage, expand 기능 단위로 여러 API를 묶어서 호출
+- `Python.FastAPI` : concepts, networks, references 도메인 기반 단편화된 API 제공
+- `Docker` : portainer, postgresql, pgadmin 컨테이너
+- `Aspire.AppHost` : 상기 모든 앱과 도커 컨테이너를 호스팅, 대시보드/모니터링/장애회복 기능제공
+- `Aspire.ServiceDefaults` : 클라우드 네이티브 앱 호스팅 기본값 설정
