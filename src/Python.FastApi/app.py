@@ -4,9 +4,9 @@ import uvicorn
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 #from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
-from concepts.conceptshandler import router as concepts_router
-from networks.networkshandler import router as networks_router
-from references.referenceshandler import router as references_router
+from src.concepts.conceptshandler import router as concepts_router
+from src.networks.networkshandler import router as networks_router
+from src.references.referenceshandler import router as references_router
 
 
 app = FastAPI(

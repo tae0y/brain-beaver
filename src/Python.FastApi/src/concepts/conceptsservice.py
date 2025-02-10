@@ -1,12 +1,12 @@
 import datetime
 from typing import Tuple
-from extract.datasources.markdown import Markdown
-from extract.concepts.conceptsreposigory import ConceptsRepository
-#from engage.networks.networksservice import NetworksService #순환참조 발생으로 각주처리
-from engage.llmroute.llmrouter import LLMRouter
-from engage.llmroute.baseclient import BaseClient
-from engage.llmroute.openaiclient import OpenAIClient
-from engage.llmroute.ollamaclient import OllamaClient
+from common.datasources.markdown import Markdown
+from concepts.conceptsreposigory import ConceptsRepository
+#from networks.networksservice import NetworksService #순환참조 발생으로 각주처리
+from llmroute.llmrouter import LLMRouter
+from llmroute.baseclient import BaseClient
+from llmroute.openaiclient import OpenAIClient
+from llmroute.ollamaclient import OllamaClient
 
 class ConceptsService:
     repository : ConceptsRepository
@@ -190,7 +190,7 @@ class ConceptsService:
         return self.repository.read_tb_concepts_nearest_by_embedding(source, operation, limit)
 
     def update_concepts_source_target_count(self):
-        from engage.networks.networksservice import NetworksService
+        from networks.networksservice import NetworksService
         networkService = NetworksService()
         networks_list = networkService.read_networks_all()
 

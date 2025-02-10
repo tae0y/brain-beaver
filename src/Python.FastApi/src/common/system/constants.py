@@ -6,8 +6,8 @@ class Constants:
     """
     다음 설정파일을 읽어 상수로 사용하는 싱글톤.
 
-    ./resources/config.properties
-    ./resources/secret.properties
+    /res/config.properties
+    /res/secret.properties
     """
     _instance = None
 
@@ -66,7 +66,7 @@ class Constants:
         secret.properties 파일 로드
         """
         secret = configparser.ConfigParser()
-        secret.read('./resources/secret.properties') #app.py가 실행되는 위치 기준으로 설정
+        secret.read('../../res/secret.properties') #app.py가 실행되는 위치 기준으로 설정
 
         # DB
         self.db_connection_string = secret.get('DB', 'CONNECTION_STRING')
@@ -93,7 +93,7 @@ class Constants:
         config.properties 파일 로드
         """
         config = configparser.ConfigParser()
-        config.read('./resources/config.properties') #app.py가 실행되는 위치 기준으로 설정
+        config.read('../../res/config.properties') #app.py가 실행되는 위치 기준으로 설정
 
         # Thread
         self.thread_global_thread_pool = int(config.get('Thread', 'GLOBAL_THREAD_POOL'))
