@@ -16,29 +16,64 @@
   
 ## Getting Started
   
+### With Aspire/AppHost
+- 파이썬 의존성을 설치
+```bash
+cd src/Python.FastApi
+python -m venv .venv
+. .venv/bin/activate
+pip install -r python/requirements
+```
+
+- AppHost를 통해 도커 및 파이썬 기동
+```bash
+# 개발용 SSL
+cd src/Aspire.AppHost
+dotnet dev-certs https --clean && dotnet dev-certs https --trust
+
+# 권한설정 (아래 명령어 실행후 도커데몬 재시작)
+sudo chown -R $USER ~/.docker
+sudo chmod -R 775 ~/.docker
+cd src/Aspire.AppHost
+dotnet run --project Aspire.AppHost.csproj
+```
+
+### Without Aspire/AppHost
 - DB와 관련 컨테이너를 빌드하고 기동한다.
 ```bash
+cd docker
 sudo docker compose build
 docker compose up
 ```
   
-- 파이썬 의존성을 설치하고 앱을 기동한다
+- 파이썬 의존성을 설치
 ```bash
-# 프로젝트 루트경로에서 - vscode python 환경을 편하게 사용하기 위함
+cd src/Python.FastApi
 python -m venv .venv
 . .venv/bin/activate
 pip install -r python/requirements
+```
 
-# 앱 구동은 python에서 - 일부 상대경로를 참조함
-cd python
+- 파이썬 앱 기동
+```bash
+cd src/Python.FastApi
 python app.py
 ```
-  
-- 마크다운 데이터 경로, 모델 종류 등은 `app.py`에서 설정한다.
 
 
+### Notice
+- 그외 설정사항
+  - 마크다운 데이터 경로, 모델 종류 등은 `app.py`에서 설정
+  - OpenAI, Naver 검색 키 등은 `config.properties`, `secret.properties`에서 설정
+  - `secret.properties`는 `secret.sample.properties`을 참고해 작성
+  - `Python 3.12`, `Mac M1`에서 작업함. `Python 3.13`에서 일부 의존성 충돌 있음
+  - Debian OS는 `psycopg2` 대신 apt 등으로 `psycopg2-binary` 패키지 설치 필요
 
-## Etc
 
-- 제 로컬환경은 Python 3.12, Mac M1임. Python 3.13에서 일부 의존성 충돌 있음.
-- Debian OS는 psycopg2 대신 apt 등으로 psycopg2-binary 패키지 설치 필요.
+## 앱 구조
+- `Dotnet.BlazorUI` : 데이터소스를 입력해 데이터추출, 예상비용 확인, 결제 및 진행
+- `Java.SpringBFF` : extract, engage, expand 기능 단위로 여러 API를 묶어서 호출
+- `Python.FastAPI` : concepts, networks, references 도메인 기반 단편화된 API 제공
+- `Docker` : portainer, postgresql, pgadmin 컨테이너
+- `Aspire.AppHost` : 상기 모든 앱과 도커 컨테이너를 호스팅, 대시보드/모니터링/장애회복 기능제공
+- `Aspire.ServiceDefaults` : 클라우드 네이티브 앱 호스팅 기본값 설정
