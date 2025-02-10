@@ -2,6 +2,7 @@ import datetime
 import pika
 import json
 import logging
+import threading
 from typing import Tuple
 from common.datasources.markdown import Markdown
 from concepts.conceptsreposigory import ConceptsRepository
@@ -19,7 +20,7 @@ class ConceptsService:
 
     def __init__(self):
         self.repository = ConceptsRepository()
-        self.start_consumer()
+        threading.Thread(target=self.start_consumer, daemon=True).start() # 별도스레드에서 실행
         pass
 
     # ---------------------------------------------------
