@@ -149,8 +149,7 @@ class ConceptsService:
     # RABBITMQ
     def callback(self, channel, method, properties, body):
         concepts = json.loads(body)
-        for concept in concepts:
-            self.create_concepts(concept)
+        self.create_concepts(concepts)
         channel.basic_ack(delivery_tag=method.delivery_tag)
         logger.info("callback end")
 

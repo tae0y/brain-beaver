@@ -116,16 +116,15 @@ class ExtractService:
                     print(f"LOG-INFO: extracting {data_name}")
 
                     # extract keyconcepts from data
-                    concepts_list = self.extract_keyconcepts_from_data(
+                    result = self.extract_keyconcepts_from_data(
                         data_name, 
                         data_loader, 
                         {
                             'reason_model_name' : reason_model_name,
                             'embed_model_name' : embed_model_name
                         })
-
-                    # publish message to rabbitmq
-                    if not concepts_list and len(concepts_list) > 0:
+                    if result['status']=='success' and result['data'] is not None:
+                        concepts_list = result['data']
                         self.publish_extracted_dataloader(concepts_list)
 
                 except Exception as e:
@@ -301,7 +300,7 @@ class ExtractService:
             channel = connection.channel()
             channel.queue_declare(queue=QUEUE_NAME, durable=True)
 
-            message = json.dumps(concepts_list)
+            message = json.dumps(concepts_list,default=str)
             channel.basic_publish(
                 exchange='',
                 routing_key=QUEUE_NAME,
