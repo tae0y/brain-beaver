@@ -12,8 +12,8 @@ from extract.extracthandler import router as extract_router
 tags_metadata = [
     {"name":"Extract", "description":"데이터 추출과 관련된 요청을 처리한다."},
     {"name":"Networks", "description":"네트워크 관련 CRUD 요청을 처리한다."},
-    {"name":"References", "description":"참조자료 관련 CRUD 요청을 처리한다."},
-    {"name":"Concepts", "description":"개념관련 CRUD 요청을 처리한다."}
+    {"name":"References", "description":"참고자료 관련 CRUD 요청을 처리한다."},
+    {"name":"Concepts", "description":"주요개념 관련 CRUD 요청을 처리한다."}
 ]
 app = FastAPI(
     openapi_tags= tags_metadata,

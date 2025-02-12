@@ -1,9 +1,12 @@
-from pydantic import BaseModel
-
-class ResponseDTO(BaseModel):
+class SimpleDTO():
     status: str
     message: str
     data: str
+
+    def __init__(self, status: str, message: str, data: str):
+        self.status = status
+        self.message = message
+        self.data = data
 
     def __dict__(self):
         return {

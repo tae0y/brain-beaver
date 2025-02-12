@@ -59,3 +59,21 @@ class NetworksRepository():
             session.close()
 
         return rtndata
+
+    def delete_tb_networks_all(self) -> Tuple[bool, str]:
+        rtncd = 900
+        rtnmsg = '실패'
+
+        session = self.db.get_session()
+        try:
+            session.query(Networks).delete()
+            session.commit()
+            rtncd = 200
+            rtnmsg = '성공'
+        except Exception as e:
+            traceback.print_exc()
+            session.rollback()
+            rtncd = 900
+            rtnmsg = '실패'
+
+        return rtncd, rtnmsg

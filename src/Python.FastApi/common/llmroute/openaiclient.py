@@ -5,7 +5,7 @@ from openai import OpenAI
 import FinanceDataReader as fdr
 import numpy as np
 from common.llmroute.baseclient import BaseClient
-from common.models.responseDTO import ResponseDTO
+from common.models.simpleDTO import SimpleDTO as ResponseDTO
 import json
 
 class OpenAIClient(BaseClient):
@@ -140,9 +140,9 @@ class OpenAIClient(BaseClient):
                 ],
                 response_format = options['format'] if 'format' in options else default_format
             )
-            return ResponseDTO(100, 'Success', json.loads(response.choices[0].message.content))
+            return ResponseDTO(status=100, message='Success', data=json.loads(response.choices[0].message.content))
         except Exception as e:
-            return ResponseDTO(900, f"Internal Server Error - {str(e)}", None)
+            return ResponseDTO(status=900, message=f"Internal Server Error - {str(e)}", data=None)
 
 
 
@@ -169,10 +169,10 @@ class OpenAIClient(BaseClient):
                 model = self.model_name,
                 input = input
             )
-            return ResponseDTO(100, 'Success', response.data[0].embedding)
+            return ResponseDTO(status=100, message='Success', data=response.data[0].embedding)
 
         except Exception as e:
-            return ResponseDTO(900, f"Internal Server Error - {str(e)}", None)
+            return ResponseDTO(status=900, message=f"Internal Server Error - {str(e)}", data=None)
 
     def load_tokenizer(self):
         """

@@ -106,6 +106,45 @@ class ConceptsService:
 
         return {"status": status, "data": data}
 
+    def read_concepts_nearest_by_embedding(self, concept: dict, operation: str, topn: int) -> list:
+        status = ''
+        data = ''
+        try:
+            nearest_list = self.repository.read_tb_concepts_nearest_by_embedding(concept, operation, topn)
+            status = 'success'
+            data = nearest_list
+        except Exception as e:
+            status = 'error'
+            data = str(e)
+
+        return {"status": status, "data": data}
+
+    def read_concpets_top_by_source_target_num(self, topn: int) -> list:
+        status = ''
+        data = ''
+        try:
+            top_list = self.repository.read_tb_concepts_top_by_source_target_num(topn)
+            status = 'success'
+            data = top_list
+        except Exception as e:
+            status = 'error'
+            data = str(e)
+
+        return {"status": status, "data": data}
+    
+    def delete_concepts_all(self) -> dict:
+        status = ''
+        data = ''
+        try:
+            self.repository.delete_tb_concepts_all()
+            status = 'success'
+            data = 'data deleted'
+        except Exception as e:
+            status = 'error'
+            data = str(e)
+
+        return {"status": status, "data": data}
+
     # ---------------------------------------------------
     # RABBITMQ
     def callback(self, channel, method, properties, body):

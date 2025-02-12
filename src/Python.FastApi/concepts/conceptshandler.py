@@ -8,6 +8,7 @@ from common.models.responseDTO import ResponseDTO
 
 router = APIRouter(
     prefix="/api/concepts",
+    tags=["Concepts"],
 )
 
 service = ConceptsService()
@@ -24,7 +25,6 @@ def get_service():
         status.HTTP_422_UNPROCESSABLE_ENTITY:  {"description":"데이터 저장 실패", "content":{ "application/json": { "example": { "status": "error", "message": "input validation error", "data": "..." } } }, "model": ResponseDTO},
         status.HTTP_500_INTERNAL_SERVER_ERROR: {"description":"데이터 저장 실패", "content":{ "application/json": { "example": { "status": "error", "message": "internal server error", "data": "XXXException occured during ..." } } }, "model": ResponseDTO}
     },
-    tags=["Concepts"],
 )
 def create_concepts(
     concepts_list: Annotated[list[dict], Body(..., examples = [ [{ "title": "개념명", "keywords": "키워드", "category": "카테고리", "summary": "개요", "status": "상태", "data_name": "데이터명", "source_num": 0, "target_num": 0, "create_time": "2021-01-01 00:00:00", "update_time": "2021-01-01 00:00:00", "embedding": [0, 0] }, { "title": "개념명2", "keywords": "키워드2", "category": "카테고리2", "summary": "개요2", "status": "상태2", "data_name": "데이터명2", "source_num": 0, "target_num": 0, "create_time": "2021-01-01 00:00:00", "update_time": "2021-01-01 00:00:00", "embedding": [0, 0] }] ],
@@ -52,7 +52,6 @@ def create_concepts(
         status.HTTP_422_UNPROCESSABLE_ENTITY:  {"description":"데이터 수정 실패", "content":{ "application/json": { "example": { "status": "error", "message": "input validation error", "data": "..." } } }, "model": ResponseDTO},
         status.HTTP_500_INTERNAL_SERVER_ERROR: {"description":"데이터 수정 실패", "content":{ "application/json": { "example": { "status": "error", "message": "internal server error", "data": "XXXException occured during ..." } } }, "model": ResponseDTO}
     },
-    tags=["Concepts"],
 )
 def update_concept(
     concepts_list: Annotated[dict, Body(..., examples = [ { "id": 1, "title": "개념명-수정00", "keywords": "키워드-수정00", "category": "카테고리-수정00", "summary": "개요-수정00", "status": "상태-수정00", "data_name": "데이터명-수정00", "source_num": 99, "target_num": 99, "create_time": "2022-01-01 00:00:00", "update_time": "2022-01-01 00:00:00", "embedding": [ 0, 0 ] } ])]
@@ -106,7 +105,6 @@ def update_concept_source_target_count(
         status.HTTP_422_UNPROCESSABLE_ENTITY:  {"description":"데이터 조회 실패", "content":{ "application/json": { "example": { "status": "error", "message": "input validation error", "data": "..." } } }, "model": ResponseDTO},
         status.HTTP_500_INTERNAL_SERVER_ERROR: {"description":"데이터 조회 실패", "content":{ "application/json": { "example": { "status": "error", "message": "internal server error", "data": "XXXException occured during ..." } } }, "model": ResponseDTO}
     },
-    tags=["Concepts"],
 )
 def get_concepts(
     service: Annotated[ConceptsService, Depends(get_service)] = get_service
@@ -132,7 +130,6 @@ def get_concepts(
         status.HTTP_422_UNPROCESSABLE_ENTITY:  {"description":"데이터 조회 실패", "content":{ "application/json": { "example": { "status": "error", "message": "input validation error", "data": "..." } } }, "model": ResponseDTO},
         status.HTTP_500_INTERNAL_SERVER_ERROR: {"description":"데이터 조회 실패", "content":{ "application/json": { "example": { "status": "error", "message": "internal server error", "data": "XXXException occured during ..." } } }, "model": ResponseDTO}
     },
-    tags=["Concepts"],
 )
 def get_concept(
     concept_id: int,
@@ -158,7 +155,6 @@ def get_concept(
         status.HTTP_422_UNPROCESSABLE_ENTITY:  {"description":"데이터 조회 실패", "content":{ "application/json": { "example": { "status": "error", "message": "input validation error", "data": "..." } } }, "model": ResponseDTO},
         status.HTTP_500_INTERNAL_SERVER_ERROR: {"description":"데이터 조회 실패", "content":{ "application/json": { "example": { "status": "error", "message": "internal server error", "data": "XXXException occured during ..." } } }, "model": ResponseDTO}
     },
-    tags=["Concepts"],
 )
 def get_concepts_count(
     service: Annotated[ConceptsService, Depends(get_service)] = get_service
@@ -170,5 +166,28 @@ def get_concepts_count(
         return JSONResponse(status_code=200, content=dict(content))
     else:
         data = result['data'] #error message string
+        content = ResponseDTO( status='error', message='internal server error', data=data )
+        return JSONResponse(status_code=500, content=dict(content))
+
+@router.delete(
+    "",
+    summary="주요개념 전체를 삭제한다",
+    description="tb_concepts에서 데이터를 삭제한다.",
+    responses={
+        status.HTTP_200_OK:                    {"description":"데이터 삭제 성공", "content":{ "application/json": { "example": { "status": "success", "message": "data deleted", "data": "..." } } }, "model": ResponseDTO},
+        status.HTTP_400_BAD_REQUEST:           {"description":"데이터 삭제 실패", "content":{ "application/json": { "example": { "status": "error", "message": "essential input missing", "data": "..." } } }, "model": ResponseDTO},
+        status.HTTP_500_INTERNAL_SERVER_ERROR: {"description":"데이터 삭제 실패", "content":{ "application/json": { "example": { "status": "error", "message": "internal server error", "data": "XXXException occured during ..." } } }, "model": ResponseDTO}
+    },
+)
+def delete_concepts_all(
+    service: Annotated[ConceptsService, Depends(get_service)] = get_service
+) -> ResponseDTO:
+    result = service.delete_concepts_all()
+    if result['status'] == 'success':
+        data = result['data']
+        content = ResponseDTO( status='success', message='data deleted', data=data )
+        return JSONResponse(status_code=200, content=dict(content))
+    else:
+        data = result['data']
         content = ResponseDTO( status='error', message='internal server error', data=data )
         return JSONResponse(status_code=500, content=dict(content))

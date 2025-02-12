@@ -37,7 +37,7 @@ class NetworksService:
             operation = 'cosine_distance'
 
         # 네트워크 관계 저장
-        keyconcepts = conceptService.read_concepts_all()
+        keyconcepts = conceptService.get_concepts()
         for c in keyconcepts:
             try:
                 # TODO: 연관성을 검사하는 것은 아니고, 의미적 유사도를 측정하는 것임. 연관성, 찬/반을 따지려면 어떻게 해야할까??
@@ -51,3 +51,6 @@ class NetworksService:
 
     def read_networks_all(self):
         return self.repository.read_tb_networks_all()
+
+    def delete_networks_all(self):
+        return self.repository.delete_tb_networks_all()

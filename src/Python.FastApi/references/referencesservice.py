@@ -20,7 +20,7 @@ class ReferencesService:
         self.constants = Constants.get_instance()
         self.llmroute = LLMRouter()
 
-    def reset_expand_keyconcpts(self):
+    def delete_refereces_all(self):
         """
         expand_keyconcpts 테이블을 초기화한다.
         """
@@ -44,9 +44,9 @@ class ReferencesService:
 
         concepts = []
         if action_type == 'top':
-            concepts.extend(conceptService.read_concepts_top(action_limit))
+            concepts.extend(conceptService.read_concpets_top_by_source_target_num(action_limit))
         elif action_type == 'all':
-            concepts.extend(conceptService.read_concepts_all())
+            concepts.extend(conceptService.get_concepts())
 
         # 검색 병렬 처리
         reason_model_name = options['reason_model_name'] if 'reason_model_name' in options else 'gemma2:9b-instruct-q5_K_M'

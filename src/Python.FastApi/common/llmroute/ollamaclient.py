@@ -2,7 +2,7 @@ import ollama
 import json
 from transformers import AutoTokenizer
 from common.llmroute.baseclient import BaseClient
-from common.models.responseDTO import ResponseDTO
+from common.models.simpleDTO import SimpleDTO as ResponseDTO
 
 class OllamaClient(BaseClient):
     """
@@ -96,9 +96,9 @@ class OllamaClient(BaseClient):
                     options = {k: v for k, v in options.items() if k != 'format'}
                 )
 
-            return ResponseDTO(100, 'Success', json.loads(response.response))
+            return ResponseDTO(status=100, message='Success', data=json.loads(response.response))
         except Exception as e:
-            return ResponseDTO(900, f"Internal Server Error - {str(e)}", None)
+            return ResponseDTO(status=900, message=f"Internal Server Error - {str(e)}", data=None)
 
     def embed(self, input, options: dict, operation: str) -> ResponseDTO:
         """
@@ -121,9 +121,9 @@ class OllamaClient(BaseClient):
                 )
 
             if (operation is not None) and (operation == 'batch'):
-                return ResponseDTO(100, 'Success', response.embeddings)
+                return ResponseDTO(status=100, message='Success', data=response.embeddings)
             else:
-                return ResponseDTO(100, 'Success', response.embeddings[0])
+                return ResponseDTO(status=100, message='Success', data=response.embeddings[0])
         except Exception as e:
             return ResponseDTO(900, f"Internal Server Error - {str(e)}", None)
 

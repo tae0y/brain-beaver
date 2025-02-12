@@ -79,7 +79,7 @@ class ConceptsRepository():
             session.close()
         return rtndata
 
-    def read_tb_concepts_top(self, limit: int) -> list[Concepts]:
+    def read_tb_concepts_top_by_source_target_num(self, limit: int) -> list[Concepts]:
         """
         tb_concepts 테이블에서 상위 limit개의 데이터를 읽어온다
         """
@@ -231,3 +231,24 @@ class ConceptsRepository():
         finally:
             session.close()
         return rtndata
+
+    def delete_tb_concepts_all(self) -> list[int]:
+        """
+        tb_concepts 테이블의 모든 데이터를 삭제한다
+        """
+        rtncd = 900
+        rtnmsg = '실패'
+        session = self.db.get_session()
+        try:
+            session.query(Concepts).delete()
+            session.commit()
+            rtncd = 200
+            rtnmsg = '성공'
+        except Exception as e:
+            traceback.print_exc()
+            session.rollback()
+            rtncd = 900
+            rtnmsg = '실패'
+        finally:
+            session.close()
+        return rtncd, rtnmsg
