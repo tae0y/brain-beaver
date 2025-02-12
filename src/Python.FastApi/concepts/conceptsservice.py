@@ -31,7 +31,6 @@ class ConceptsService:
         try:
             for concept in concepts_list:
                 concept['embedding'] = self.pad_vector_to4096(concept['embedding'])
-
             self.repository.create_tb_concepts_list(concepts_list)
             status = 'success'
             data = 'data created'
@@ -41,10 +40,19 @@ class ConceptsService:
 
         return {"status": status, "data": data}
 
-    def update_concepts(self, concepts_list: list[dict]) -> dict:
-        raise NotImplementedError
-        #self.repository.update_tb_concepts_list(concepts_list)
-        #return {"status": "success"}
+    def update_concepts(self, concepts: dict) -> dict:
+        status = ''
+        data = ''
+        try:
+            concepts['embedding'] = self.pad_vector_to4096(concepts['embedding'])
+            self.repository.update_tb_concepts(concepts)
+            status = 'success'
+            data = 'data updated'
+        except Exception as e:
+            status = 'error'
+            data = str(e)
+
+        return {"status": status, "data": data}
 
     def update_concepts_source_target_count(self, concept_id: int, source_num: int, target_num: int) -> dict:
         status = ''

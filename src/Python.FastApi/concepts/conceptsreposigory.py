@@ -153,6 +153,44 @@ class ConceptsRepository():
         return rtndata
 
 
+    def update_tb_concepts(self, concepts: dict) -> Tuple[int, str]:
+        """
+        tb_concepts 테이블의 데이터를 갱신한다
+        """
+        rtncd = 900
+        rtnmsg = '실패'
+        session = self.db.get_session()
+        try:
+            session.execute(update(Concepts)
+                            .where(Concepts.id == concepts['id'])
+                            .values(
+                                title = concepts['title'],
+                                keywords = concepts['keywords'],
+                                category = concepts['category'],
+                                summary = concepts['summary'],
+                                status = concepts['status'],
+                                data_name = concepts['data_name'],
+                                source_num = concepts['source_num'],
+                                target_num = concepts['target_num'],
+                                create_time = concepts['create_time'],
+                                update_time = concepts['update_time'],
+                                embedding = concepts['embedding']
+                            )
+            )
+            session.commit()
+            rtncd = 200
+            rtnmsg = '성공'
+        except Exception as e:
+            traceback.print_exc()
+            session.rollback()
+            rtncd = 900
+            rtnmsg = '실패'
+        finally:
+            session.close()
+        return rtncd, rtnmsg
+
+
+
     def update_tb_concepts_source_target_count(self, concept_id, source_num, target_num) -> Tuple[int, str]:
         """
         keyconcept_list의 source_num, target_num을 갱신한다

@@ -9,5 +9,15 @@ class Networks(Base):
     source_concept_id      = Column(String)
     target_concept_id      = Column(String)
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "source_concept_id": self.source_concept_id,
+            "target_concept_id": self.target_concept_id
+        }
+
+    def __repr__(self):
+        return str(self.to_dict())
+
     def __str__(self):
-        return f"Networks(id={self.id}, source={self.source}, target={self.target})"
+        return str(self.to_dict())

@@ -2,7 +2,7 @@ from typing import Tuple
 import traceback
 from sqlalchemy import insert, select
 from common.db.db import DB
-from references.referencesmodel import References, ReferencesResult
+from references.referencesmodel import References
 
 class ReferencesRepository:
     """
