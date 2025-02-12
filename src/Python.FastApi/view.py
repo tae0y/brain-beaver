@@ -4,6 +4,9 @@ import math
 from concepts.conceptsservice import ConceptsService
 from networks.networksservice import NetworksService
 from references.referencesservice import ReferencesService
+from concepts.conceptsmodel import Concepts
+from networks.networksmodel import Networks
+from references.referencesmodel import References
 
 # 사이드바 상단 여백 조정
 detail_container = st.sidebar.container()
@@ -19,8 +22,11 @@ networks_service = NetworksService()
 references_service = ReferencesService()
 
 # 데이터 조회
+networks : list[Networks]
+concepts : list[Concepts]
+references : list[References]
 networks = networks_service.read_networks_all()
-concepts = concepts_service.read_concepts_all()
+concepts = concepts_service.get_concepts()['data']
 references = references_service.read_references_all()
 print(f"networks: {len(networks)}, concepts: {len(concepts)}, references: {len(references)}")
 

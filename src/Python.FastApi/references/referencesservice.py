@@ -44,9 +44,9 @@ class ReferencesService:
 
         concepts = []
         if action_type == 'top':
-            concepts.extend(conceptService.read_concpets_top_by_source_target_num(action_limit))
+            concepts.extend(conceptService.read_concpets_top_by_source_target_num(action_limit)['data'])
         elif action_type == 'all':
-            concepts.extend(conceptService.get_concepts())
+            concepts.extend(conceptService.get_concepts()['data'])
 
         # 검색 병렬 처리
         reason_model_name = options['reason_model_name'] if 'reason_model_name' in options else 'gemma2:9b-instruct-q5_K_M'

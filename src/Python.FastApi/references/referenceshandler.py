@@ -53,7 +53,7 @@ def delete_refereces_all(
     },
 )
 def expand_keyconcepts_with_websearch(
-    options: Annotated[dict, Body(..., examples=[ { "action_type": "top", "action_limit": 10 }, { "action_type": "all" } ])],
+    options: Annotated[dict, Body(..., examples=[ { "action_type": "top", "action_limit": 10, "reason_model_name": "gemma2:9b-instruct-q5_K_M" }, { "action_type": "all" } ])],
     service: Annotated[ReferencesService, Depends(get_service)] = get_service,
 ) -> ResponseDTO:
     """

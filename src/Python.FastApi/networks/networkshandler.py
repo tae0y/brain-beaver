@@ -26,7 +26,7 @@ def get_service():
     },
 )
 def engage_keyconcepts_into_networks(
-    options: Annotated[dict, Body(..., examples=[ { "operation": "cosine_distance" } ])],
+    options: Annotated[dict, Body(..., examples=[ { "operation": "cosine_distance", "cosine_sim_check" : "true" } ])],
     service: Annotated[NetworksService, Depends(get_service)] = get_service,
 ) -> ResponseDTO:
     """
