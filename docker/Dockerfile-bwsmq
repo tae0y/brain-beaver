@@ -13,3 +13,26 @@ RUN fc-cache -f && rm -rf /var/cache/*
 RUN apk add tzdata && \
         cp /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
         echo "Asia/Seoul" > /etc/timezone
+
+
+# -------------------------------- 보안설정 -------------------------------
+# 
+# # 새 사용자 생성
+# rabbitmqctl add_user myuser StrongPassword123!
+# 
+# # 사용자의 기본 가상 호스트(/)에 대한 권한 설정
+# rabbitmqctl set_permissions -p / myuser ".*" ".*" ".*"
+# 
+# # 새 가상 호스트 생성
+# rabbitmqctl add_vhost myvhost
+# 
+# # 가상 호스트에 대해 사용자 권한 설정
+# rabbitmqctl set_permissions -p myvhost myuser ".*" ".*" ".*"
+# 
+# ### filepath: /etc/rabbitmq/rabbitmq.conf
+# listeners.ssl.default = 5671
+# ssl_options.cacertfile           = /etc/rabbitmq/ssl/ca_certificate.pem
+# ssl_options.certfile             = /etc/rabbitmq/ssl/server_certificate.pem
+# ssl_options.keyfile              = /etc/rabbitmq/ssl/server_key.pem
+# ssl_options.verify               = verify_peer
+# ssl_options.fail_if_no_peer_cert = true
