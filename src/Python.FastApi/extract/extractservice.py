@@ -251,21 +251,34 @@ class ExtractService:
             batch_size : int
             if isinstance(embed_model_client, OpenAIClient):
                 batch_size = 1
+                for i in range(0, len(concepts_list), batch_size):
+                    batch = concepts_list[i:i+batch_size]
+                    texts_to_embed = [f"{data.get('title','')} {data.get('summary','')}" for data in batch]
+                    embedding = embed_model_client.embed(texts_to_embed, {}, 'batch').data
+
+                    batch['embedding']   = self.pad_embedding_with_zero_until_4096(embedding)
+                    batch['status']      = None
+                    batch['data_name']   = data_name
+                    batch['create_time'] = datetime.datetime.now()
+                    batch['update_time'] = None
+                    batch['source_num']  = 0
+                    batch['target_num']  = 0
+
             elif isinstance(embed_model_client, OllamaClient):
                 batch_size = 10
-            for i in range(0, len(concepts_list), batch_size):
-                batch = concepts_list[i:i+batch_size]
-                texts_to_embed = [f"{data.get('title','')} {data.get('summary','')}" for data in batch]
-                embeddings = embed_model_client.embed(texts_to_embed, {}, 'batch').data
+                for i in range(0, len(concepts_list), batch_size):
+                    batch = concepts_list[i:i+batch_size]
+                    texts_to_embed = [f"{data.get('title','')} {data.get('summary','')}" for data in batch]
+                    embeddings = embed_model_client.embed(texts_to_embed, {}, 'batch').data
 
-                for concept, embedding in zip(batch, embeddings):
-                    concept['embedding']   = self.pad_embedding_with_zero_until_4096(embedding)
-                    concept['status']      = None
-                    concept['data_name']   = data_name
-                    concept['create_time'] = datetime.datetime.now()
-                    concept['update_time'] = None
-                    concept['source_num']  = 0
-                    concept['target_num']  = 0
+                    for concept, embedding in zip(batch, embeddings):
+                        concept['embedding']   = self.pad_embedding_with_zero_until_4096(embedding)
+                        concept['status']      = None
+                        concept['data_name']   = data_name
+                        concept['create_time'] = datetime.datetime.now()
+                        concept['update_time'] = None
+                        concept['source_num']  = 0
+                        concept['target_num']  = 0
 
             status = 'success'
             data = concepts_list
