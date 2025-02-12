@@ -1,7 +1,7 @@
 services:
 
-  docker_admin:
-    container_name: docker_admin
+  bws_container_admin:
+    container_name: bws_container_admin
     build:
       context: .
       dockerfile: Dockerfile-dockeradmin
