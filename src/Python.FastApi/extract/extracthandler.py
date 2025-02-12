@@ -28,19 +28,7 @@ def get_service():
 def check_budget(
     datasourcetype: Annotated[str, Body( ..., examples=[ "markdown" ], description="data type")],
     datasourcepath: Annotated[str, Body( ..., examples=[ "/Users/bachtaeyeong/20_DocHub/TIL" ], description="data path" )],
-    options: Annotated[dict, Body(
-        examples=[
-            {
-                "ignore_dir_list": [".git", ".vscode", ".obsidian"],
-                "reason_model_name": "gemma2:9b-instruct-q5_K_M",
-                "embed_model_name": "gemma2:9b-instruct-q5_K_M",
-                "max_budget": 1000,
-                "shuffle_flag" : True,
-                "max_file_num": 10,
-                "prompt": "prompt text for generate output from llm",
-                "format": "json schema for structured output from llm"
-            }
-        ],
+    options: Annotated[dict, Body( examples=[ { "reason_model_name": "gpt-4o-mini", "embed_model_name": "text-embedding-3-small", "max_budget": 1000, "max_file_num": 1, "shuffle_flag": "true" } ],
         description="options, usually not required"
     )],
     service: Annotated[ExtractService, Depends(get_service)]
