@@ -48,6 +48,8 @@ class NetworksService:
                     for nearest in nearest_list['data']:
                         if cosine_sim_check == "true" and cosine_similarity(c.embedding, nearest.embedding) > 0.7:
                             self.repository.create_network_connections_tb_networks(str(c.id), str(nearest.id))
+                        elif cosine_sim_check == "false":
+                            self.repository.create_network_connections_tb_networks(str(c.id), str(nearest.id))
                 except Exception as e:
                     traceback.print_exc()
                     continue

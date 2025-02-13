@@ -41,6 +41,7 @@ class ReferencesService:
         conceptService = ConceptsService()
         action_type = options['action_type'] if 'action_type' in options else 'all'
         action_limit = options['action_limit'] if 'action_limit' in options else 10
+        quorum_check = options['quorum_check'] if 'quorum_check' in options else 'true'
 
         concepts = []
         if action_type == 'top':
@@ -55,7 +56,7 @@ class ReferencesService:
         #TODO : 비용추계 추가
         results = []
         for concept in concepts:
-            results.append(self.expand_one_concept_with_websearch(concept, llmclient))
+            results.append(self.expand_one_concept_with_websearch(concept, llmclient, quorum_check))
         #TODO : OpenAI의 경우 병렬호출, 그외에는 웹검색만 병렬호출
         #pool = ThreadPoolExecutor(max_workers=self.constants.thread_global_thread_pool)
         #results = list(
@@ -69,7 +70,7 @@ class ReferencesService:
         print(f"LOG-DEBUG {len(successful_results)}건 처리됨)")
 
 
-    def expand_one_concept_with_websearch(self, concept : Concepts, llmclient : BaseClient):
+    def expand_one_concept_with_websearch(self, concept : Concepts, llmclient : BaseClient, quorum_check : str):
         """
         주요개념 하나에 대해 웹검색을 수행하고 저장한다
         """
@@ -238,7 +239,7 @@ class ReferencesService:
             ).data['text']
             print(f"LOG-DEBUG : 검색결과 종합결과 - {final_result}")
 
-            # 다수결로 인용 결정
+            # 다수결 확인
             true_count = 0
             false_count = 0
             for item in comparison_list:
@@ -248,11 +249,18 @@ class ReferencesService:
                     false_count += 1
 
             # 결과 저장
-            if true_count > false_count:
+            if quorum_check == 'true' and true_count > false_count:
                 reference_list = []
                 reference_list.append({
                     "concept_id" : concept.id,
-                    "description" : f"종합의견: {final_result} / 상세의견: {str(comparison_list)}"
+                    "description" : f"악마의대변인 : {keyword_gen_results['opposition']} // 최종검토의견: {final_result} // 관련근거문서: {str(comparison_list)}"
+                })
+                self.repository.create_reference_into_tb_references(reference_list)
+            elif quorum_check == 'false':
+                reference_list = []
+                reference_list.append({
+                    "concept_id" : concept.id,
+                    "description" : f"악마의대변인 : {keyword_gen_results['opposition']} // 최종검토의견: {final_result} / 관련근거문서: {str(comparison_list)}"
                 })
                 self.repository.create_reference_into_tb_references(reference_list)
 
