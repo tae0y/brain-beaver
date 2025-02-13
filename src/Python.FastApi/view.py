@@ -51,7 +51,11 @@ for concept in concepts:
     if len(concepts) < 10 :
         node_size = node_default_size
     else:
-        node_size = node_default_size * math.log(concept.source_num + concept.target_num) #* node_multiple
+        src_trg_sum = concept.source_num + concept.target_num
+        if src_trg_sum == 0:
+            node_size = node_default_size
+        else:
+            node_size = node_default_size * math.log(src_trg_sum) #* node_multiple
 
     node_color = node_neutral
     if concept.source_num > concept.target_num * 2:
