@@ -6,6 +6,7 @@ import threading
 from typing import Tuple
 from common.datasources.markdown import Markdown
 from concepts.conceptsreposigory import ConceptsRepository
+from common.system.constants import Constants
 #from networks.networksservice import NetworksService #순환참조 발생으로 각주처리
 
 RABBITMQ_HOST = 'localhost'
@@ -20,6 +21,7 @@ class ConceptsService:
 
     def __init__(self):
         self.repository = ConceptsRepository()
+        self.constants = Constants.get_instance()
         threading.Thread(target=self.start_consumer, daemon=True).start() # 별도스레드에서 실행
         pass
 
@@ -155,7 +157,9 @@ class ConceptsService:
 
     def start_consumer(self):
         logger.info("start_consumer called")
-        with pika.BlockingConnection(pika.ConnectionParameters(RABBITMQ_HOST)) as connection:
+        credentials = pika.PlainCredentials(self.constants.rabbitmq_user, self.constants.rabbitmq_passwd)
+        connection_params = pika.ConnectionParameters(RABBITMQ_HOST, credentials=credentials)
+        with pika.BlockingConnection(connection_params) as connection:
             channel = connection.channel()
             channel.queue_declare(queue=QUEUE_NAME, durable=True)
             channel.basic_consume(queue=QUEUE_NAME, on_message_callback=self.callback)

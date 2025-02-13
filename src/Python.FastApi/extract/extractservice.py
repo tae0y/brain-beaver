@@ -8,6 +8,7 @@ from common.llmroute.openaiclient import OpenAIClient
 from common.llmroute.ollamaclient import OllamaClient
 from common.llmroute.baseclient import BaseClient
 from concepts.conceptsmodel import Concepts
+from common.system.constants import Constants
 
 
 RABBITMQ_HOST = 'localhost'
@@ -18,6 +19,7 @@ class ExtractService:
     def __init__(self):
         llmrouter = LLMRouter()
         self.llmclients = llmrouter.get_clients_all()
+        self.constants = Constants.get_instance()
         pass
 
 
@@ -309,8 +311,9 @@ class ExtractService:
     def publish_extracted_dataloader(self, concepts_list:list[dict]):
         """
         """
-
-        with pika.BlockingConnection(pika.ConnectionParameters(RABBITMQ_HOST)) as connection:
+        credentials = pika.PlainCredentials(self.constants.rabbitmq_user, self.constants.rabbitmq_passwd)
+        connection_params = pika.ConnectionParameters(RABBITMQ_HOST, credentials=credentials)
+        with pika.BlockingConnection(connection_params) as connection:
             channel = connection.channel()
             channel.queue_declare(queue=QUEUE_NAME, durable=True)
 

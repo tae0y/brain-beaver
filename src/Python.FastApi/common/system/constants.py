@@ -33,6 +33,10 @@ class Constants:
     # OpenAI constants
     openai_api_key :str
 
+    # RabbitMQ constants
+    rabbitmq_user :str
+    rabbitmq_passwd :str
+
     # ---------- Configs ---------- 
     # Thread constants
     thread_global_thread_pool :int
@@ -88,6 +92,10 @@ class Constants:
 
         # OpenAI
         self.openai_api_key = secret.get('OpenAI', 'API_KEY')
+
+        # RabbitMQ
+        self.rabbitmq_user = secret.get('RabbitMQ', 'USER')
+        self.rabbitmq_passwd = secret.get('RabbitMQ', 'PASSWD')
 
         """
         config.properties 파일 로드 (app.py가 실행되는 위치 기준으로 설정)
