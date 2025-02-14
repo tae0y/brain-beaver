@@ -3,7 +3,7 @@ import logging
 import uvicorn
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
-#from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from concepts.conceptshandler import router as concepts_router
 from networks.networkshandler import router as networks_router
 from references.referenceshandler import router as references_router
@@ -36,7 +36,7 @@ app.include_router(networks_router)
 app.include_router(references_router)
 app.include_router(extract_router)
 
-#FastAPIInstrumentor().instrument_app(app)
+FastAPIInstrumentor().instrument_app(app)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -48,10 +48,11 @@ def rootPage() -> str:
 
 if __name__ == "__main__":
     """
-    디버깅을 위해 역으로 파이썬 안에서 Uvicorn을 호출
+    디버깅을 위해 역으로 파이썬 안에서 Uvicorn을 호출한다.
     """
     uvicorn.run(
-        app=app,
+        "app:app",
         host="0.0.0.0",
-        port=int(os.environ.get("UVICORN_PORT", 8111))
+        port=int(os.environ.get("UVICORN_PORT", 8111)),
+        reload=True
     )
