@@ -1,6 +1,49 @@
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
+using Microsoft.VisualBasic;
 
 var builder = DistributedApplication.CreateBuilder(args);
+
+
+/****************************************************************************************
+ * 
+ *  OpenTelemetry
+ * 
+ ****************************************************************************************/
+
+
+
+
+
+/****************************************************************************************
+ * 
+ *  Health Check
+ * 
+ ****************************************************************************************/
+
+var pythonPortStr = Environment.GetEnvironmentVariable("UVICORN_PORT");
+int pythonPort = int.TryParse(pythonPortStr, out int pythonPortParsed) ? pythonPortParsed : 8111;
+
+// python-health-check
+builder.Services.AddHealthChecks().AddCheck("python-health-check", 
+    () =>  {
+        try {
+            using var client = new System.Net.Http.HttpClient();
+            client.Timeout = TimeSpan.FromSeconds(2);
+            var response = client.GetAsync($"http://localhost:{pythonPort}")
+                                 .GetAwaiter()
+                                 .GetResult();
+            return response.StatusCode == System.Net.HttpStatusCode.OK 
+                ? HealthCheckResult.Healthy("Python App running") 
+                : HealthCheckResult.Unhealthy("Python App something wrong");
+        }
+        catch (System.Exception ex) {
+            return HealthCheckResult.Unhealthy("Python App something wrong : " + ex.Message);
+        }
+    },
+    tags: new[] { "python" }
+);
 
 
 /****************************************************************************************
@@ -65,26 +108,38 @@ var rabbitMQContainer = builder.AddDockerfile(
  *  Python Application Hosting
  * 
  ****************************************************************************************/
-var portValueStr = Environment.GetEnvironmentVariable("UVICORN_PORT");
-var portValueInt = int.TryParse(portValueStr, out int portParsed) ? portParsed : 8111;
 
 // Python Hosting은 실험적 기능으로, 추가 방법이 바뀔 수 있어 Warning을 띄움. 테스트 용도로만 사용이 권장됨.
 #pragma warning disable ASPIREHOSTINGPYTHON001
-var uvicornApp = builder.AddUvicornApp(
-        name: "python",                        // Name of the Python project
-        projectDirectory: "../Python.FastAPI", // Path to the Python project
-        appName: "app:app",                    // {FILE_NAME}:{APP_VARIABLE_NAME}
-        args: new[] { 
-            "--reload"
-        }
+var pythonApp = builder.AddPythonApp(
+        name: "python",
+        projectDirectory: "../Python.FastAPI",
+        virtualEnvironmentPath: "../Python.FastAPI/.venv",
+        scriptPath: "app.py",
+        scriptArgs: new[] {""}
     )
-    // 무조건 환경변수로 지정된 PORT를 따라가는 이슈가 있어 export PORT=8000 같이 지정해줌
     .WithHttpEndpoint(
-        targetPort: portValueInt,      // tatgetPort : Port the resource is listening on
-        port: portValueInt + 1         // port : Port that will be exposed to the outside
-    )
+        targetPort: pythonPort,
+        port: pythonPort+1)
     .WaitFor(rabbitMQContainer)
-    .WaitFor(postgresqlContainer);
+    .WaitFor(postgresqlContainer)
+    .WithHealthCheck("python-health-check"); // 30초마다 헬스체크, 타임아웃 2초, 실패시 3번 재시도
+
+//var uvicornApp = builder.AddUvicornApp(
+//        name: "python",                        // Name of the Python project
+//        projectDirectory: "../Python.FastAPI", // Path to the Python project
+//        appName: "app:app",                    // {FILE_NAME}:{APP_VARIABLE_NAME}
+//        args: new[] { 
+//            "--reload"
+//        }
+//    )
+//    // 무조건 환경변수로 지정된 PORT를 따라가는 이슈가 있어 export PORT=8000 같이 지정해줌
+//    .WithHttpEndpoint(
+//        targetPort: portValueInt,      // tatgetPort : Port the resource is listening on
+//        port: portValueInt             // port : Port that will be exposed to the outside
+//    )
+//    .WaitFor(rabbitMQContainer)
+//    .WaitFor(postgresqlContainer);
 #pragma warning restore ASPIREHOSTINGPYTHON001
 
 
