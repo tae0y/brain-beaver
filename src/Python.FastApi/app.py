@@ -39,13 +39,12 @@ app.include_router(extract_router)
 
 logging.basicConfig(level=logging.INFO)
 tracer = configure_otel_otlp(
-    endpoint=os.environ.get("OTEL_EXPORTER_OTLP_ENDPOINT", "localhost:18889")
+    endpoint=os.environ.get("OTEL_EXPORTER_OTLP_ENDPOINT", "http://localhost:18889")
 )
 logger = logging.getLogger(__name__)
 
-# TODO: Exclude files, Request/Response Hook, Http Header Capture, ...
-#FastAPIInstrumentor().instrument()
-#FastAPIInstrumentor().instrument_app(app)
+# FastAPI OpenTelemetry 계측 활성화
+FastAPIInstrumentor.instrument_app(app)
 
 @app.get("/")
 def rootPage() -> str:

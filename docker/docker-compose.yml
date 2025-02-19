@@ -54,6 +54,18 @@ services:
     volumes:
       - ./rabbitmq_volume:/var/lib/rabbitmq
 
+  bwsotelcollector:
+    container_name: bwsotelcollector
+    build:
+      context: .
+      dockerfile: Dockerfile-otelcollector
+    restart: always
+    ports:
+      - "18889:4317"
+      - "18888:4318"
+    volumes:
+      - ./otelcollector_volume:/etc/otel-collector-config.yaml
+
   #bwswas:
   #  container_name: bwswas
   #  build:

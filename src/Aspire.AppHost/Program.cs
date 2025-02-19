@@ -12,8 +12,28 @@ var builder = DistributedApplication.CreateBuilder(args);
  * 
  ****************************************************************************************/
 
-
-
+var justdirectory_otelcollector_volume = "otelcollector_volume";
+var otelCollectorContainer = builder.AddDockerfile(
+        "otelcollector",
+        "../../docker",            // 도커파일이 위치한 디렉토리 상대경로 (AppHost.csproj 기준)
+        "Dockerfile-otelcollector" // 도커파일 이름
+    )
+    .WithContainerName("bwsotelcollector")
+    .WithHttpEndpoint(
+        name: "otlp1",
+        port: 18888,
+        targetPort: 18888
+    )
+    .WithEndpoint(
+        name: "otlp2",
+        port: 4317,
+        targetPort: 18889
+    )
+    .WithVolume(justdirectory_otelcollector_volume, "/data")
+    .WithBindMount(
+        source: "../../docker/otel.conf/otel-collector-config.yaml",
+        target: "/etc/otel-collector-config.yaml"
+    );
 
 
 /****************************************************************************************
@@ -116,15 +136,18 @@ var pythonApp = builder.AddPythonApp(
         projectDirectory: "../Python.FastAPI",
         virtualEnvironmentPath: "../Python.FastAPI/.venv",
         scriptPath: "app.py",
-        scriptArgs: new[] {""}
+        scriptArgs: new[] {
+            ""
+        }
     )
     .WithHttpEndpoint(
         targetPort: pythonPort,
         port: pythonPort+1)
+    .WithEnvironment("OTEL_EXPORTER_OTLP_ENDPOINT", "http://localhost:18889")
+    .WaitFor(otelCollectorContainer)
     .WaitFor(rabbitMQContainer)
     .WaitFor(postgresqlContainer)
-    .WithHealthCheck("python-health-check"); // 30초마다 헬스체크, 타임아웃 2초, 실패시 3번 재시도
-
+    .WithHealthCheck("python-health-check");
 //var uvicornApp = builder.AddUvicornApp(
 //        name: "python",                        // Name of the Python project
 //        projectDirectory: "../Python.FastAPI", // Path to the Python project
@@ -135,11 +158,14 @@ var pythonApp = builder.AddPythonApp(
 //    )
 //    // 무조건 환경변수로 지정된 PORT를 따라가는 이슈가 있어 export PORT=8000 같이 지정해줌
 //    .WithHttpEndpoint(
-//        targetPort: portValueInt,      // tatgetPort : Port the resource is listening on
-//        port: portValueInt             // port : Port that will be exposed to the outside
+//        targetPort: pythonPort,        // tatgetPort : Port the resource is listening on
+//        port: pythonPort+1             // port : Port that will be exposed to the outside
 //    )
+//    .WithEnvironment("OTEL_EXPORTER_OTLP_ENDPOINT", "http://localhost:18889")
+//    .WaitFor(otelCollectorContainer)
 //    .WaitFor(rabbitMQContainer)
-//    .WaitFor(postgresqlContainer);
+//    .WaitFor(postgresqlContainer)
+//    .WithHealthCheck("python-health-check");
 #pragma warning restore ASPIREHOSTINGPYTHON001
 
 
