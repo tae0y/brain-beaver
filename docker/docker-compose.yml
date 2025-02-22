@@ -64,7 +64,8 @@ services:
       - "18889:4317"
       - "18888:4318"
     volumes:
-      - ./otelcollector_volume:/etc/otel-collector-config.yaml
+      - ./otel.conf/otel-collector-config.yaml:/etc/otel-collector-config.yaml
+      #- ./otelcollector_volume:/otelcol
 
   #bwswas:
   #  container_name: bwswas
