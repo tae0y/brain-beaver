@@ -19,9 +19,9 @@
 ### With Docker Compose
 - DB와 관련 컨테이너를 빌드하고 기동한다.
 ```bash
+docker plugin install grafana/loki-docker-driver:latest --alias loki --grant-all-permissions
 cd docker
-sudo docker compose build
-docker compose up
+docker compose up --build
 ```
   
 - 파이썬 의존성을 설치, 기동
@@ -51,10 +51,11 @@ pip install -r python/requirements
 cd src/Aspire.AppHost
 dotnet dev-certs https --clean && dotnet dev-certs https --trust
 
-# 도커 권한설정
+# 도커 설정
 # - sudo로 aspire 기동시 권한문제, 대신에 현재 사용자에게 docker 권한부여
 sudo chown -R $USER ~/.docker
 sudo chmod -R 775 ~/.docker
+docker plugin install grafana/loki-docker-driver:latest --alias loki --grant-all-permissions
 
 # AppHost 앱 기동
 cd src/Aspire.AppHost
