@@ -15,7 +15,27 @@
   
   
 ## Getting Started
+
+### With Docker Compose
+- DB와 관련 컨테이너를 빌드하고 기동한다.
+```bash
+cd docker
+sudo docker compose build
+docker compose up
+```
   
+- 파이썬 의존성을 설치, 기동
+```bash
+cd src/Python.FastApi
+python -m venv .venv
+. .venv/bin/activate
+pip install -r python/requirements
+
+# 앱 기동
+OTEL_PYTHON_LOG_CORRELATION=true \
+uvicorn app:app
+```
+
 ### With Aspire/AppHost
 - 파이썬 의존성을 설치
 ```bash
@@ -31,49 +51,19 @@ pip install -r python/requirements
 cd src/Aspire.AppHost
 dotnet dev-certs https --clean && dotnet dev-certs https --trust
 
-# 도커 권한설정 (아래 명령어 실행후 도커데몬 재시작)
+# 도커 권한설정
+# - sudo로 aspire 기동시 권한문제, 대신에 현재 사용자에게 docker 권한부여
 sudo chown -R $USER ~/.docker
 sudo chmod -R 775 ~/.docker
 
-# AppHost 기동
+# AppHost 앱 기동
 cd src/Aspire.AppHost
 dotnet run --project Aspire.AppHost.csproj
 
-# Opentelemetry + Uvicorn + FastAPI 기동 (AppHost 9.2부터 Opentelemetry/Uvicorn 지원예정)
-OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:18888 \
-OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://localhost:18888/v1/traces \
-OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=http://localhost:18888/v1/metrics \
-OTEL_EXPORTER_OTLP_LOGS_ENDPOINT=http://localhost:18888/v1/logs \
-opentelemetry-instrument \
-  --traces_exporter otlp \
-  --metrics_exporter otlp \
-  --logs_exporter otlp \
-  uvicorn app:app
-
-opentelemetry-instrument --traces_exporter otlp --logs_exporter console,otlp --metrics_exporter otlp uvicorn app:app 
-```
-
-### Without Aspire/AppHost
-- DB와 관련 컨테이너를 빌드하고 기동한다.
-```bash
-cd docker
-sudo docker compose build
-docker compose up
-```
-  
-- 파이썬 의존성을 설치
-```bash
-cd src/Python.FastApi
-python -m venv .venv
-. .venv/bin/activate
-pip install -r python/requirements
-```
-
-- 파이썬 앱 기동
-```bash
-# Opentelemetry + Uvicorn + FastAPI 기동
-cd src/Python.FastApi
-opentelemetry-instrument --traces_exporter otlp --logs_exporter console,otlp --metrics_exporter otlp uvicorn app:app
+# Python 앱 기동
+# - AppHost uvicorn/dashboard는 opentelemetry 연동시 버그가 있어 9.2 이후 패치예정
+OTEL_PYTHON_LOG_CORRELATION=true \
+uvicorn app:app
 ```
 
 

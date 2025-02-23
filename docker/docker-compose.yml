@@ -54,18 +54,54 @@ services:
     volumes:
       - ./rabbitmq_volume:/var/lib/rabbitmq
 
-  bwsotelcollector:
-    container_name: bwsotelcollector
+  #bwsotelcollector:
+  #  container_name: bwsotelcollector
+  #  build:
+  #    context: .
+  #    dockerfile: Dockerfile-otelcollector
+  #  restart: always
+  #  ports:
+  #    - "18889:4317"
+  #    - "18888:4318"
+  #  volumes:
+  #    - ./otel.conf/otel-collector-config.yaml:/etc/otel-collector-config.yaml
+  #    #- ./otelcollector_volume:/otelcol
+
+  bwsgrafana:
+    container_name: bwsgrafana
     build:
       context: .
-      dockerfile: Dockerfile-otelcollector
+      dockerfile: Dockerfile-bwsgrafana
     restart: always
     ports:
-      - "18889:4317"
-      - "18888:4318"
+      - 3000:3000
     volumes:
-      - ./otel.conf/otel-collector-config.yaml:/etc/otel-collector-config.yaml
-      #- ./otelcollector_volume:/otelcol
+      - ./graf.conf/grafana.ini:/etc/grafana/grafana.ini
+      - ./graf.conf/grafana-datasources.yml:/etc/grafana/provisioning/datasources/datasources.yaml
+      - ./graf.conf/defaults.ini:/usr/share/grafana/conf/defaults.ini
+      - ./grafana_volume:/var/lib/grafana
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+    depends_on:
+      - tempo
+  loki:
+    container_name: loki
+    image: grafana/loki:2.3.0
+    ports:
+      - 3100:3100
+    command:
+      -config.file=/etc/loki/local-config.yaml
+  tempo:
+    container_name: tempo
+    image: grafana/tempo:1.2.0
+    command: [ "-search.enabled=true", "-config.file=/etc/tempo.yaml" ]
+    volumes:
+      - ./graf.conf/tempo.yaml:/etc/tempo.yaml
+    ports:
+      - 8000:8000
+      - 4317:4317
 
   #bwswas:
   #  container_name: bwswas

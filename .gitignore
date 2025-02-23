@@ -5,6 +5,7 @@
 **/portainer_volume/**
 **/rabbitmq_volume/**
 #**/otelcollector_volume/**
+**/grafana_volume/**
 
 
 # --------------------------------------------
