@@ -108,7 +108,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-pythonfastapi
-    #restart: always
+    restart: no
     ports:
       - 8112:8111
     volumes:
@@ -122,4 +122,4 @@ services:
     #  driver: loki
     #  options:
     #    loki-url: http://loki:3100/loki/api/v1/push
-    command: uvicorn app:app --port 8111
+    command: uvicorn app:app --host 0.0.0.0 --port 8111

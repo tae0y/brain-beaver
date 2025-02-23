@@ -6,5 +6,3 @@ COPY ./fastapi.conf/requirements.txt ./requirements.txt
 
 RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install fastapi uvicorn
-
-EXPOSE 8111
