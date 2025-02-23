@@ -1,39 +1,58 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Hosting;
-using Microsoft.VisualBasic;
+using OpenTelemetry.Trace;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
 
 /****************************************************************************************
  * 
- *  OpenTelemetry
+ *  OpenTelemetry to Aspire Dashboard
  * 
  ****************************************************************************************/
 
-var justdirectory_otelcollector_volume = "otelcollector_volume";
-var otelCollectorContainer = builder.AddDockerfile(
-        "otelcollector",
-        "../../docker",            // 도커파일이 위치한 디렉토리 상대경로 (AppHost.csproj 기준)
-        "Dockerfile-otelcollector" // 도커파일 이름
-    )
-    .WithContainerName("bwsotelcollector")
-    .WithHttpEndpoint(
-        name: "otlp1",
-        port: 18888,
-        targetPort: 18888
-    )
-    .WithEndpoint(
-        name: "otlp2",
-        port: 4317,
-        targetPort: 18889
-    )
-    .WithVolume(justdirectory_otelcollector_volume, "/data")
-    .WithBindMount(
-        source: "../../docker/otel.conf/otel-collector-config.yaml",
-        target: "/etc/otel-collector-config.yaml"
-    );
+//builder.Services.AddOpenTelemetry()
+//    .ConfigureResource(resource => resource.AddService("MyAspireApp"))  // 서비스 이름 지정
+//    .WithTracing(tracing => tracing
+//        .AddAspNetCoreInstrumentation()
+//        .AddHttpClientInstrumentation()
+//        .AddOtlpExporter(opt => opt.Endpoint = new Uri("http://localhost:18888")))
+//    .WithMetrics(metrics => metrics
+//        .AddAspNetCoreInstrumentation()
+//        .AddHttpClientInstrumentation()
+//        .AddOtlpExporter(opt => opt.Endpoint = new Uri("http://localhost:18888")));
+
+
+/****************************************************************************************
+ * 
+ *  OpenTelemetry Collector
+ * 
+ ****************************************************************************************/
+
+//var justdirectory_otelcollector_volume = "otelcollector_volume";
+//var otelCollectorContainer = builder.AddDockerfile(
+//        "otelcollector",
+//        "../../docker",            // 도커파일이 위치한 디렉토리 상대경로 (AppHost.csproj 기준)
+//        "Dockerfile-otelcollector" // 도커파일 이름
+//    )
+//    .WithContainerName("bwsotelcollector")
+//    .WithHttpEndpoint(
+//        name: "otlp1",
+//        port: 18888,
+//        targetPort: 18888
+//    )
+//    .WithHttpsEndpoint(
+//        name: "otlp2",
+//        port: 18889,
+//        targetPort: 18889
+//    )
+//    .WithVolume(justdirectory_otelcollector_volume, "/data")
+//    .WithBindMount(
+//        source: "../../docker/otel.conf/otel-collector-config.yaml",
+//        target: "/etc/otel-collector-config.yaml"
+//    );
 
 
 /****************************************************************************************
@@ -131,23 +150,23 @@ var rabbitMQContainer = builder.AddDockerfile(
 
 // Python Hosting은 실험적 기능으로, 추가 방법이 바뀔 수 있어 Warning을 띄움. 테스트 용도로만 사용이 권장됨.
 #pragma warning disable ASPIREHOSTINGPYTHON001
-var pythonApp = builder.AddPythonApp(
-        name: "python",
-        projectDirectory: "../Python.FastAPI",
-        virtualEnvironmentPath: "../Python.FastAPI/.venv",
-        scriptPath: "app.py",
-        scriptArgs: new[] {
-            ""
-        }
-    )
-    .WithHttpEndpoint(
-        targetPort: pythonPort,
-        port: pythonPort+1)
-    .WithEnvironment("OTEL_EXPORTER_OTLP_ENDPOINT", "http://localhost:18889")
-    .WaitFor(otelCollectorContainer)
-    .WaitFor(rabbitMQContainer)
-    .WaitFor(postgresqlContainer)
-    .WithHealthCheck("python-health-check");
+//var pythonApp = builder.AddPythonApp(
+//        name: "python",
+//        projectDirectory: "../Python.FastAPI",
+//        virtualEnvironmentPath: "../Python.FastAPI/.venv",
+//        scriptPath: "app.py",
+//        scriptArgs: new[] {
+//            ""
+//        }
+//    )
+//    .WithHttpEndpoint(
+//        targetPort: pythonPort,
+//        port: pythonPort+1)
+//    .WithEnvironment("OTEL_EXPORTER_OTLP_ENDPOINT", "http://localhost:18889")
+//    .WaitFor(otelCollectorContainer)
+//    .WaitFor(rabbitMQContainer)
+//    .WaitFor(postgresqlContainer)
+//    .WithHealthCheck("python-health-check");
 //var uvicornApp = builder.AddUvicornApp(
 //        name: "python",                        // Name of the Python project
 //        projectDirectory: "../Python.FastAPI", // Path to the Python project

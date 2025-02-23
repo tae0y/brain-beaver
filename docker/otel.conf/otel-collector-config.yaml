@@ -12,12 +12,14 @@ processors:
     send_batch_size: 1024
 
 exporters:
-  logging:
-    loglevel: debug
   otlp:
-    endpoint: "http://localhost:4317"
+    endpoint: "http://localhost:18888" # Dotnet Aspire Dashboard
     tls:
       insecure: true
+  logging:
+    loglevel: debug # 로그는 콘솔에도 출력
+  file:
+    path: /data/otel-logs/json
 
 service:
   pipelines:
@@ -32,4 +34,4 @@ service:
     logs:
       receivers: [otlp]
       processors: [batch]
-      exporters: [logging, otlp] 
+      exporters: [logging, otlp, file] 

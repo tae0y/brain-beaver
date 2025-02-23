@@ -38,9 +38,9 @@ app.include_router(references_router)
 app.include_router(extract_router)
 
 logging.basicConfig(level=logging.INFO)
-tracer = configure_otel_otlp(
-    endpoint=os.environ.get("OTEL_EXPORTER_OTLP_ENDPOINT", "http://localhost:18889")
-)
+#tracer = configure_otel_otlp(
+#    endpoint=os.environ.get("OTEL_EXPORTER_OTLP_ENDPOINT", "http://localhost:18889")
+#)
 logger = logging.getLogger(__name__)
 
 # FastAPI OpenTelemetry 계측 활성화

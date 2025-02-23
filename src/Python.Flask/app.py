@@ -1,17 +1,18 @@
 import os
+from opentelemetry.instrumentation.flask import FlaskInstrumentor
 
 from flask import (Flask, redirect, render_template, request,
                    send_from_directory, url_for)
 
 import logging
-from otlp_tracing import configure_oltp_grpc_tracing as configure_otel_otlp
+#from otlp_tracing import configure_oltp_grpc_tracing as configure_otel_otlp
 
 logging.basicConfig(level=logging.INFO)
-tracer = configure_otel_otlp()
+#tracer = configure_otel_otlp()
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-
+FlaskInstrumentor().instrument()
 
 @app.route('/')
 def index():
