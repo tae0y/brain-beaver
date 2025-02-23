@@ -4,7 +4,6 @@ import uvicorn
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
-from common.system.otlp_tracing import configure_oltp_grpc_tracing as configure_otel_otlp
 from concepts.conceptshandler import router as concepts_router
 from networks.networkshandler import router as networks_router
 from references.referenceshandler import router as references_router
@@ -38,13 +37,7 @@ app.include_router(references_router)
 app.include_router(extract_router)
 
 logging.basicConfig(level=logging.INFO)
-#tracer = configure_otel_otlp(
-#    endpoint=os.environ.get("OTEL_EXPORTER_OTLP_ENDPOINT", "http://localhost:18889")
-#)
 logger = logging.getLogger(__name__)
-
-# FastAPI OpenTelemetry 계측 활성화
-FastAPIInstrumentor.instrument_app(app)
 
 @app.get("/")
 def rootPage() -> str:
