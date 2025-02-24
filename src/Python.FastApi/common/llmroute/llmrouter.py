@@ -1,3 +1,4 @@
+import traceback
 import ollama
 from common.system.constants import Constants
 from common.llmroute.ollamaclient import OllamaClient
@@ -13,32 +14,40 @@ class LLMRouter:
         self.clients = {}
 
         # ollama model client spawn
-        for m in ollama.list().models:
-            model_name = m.model
-            self.clients[model_name] = OllamaClient(
-                model_name = model_name,
-                options = {}
-            )
+        try:
+            for m in ollama.list().models:
+                model_name = m.model
+                self.clients[model_name] = OllamaClient(
+                    model_name = model_name,
+                    options = {}
+                )
+        except Exception as e:
+            #traceback.print_exc()
+            print("Ollama API Client Spawn Error")
 
         # openai api client spawn
-        self.clients['gpt-4o-mini'] = OpenAIClient(
-            model_name = 'gpt-4o-mini',
-            options = {
-                'api_key' : constants.openai_api_key,
-                'context_length' : 128000,
-                'embedding_length' : None,
-                'cost_per_token' : 0.15/1000000
-            }
-        )
-        self.clients['text-embedding-3-small'] = OpenAIClient(
-            model_name = 'text-embedding-3-small',
-            options = {
-                'api_key' : constants.openai_api_key,
-                'context_length' : 8191,
-                'embedding_length' : 1536,
-                'cost_per_token' : 0.02/1000000
-            }
-        )
+        try:
+            self.clients['gpt-4o-mini'] = OpenAIClient(
+                model_name = 'gpt-4o-mini',
+                options = {
+                    'api_key' : constants.openai_api_key,
+                    'context_length' : 128000,
+                    'embedding_length' : None,
+                    'cost_per_token' : 0.15/1000000
+                }
+            )
+            self.clients['text-embedding-3-small'] = OpenAIClient(
+                model_name = 'text-embedding-3-small',
+                options = {
+                    'api_key' : constants.openai_api_key,
+                    'context_length' : 8191,
+                    'embedding_length' : 1536,
+                    'cost_per_token' : 0.02/1000000
+                }
+            )
+        except Exception as e:
+            #traceback.print_exc()
+            print("OpenAI API Client Spawn Error")
 
     def get_client_by_modelname(self, model_name):
         """
