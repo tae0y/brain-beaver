@@ -68,7 +68,7 @@ app.include_router(extract_router)
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-resource = Resource.create(attributes={"service.name": "Python.FastAPI"})
+resource = Resource(attributes={"service.name": "Python.FastAPI"})
 
 # set the tracer provider
 tracer = TracerProvider(resource=resource)

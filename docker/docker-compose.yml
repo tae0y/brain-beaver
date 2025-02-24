@@ -68,9 +68,10 @@ services:
 
   bws_grafana:
     container_name: bws_grafana
-    build:
-      context: .
-      dockerfile: Dockerfile-bwsgrafana
+    image: grafana/grafana:8.2.0
+    #build:
+    #  context: .
+    #  dockerfile: Dockerfile-bwsgrafana
     #restart: always
     ports:
       - 3000:3000
@@ -86,10 +87,10 @@ services:
       - GF_AUTH_DISABLE_LOGIN_FORM=true
     depends_on:
       - bws_tempo
-      - bws_loki
+
   bws_loki:
     container_name: bws_loki
-    image: grafana/loki:2.7.3
+    image: grafana/loki:2.3.0
     ports:
       - 3100:3100
     #volumes:
