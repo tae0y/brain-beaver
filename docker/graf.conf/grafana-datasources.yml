@@ -4,14 +4,20 @@ datasources:
   - name: Tempo
     type: tempo
     access: proxy
-    url: http://tempo:8000
+    url: http://bws_tempo:8000
     version: 1
     editable: false
     uid: tempo
   - name: Loki
     type: loki
     access: proxy
-    url: http://loki:3100
+    url: http://bws_loki:3100
     version: 1
     editable: false
     isDefault: true
+    jsonData:
+      derivedFields:
+        - datasourceUid: tempo
+          matcherRegex: trace_id=(\w+)
+          name: TraceID
+          url: "$${__value.raw}"

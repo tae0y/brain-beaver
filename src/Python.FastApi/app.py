@@ -17,6 +17,8 @@ from opentelemetry.sdk.resources import Resource
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from opentelemetry.instrumentation.logging import LoggingInstrumentor
 
+from prometheus_client import Histogram
+
 # ************************************************************
 # App 정의
 # 
@@ -61,20 +63,28 @@ app.include_router(extract_router)
 #   - [ ] Grafana + Prometheus + Loki + Tempo
 #   - [ ] OpenTelemetry Collector + Something Behind
 #   - [ ] Something Ahead + Aspire Dashboard
+# - refered from https://github.com/blueswen/fastapi-observability/tree/main
 # ************************************************************
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-resource = Resource()
+resource = Resource.create(attributes={"service.name": "Python.FastAPI"})
 
 # set the tracer provider
 tracer = TracerProvider(resource=resource)
 trace.set_tracer_provider(tracer)
 
 # Use the OTLPSpanExporter to send traces to Tempo
-tracer.add_span_processor(BatchSpanProcessor(OTLPSpanExporter(endpoint="http://tempo:4317")))
+endpoint = "bws_tempo:4317"
+endpoint_http = "http://bws_tempo:4318/v1/trace"
+tracer.add_span_processor(BatchSpanProcessor(
+    OTLPSpanExporter(
+        endpoint=endpoint,
+        insecure=True,
+    )
+))
 
-LoggingInstrumentor().instrument()
+LoggingInstrumentor().instrument(set_logging_format=True)
 FastAPIInstrumentor.instrument_app(app, tracer_provider=tracer)
 
 
