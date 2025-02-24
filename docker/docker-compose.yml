@@ -88,9 +88,11 @@ services:
       - tempo
   loki:
     container_name: loki
-    image: grafana/loki:2.3.0
+    image: grafana/loki:2.7.3
     ports:
       - 3100:3100
+    volumes:
+      - ./loki.conf/loki-config.yaml:/etc/loki/local-config.yaml
     command:
       -config.file=/etc/loki/local-config.yaml
   tempo:
@@ -115,11 +117,12 @@ services:
       - ../src/Python.FastAPI:/SRC
       - /SRC/.venv
       - /SRC/__pycache__
-    #depends_on:
-    #  - bwsdb
-    #  - bwsmq
-    #logging:
-    #  driver: loki
-    #  options:
-    #    loki-url: http://loki:3100/loki/api/v1/push
+    depends_on:
+      - bws_db
+      - bws_mq
+      - loki
+    logging:
+      driver: loki # 오류를 피하려면, 플러그인 적용시 컨테이너 이미지를 새로 만들자
+      options:
+        loki-url: http://loki:3100/loki/api/v1/push
     command: uvicorn app:app --host 0.0.0.0 --port 8111
