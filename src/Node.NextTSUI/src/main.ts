@@ -1,3 +1,5 @@
+// refer to https://cosmograph.app/docs/cosmograph/Introduction
+
 import './style.css';
 import { pointPositions, links } from './data-gen';
 import { Graph, GraphConfigInterface } from '@cosmograph/cosmos';

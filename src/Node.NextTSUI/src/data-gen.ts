@@ -1,31 +1,31 @@
+import loremIpsumKR from "lorem-ipsum-kr";
+
+interface Node {
+  id: number;
+  label: string;
+  text: string;
+  value: number;
+  category: string;
+}
+
 function getRandom(min: number, max: number): number {
     return Math.random() * (max - min) + min;
   }
-  
-  const n = 100;
-  const m = 100;
-  const pointPositions = new Float32Array(n * m * 2);
-  const links: number[] = [];
-  for (let pointIndex = 0; pointIndex < n * m; pointIndex += 1) {
-    const x = 4096 * getRandom(0.495, 0.505);
-    const y = 4096 * getRandom(0.495, 0.505);
-    pointPositions[pointIndex * 2] = x;
-    pointPositions[pointIndex * 2 + 1] = y;
-    const nextPointIndex = pointIndex + 1;
-    const bottomPointIndex = pointIndex + n;
-    const pointLine = Math.floor(pointIndex / n);
-    const nextPointLine = Math.floor(nextPointIndex / n);
-    const bottomPointLine = Math.floor(bottomPointIndex / n);
-    if (pointLine === nextPointLine) {
-      links.push(pointIndex);
-      links.push(nextPointIndex);
-    }
-  
-    if (bottomPointLine < m) {
-      links.push(pointIndex);
-      links.push(bottomPointIndex);
-    }
-  }
-  
-  export { pointPositions, links };
-  
+
+const numNodes = 20000;
+const pointPositions: Node[] = Array.from({ length: numNodes }, (_, i) => ({
+  id: i + 1,
+  label: `노드 ${i + 1}`,
+  text: loremIpsumKR(),
+  value: Math.floor(Math.random() * 100) + 1,
+  category: String.fromCharCode(65 + Math.floor(Math.random() * 26))
+}));
+
+const numLinks = Math.floor(numNodes * 2);
+const links: number[] = [];
+Array.from({ length: numLinks }, () => (
+  links.push(Math.floor(Math.random() * numNodes) + 1),
+  links.push(Math.floor(Math.random() * numNodes) + 1)
+));
+
+export { pointPositions, links };
