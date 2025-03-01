@@ -1,9 +1,10 @@
+from typing import Any
 from pydantic import BaseModel
 
 class ResponseDTO(BaseModel):
     status: str
     message: str
-    data: str
+    data: Any
 
     def __dict__(self):
         return {

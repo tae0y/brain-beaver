@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 from starlette import status as status
 from networks.networksservice import NetworksService
 from common.models.responseDTO import ResponseDTO
+import json
 
 router = APIRouter(
     prefix="/api/networks",
@@ -71,8 +72,10 @@ def get_networks(
     content = None
     try:
         result = service.read_networks_all()
+        result = [o.to_dict() for o in result]
+        result = json.loads(json.dumps(result, default=str))
         status = 200
-        content = ResponseDTO( status='success', message='data extracted', data=str(result) )
+        content = ResponseDTO( status='success', message='data extracted', data=result )
     except Exception as e:
         status = 500
         content = ResponseDTO( status='error', message='internal server error', data=str(e) )
