@@ -1,4 +1,5 @@
-// refer to https://cosmograph.app/docs/cosmograph/Introduction
+// cosmos v1 : https://cosmograph.app/docs/cosmograph/Introduction
+// cosmos v2 : https://cosmograph-org.github.io/cosmos/?path=/docs/welcome-to-cosmos--docs
 
 import './style.css';
 import { 
@@ -70,17 +71,13 @@ function initGraph(){
   graph.setLinks(links);
   graph.setLinkColors(linkColors);
   graph.setLinkWidths(linkWidths);
-  graph.render(0.1);
-  graph.trackPointPositionsByIndices(
-    pointsToShowLabelsFor.map(
-      label => {
-        return pointLabelToIndex.get(`${label}`) as number;
-      }
-    )
-  )
+  graph.render(0.02);
+  const trackIndices = pointsToShowLabelsFor.map( label => { return pointLabelToIndex.get(`${label}`) as number; } );
+  graph.trackPointPositionsByIndices(trackIndices);
   setTimeout(()=>{
     graph.pause();
-  },2000)
+    //graph.fitView();
+  },1000)
 
   /* ~ Demo Actions ~ */
   // Start / Pause
@@ -159,7 +156,7 @@ function initGraph(){
     graph.selectPointsByIndices(
       fullyMappedNetwork.get(root) ?? []
     )
-    graph.zoomToPointByIndex(pointLabelToIndex.get(`${root}`) ?? -1);
+    //graph.zoomToPointByIndex(pointLabelToIndex.get(`${root}`) ?? -1);
   }
 
   document.getElementById('fit-view')?.addEventListener('click', fitView);

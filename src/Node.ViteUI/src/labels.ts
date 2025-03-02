@@ -13,7 +13,8 @@ export class CosmosLabels {
 
   public update (graph: Graph): void {
     // Get coordinates of the tracked nodes
-    const trackedNodesPositions = graph.getTrackedPointPositionsMap()
+    const trackedNodesPositions = graph.getTrackedPointPositionsMap();
+
     let index = 0
     trackedNodesPositions.forEach((positions, pointIndex) => {
       // Convert coordinates to the screen space
@@ -41,6 +42,7 @@ export class CosmosLabels {
 
     // Pass labels configuration to the renderer and draw them
     this.labelRenderer.setLabels(this.labels)
+    debugger;
     this.labelRenderer.draw(true)
   }
 }

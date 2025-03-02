@@ -72,17 +72,8 @@ async function fetchPointPositions() {
         pointIndexToLabel.set(concept.id, `${concept.id}`);
       }
       // labels display
-      const concepts_sorted = concepts.sort(
-        (a, b) => { //내림차순
-          if (a.source_num + a.target_num > b.source_num + b.target_num) {
-            return -1;
-          } else if (a.source_num + a.target_num < b.source_num + b.target_num) {
-            return 1;
-          }
-          return 0;
-      });
-      debugger;
-      for (let i = 0; i < concepts.length/100; i++) {
+      const concepts_sorted = concepts.sort( (a, b) => { if (a.source_num + a.target_num > b.source_num + b.target_num) { return -1; } else if (a.source_num + a.target_num < b.source_num + b.target_num) { return 1; } return 0; });
+      for (let i = 0; i < concepts.length/10; i++) {
         pointsToShowLabelsFor.push(`${concepts_sorted[i].id}`);
       }
 
