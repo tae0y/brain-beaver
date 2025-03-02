@@ -5,7 +5,7 @@ import {
   onDataReady, // async callback subscription
   pointPositions, pointColors, pointSizes,  //point
   links, linkColors, linkWidths,  //link
-  pointIndexToLabel, //index-label
+  pointIndexToLabel, pointLabelToIndex, pointsToShowLabelsFor, //label
 } from './data-gen';
 import { CosmosLabels } from './labels';
 import { Graph, GraphConfigInterface } from '@cosmograph/cosmos';
@@ -18,7 +18,6 @@ function initGraph(){
   const appDiv = document.getElementsByClassName('app')[0];
 
   const labelsDiv = document.createElement('div');
-  labelsDiv.className = 'labels';
   appDiv.appendChild(labelsDiv)
 
   const graphDiv = document.createElement('div')
@@ -54,6 +53,7 @@ function initGraph(){
     simulationGravity: 0.1,
     simulationDecay: 100000,
     fitViewOnInit: true,
+    //showDynamicLabels: true,
     onSimulationTick: () => graph && cosmosLabels.update(graph),
     onZoom: () => graph && cosmosLabels.update(graph),
     onClick: (
@@ -78,6 +78,9 @@ function initGraph(){
   graph.setLinks(links);
   graph.setLinkColors(linkColors);
   graph.setLinkWidths(linkWidths);
+  //graph.trackPointPositionsByIndices(
+  //  pointsToShowLabelsFor.map((l) => pointLabelToIndex.get(l) as number)
+  //);
 
   graph.render(0.01);
 

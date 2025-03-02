@@ -59,8 +59,8 @@ async function fetchPointPositions() {
       pointIndexToLabel = new Map<number, string>();
       for (let i = 0; i < concepts.length; i++) {
         const concept = concepts[i];
-        pointLabelToIndex.set(concept.title, concept.id);
-        pointIndexToLabel.set(concept.id, concept.title);
+        pointLabelToIndex.set(concept.category, concept.id);
+        pointIndexToLabel.set(concept.id, concept.category);
       }
 
     } else {
@@ -194,4 +194,11 @@ export {
   , linkColors
   , linkWidths
   , pointIndexToLabel
+  , pointLabelToIndex
 };
+
+export const pointsToShowLabelsFor = [
+  'information',
+  'sentiment',
+  'insight'
+]
