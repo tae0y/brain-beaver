@@ -4,7 +4,7 @@ import './style.css';
 import { 
   onDataReady, // async callback subscription
   pointPositions, pointColors, pointSizes,  //point
-  links, linkColors, linkWidths,  //link
+  links, linkColors, linkWidths, fullyMappedNetwork,  //link
   pointIndexToLabel, pointLabelToIndex, pointsToShowLabelsFor, //label
 } from './data-gen';
 import { CosmosLabels } from './labels';
@@ -18,6 +18,7 @@ function initGraph(){
   const appDiv = document.getElementsByClassName('app')[0];
 
   const labelsDiv = document.createElement('div');
+  labelsDiv.className = 'labels';
   appDiv.appendChild(labelsDiv)
 
   const graphDiv = document.createElement('div')
@@ -35,25 +36,16 @@ function initGraph(){
   let graph: Graph;
   const config: GraphConfigInterface = {
     spaceSize: 4096,
-    pointSize: 10,
-    pointGreyoutOpacity: 0.1,
-    //pointColor: '#2748A4',
-    //linkColor: '#88C6FF',
+    backgroundColor: '#2d313a',
+    linkWidth: 0.1,
+    linkColor: '#5F74C2',
     linkArrows: false,
-    linkGreyoutOpacity: 0,
-    curvedLinks: true,
-    backgroundColor: '#151515',
-    renderHoveredPointRing: true,
-    hoveredPointRingColor: '#4B5BBF',
-    enableDrag: true,
-    simulationFriction: 0.1,
-    simulationLinkDistance: 20,
-    simulationLinkSpring: 2,
-    simulationRepulsion: 0.5,
-    simulationGravity: 0.1,
-    simulationDecay: 100000,
     fitViewOnInit: true,
-    //showDynamicLabels: true,
+    enableDrag: true,
+    simulationGravity: 0.1,
+    simulationLinkDistance: 1,
+    simulationLinkSpring: 0.3,
+    simulationRepulsion: 0.4,
     onSimulationTick: () => graph && cosmosLabels.update(graph),
     onZoom: () => graph && cosmosLabels.update(graph),
     onClick: (
@@ -78,11 +70,17 @@ function initGraph(){
   graph.setLinks(links);
   graph.setLinkColors(linkColors);
   graph.setLinkWidths(linkWidths);
-  //graph.trackPointPositionsByIndices(
-  //  pointsToShowLabelsFor.map((l) => pointLabelToIndex.get(l) as number)
-  //);
-
-  graph.render(0.01);
+  graph.render(0.1);
+  graph.trackPointPositionsByIndices(
+    pointsToShowLabelsFor.map(
+      label => {
+        return pointLabelToIndex.get(`${label}`) as number;
+      }
+    )
+  )
+  setTimeout(()=>{
+    graph.pause();
+  },2000)
 
   /* ~ Demo Actions ~ */
   // Start / Pause
@@ -100,59 +98,75 @@ function initGraph(){
     pauseButton.textContent = 'Pause';
     graph.start();
   }
-  
+
   function togglePause() {
     if (isPaused) start();
     else pause();
   }
-  
+
   pauseButton.addEventListener('click', togglePause);
-  
+
   // Zoom and Select
   function getRandomPointIndex() {
     return Math.floor((Math.random() * pointPositions.length) / 2);
   }
-  
+
   function getRandomInRange([min, max]: [number, number]): number {
     return Math.random() * (max - min) + min;
   }
-  
+
   function fitView() {
     graph.fitView();
   }
-  
+
   function zoomIn() {
     const pointIndex = getRandomPointIndex();
     graph.zoomToPointByIndex(pointIndex);
     graph.selectPointByIndex(pointIndex);
     pause();
   }
-  
+
   function selectPoint() {
     const pointIndex = getRandomPointIndex();
     graph.selectPointByIndex(pointIndex);
     graph.fitView();
     pause();
   }
-  
-  //function selectPointsInArea() {
-  //  const w = canvas.clientWidth;
-  //  const h = canvas.clientHeight;
-  //  const left = getRandomInRange([w / 4, w / 2]);
-  //  const right = getRandomInRange([left, (w * 3) / 4]);
-  //  const top = getRandomInRange([h / 4, h / 2]);
-  //  const bottom = getRandomInRange([top, (h * 3) / 4]);
-  //  pause();
-  //  graph.selectPointsInRange([
-  //    [left, top],
-  //    [right, bottom],
-  //  ]);
-  //}
-  
+
+  function selectPointsInArea() {
+    const w = appDiv.clientWidth;
+    const h = appDiv.clientHeight;
+    const left = getRandomInRange([w / 4, w / 2]);
+    const right = getRandomInRange([left, (w * 3) / 4]);
+    const top = getRandomInRange([h / 4, h / 2]);
+    const bottom = getRandomInRange([top, (h * 3) / 4]);
+    pause();
+    graph.selectPointsInRange([
+      [left, top],
+      [right, bottom],
+    ]);
+  }
+
+  function selectMostLinkedPoint(){
+    graph.zoomToPointByIndex(pointLabelToIndex.get(`${pointsToShowLabelsFor[0]}`) ?? -1);
+    graph.selectPointByIndex(pointLabelToIndex.get(`${pointsToShowLabelsFor[0]}`) ?? -1);
+  }
+
+  function selectMostLinkedNetwork(){
+    graph.fitView();
+    const rootIndex = Math.floor(Math.random()*pointsToShowLabelsFor.length);
+    const root = pointsToShowLabelsFor[rootIndex];
+    graph.selectPointsByIndices(
+      fullyMappedNetwork.get(root) ?? []
+    )
+    graph.zoomToPointByIndex(pointLabelToIndex.get(`${root}`) ?? -1);
+  }
+
   document.getElementById('fit-view')?.addEventListener('click', fitView);
   document.getElementById('zoom')?.addEventListener('click', zoomIn);
   document.getElementById('select-point')?.addEventListener('click', selectPoint);
-  //document
-  //  .getElementById('select-points-in-area')
-  //  ?.addEventListener('click', selectPointsInArea);
+  document.getElementById('select-points-in-area')?.addEventListener('click', selectPointsInArea);
+  document.getElementById('select-most-linked-point')?.addEventListener('click', selectMostLinkedPoint);
+  document.getElementById('select-most-linked-network')?.addEventListener('click', selectMostLinkedNetwork);
+
 }

@@ -6,12 +6,19 @@ import axios from 'axios';
  * 
  * 
  *********************************************************************************************/
-interface Node {
-  id: string;
-  label: string;
-  text: string;
-  value: number;
-  category: string;
+interface Concept {
+  id          :number,
+  title       :string,
+  keywords    :string,
+  category    :string,
+  summary     :string,
+  status      :string,
+  data_name   :string,
+  source_num  :number,
+  target_num  :number,
+  create_time :string,
+  update_time :string,
+  embedding   :Array<number>,
 }
 
 //['#88C6FF', '#FF99D2', '#2748A4'];
@@ -38,12 +45,12 @@ async function fetchPointPositions() {
     //const response = await axios.get('http://bws_backend:8112/api/concepts');
     const concepts_response = await axios.get('http://localhost:8112/api/concepts');
     if (concepts_response.data.status === 'success') {
-      const concepts = concepts_response.data.data;
+      const concepts: Concept[] = concepts_response.data.data;
       const results = new Float32Array(concepts.length * 2);
       for (let i = 0; i < concepts.length; i++) {
         const concept = concepts[i];
-        results[concepts[i].id * 2]     = getRandom(1,concepts.length);
-        results[concepts[i].id * 2 + 1] = getRandom(1,concepts.length);
+        results[concept.id * 2]     = getRandom(1,concepts.length);
+        results[concept.id * 2 + 1] = getRandom(1,concepts.length);
       }
 
       // point
@@ -52,15 +59,31 @@ async function fetchPointPositions() {
       pointColors = fetchPointColors();
       pointSizes  = fetchPointSizes(concepts_response.data.data);
       // raw data
-      //conceptsRawDataList = concepts_response.data.data;
+      conceptsRawDataList = concepts_response.data.data;
 
-      // labels
+      // labels create
       pointLabelToIndex = new Map<string, number>();
       pointIndexToLabel = new Map<number, string>();
       for (let i = 0; i < concepts.length; i++) {
         const concept = concepts[i];
-        pointLabelToIndex.set(concept.category, concept.id);
-        pointIndexToLabel.set(concept.id, concept.category);
+        //pointLabelToIndex.set(`${concept.id}: ${concept.title}` , concept.id);
+        //pointIndexToLabel.set(concept.id, `${concept.id}: ${concept.title}`);
+        pointLabelToIndex.set(`${concept.id}` , concept.id);
+        pointIndexToLabel.set(concept.id, `${concept.id}`);
+      }
+      // labels display
+      const concepts_sorted = concepts.sort(
+        (a, b) => { //내림차순
+          if (a.source_num + a.target_num > b.source_num + b.target_num) {
+            return -1;
+          } else if (a.source_num + a.target_num < b.source_num + b.target_num) {
+            return 1;
+          }
+          return 0;
+      });
+      debugger;
+      for (let i = 0; i < concepts.length/100; i++) {
+        pointsToShowLabelsFor.push(`${concepts_sorted[i].id}`);
       }
 
     } else {
@@ -92,6 +115,20 @@ async function fetchLinks(){
       // link color, width
       linkColors = fetchLinkColors();
       linkWidths = fetchLinkWidths();
+
+      // fullyMappedNetwork
+      for(let i=0; i<networks.length; i++){
+        const source_key = `${networks[i].source_concept_id}`; //source->target
+        const source_element = fullyMappedNetwork.get(source_key) ?? new Array<number>();
+        source_element?.push(networks[i].target_concept_id);
+        fullyMappedNetwork.set(source_key, source_element);
+
+        const target_key = `${networks[i].target_concept_id}`; //target->source
+        const target_element = fullyMappedNetwork.get(target_key) ?? new Array<number>();
+        target_element?.push(networks[i].source_concept_id);
+        fullyMappedNetwork.set(target_key, target_element);
+      }
+
     } else {
       console.error('Failed to fetch concepts:', networks_response.data.message);
     }
@@ -115,12 +152,12 @@ function fetchPointColors(){
 }
 
 //todo : 백엔드와 프론트가 동일한 객체 정의를 공유할 수는 없을까?
-function fetchPointSizes(concept_list: any[]){
+function fetchPointSizes(concept_list: Concept[]){
   const results = new Float32Array(pointPositions.length / 2);
   for (let i = 0; i < pointPositions.length/2; i++) {
     const concept = concept_list[i]
     const link_num = concept.source_num + concept.target_num
-    results[concept.id] = getRandom(link_num, link_num+1);
+    results[concept.id] = link_num * 1.2 + 2;
   }
   return results;
 }
@@ -133,7 +170,7 @@ function fetchLinkColors(){
     results[i * 4]     = linkColor[0]
     results[i * 4 + 1] = linkColor[1]
     results[i * 4 + 2] = linkColor[2]
-    results[i * 4 + 3] = 0.6
+    results[i * 4 + 3] = 1;
   }
   return results;
 }
@@ -179,6 +216,8 @@ let linkColors         : Float32Array;
 let linkWidths         : Float32Array;
 let pointLabelToIndex  : Map<string, number>;
 let pointIndexToLabel  : Map<number, string>;
+let pointsToShowLabelsFor: string[] = [];
+let fullyMappedNetwork : Map<string, Array<number>> = new Map<string, Array<number>>();
 
 (async () => {
   await fetchPointPositions();
@@ -195,10 +234,6 @@ export {
   , linkWidths
   , pointIndexToLabel
   , pointLabelToIndex
+  , pointsToShowLabelsFor
+  , fullyMappedNetwork
 };
-
-export const pointsToShowLabelsFor = [
-  'information',
-  'sentiment',
-  'insight'
-]
