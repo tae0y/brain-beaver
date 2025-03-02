@@ -1,9 +1,6 @@
 // cosmos v1 : https://cosmograph.app/docs/cosmograph/Introduction
 // cosmos v2 : https://cosmograph-org.github.io/cosmos/?path=/docs/welcome-to-cosmos--docs
 import { createRoot } from 'react-dom/client';
-import { useState } from 'react';
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react'
 import VaulDrawer from './drawer';
 
 import './style.css';
@@ -66,13 +63,15 @@ function initGraph(){
     backgroundColor: '#2d313a',
     linkWidth: 0.1,
     linkColor: '#5F74C2',
-    linkArrows: false,
+    linkArrows: true,
     fitViewOnInit: true,
     enableDrag: true,
-    simulationGravity: 0.1,
+    simulationGravity: 0,
     simulationLinkDistance: 1,
     simulationLinkSpring: 0.3,
     simulationRepulsion: 0.4,
+    simulationDecay: 3000,
+    useQuadtree: true,
     onSimulationTick: () => graph && cosmosLabels.update(graph),
     onZoom: () => graph && cosmosLabels.update(graph),
     onClick: (
@@ -113,14 +112,12 @@ function initGraph(){
   graph.setLinks(links);
   graph.setLinkColors(linkColors);
   graph.setLinkWidths(linkWidths);
-  graph.render(0.02);
+  graph.render(0.1);
   const trackIndices = pointsToShowLabelsFor.map( label => { return pointLabelToIndex.get(`${label}`) as number; } );
   graph.trackPointPositionsByIndices(trackIndices);
   setTimeout(()=>{
-    graph.pause();
-    graph.fitView();
     //graph.fitView();
-  },0)
+  },10000)
 
 
   // ------------------------------------------------------------------------------
@@ -207,7 +204,6 @@ function initGraph(){
     graph.selectPointsByIndices(
       fullyMappedNetwork.get(`${rootPoint}`) ?? []
     )
-    debugger;
     graph.zoomToPointByIndex(rootPoint);
   }
 

@@ -89,9 +89,13 @@ async function fetchPointPositions() {
         pointIndexToLabel.set(concept.id, `${concept.id}:${concept.category}`);  // fix here for label text 2/3
       }
       // labels display
-      const concepts_sorted = concepts.sort( (a, b) => { if (a.source_num + a.target_num > b.source_num + b.target_num) { return -1; } else if (a.source_num + a.target_num < b.source_num + b.target_num) { return 1; } return 0; });
-      for (let i = 0; i < concepts.length/10; i++) {
-        pointsToShowLabelsFor.push(`${concepts_sorted[i].id}:${concepts_sorted[i].category}`); // fix here for label text 3/3
+      const concepts_sorted_desc = concepts.sort( (a, b) => { if (a.source_num + a.target_num > b.source_num + b.target_num) { return -1; } else if (a.source_num + a.target_num < b.source_num + b.target_num) { return 1; } return 0; });
+      for (let i = 0; i < concepts.length/100; i++) {
+        pointsToShowLabelsFor.push(`${concepts_sorted_desc[i].id}:${concepts_sorted_desc[i].category}`); // fix here for label text 3/3
+      }
+      const concepts_sorted_asc = concepts.sort( (a, b) => { if (a.source_num + a.target_num > b.source_num + b.target_num) { return 1; } else if (a.source_num + a.target_num < b.source_num + b.target_num) { return -1; } return 0; });
+      for (let i = 0; i < concepts.length/100; i++) {
+        pointsToShowLabelsFor.push(`${concepts_sorted_asc[i].id}:${concepts_sorted_asc[i].category}`); // fix here for label text 3/3
       }
 
     } else {
