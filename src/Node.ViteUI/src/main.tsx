@@ -83,7 +83,7 @@ function initGraph(){
       if (index !== undefined) {
         graph.selectPointByIndex(index);
         graph.zoomToPointByIndex(index);
-        
+
         // Drawer 렌더링
         drawerRoot.render(
           <VaulDrawer 
@@ -118,8 +118,9 @@ function initGraph(){
   graph.trackPointPositionsByIndices(trackIndices);
   setTimeout(()=>{
     graph.pause();
+    graph.fitView();
     //graph.fitView();
-  },1000)
+  },0)
 
 
   // ------------------------------------------------------------------------------
@@ -200,12 +201,14 @@ function initGraph(){
 
   function selectMostLinkedNetwork(){
     graph.fitView();
-    const rootIndex = Math.floor(Math.random()*pointsToShowLabelsFor.length);
-    const root = pointsToShowLabelsFor[rootIndex];
+    const rootLabelIndex = Math.floor(Math.random()*pointsToShowLabelsFor.length);
+    const rootLabel = pointsToShowLabelsFor[rootLabelIndex];
+    const rootPoint = pointLabelToIndex.get(rootLabel) ?? -1;
     graph.selectPointsByIndices(
-      fullyMappedNetwork.get(root) ?? []
+      fullyMappedNetwork.get(`${rootPoint}`) ?? []
     )
-    //graph.zoomToPointByIndex(pointLabelToIndex.get(`${root}`) ?? -1);
+    debugger;
+    graph.zoomToPointByIndex(rootPoint);
   }
 
 

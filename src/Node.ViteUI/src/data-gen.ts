@@ -1,4 +1,5 @@
 import axios from 'axios';
+import {PCA} from 'ml-pca';
 
 /*********************************************************************************************
  * 
@@ -18,20 +19,32 @@ interface Concept {
   target_num  :number,
   create_time :string,
   update_time :string,
-  embedding   :Array<number>,
+  embedding   :string, //split , and cast to number
 }
 
 //['#88C6FF', '#FF99D2', '#2748A4'];
 const colors = [
    [0.15294117647058825 , 0.2823529411764706 , 0.6431372549019608] //blue 2748A4
-  ,[0.5333333333333333  , 0.7764705882352941 , 1] //skyblue 88C6FF
-  ,[1                   , 0.6                , 0.8235294117647058]                 //palepink FF99D2
+  ,[0.5333333333333333  , 0.7764705882352941 , 1                 ] //skyblue 88C6FF
+  ,[1                   , 0.6                , 0.8235294117647058] //palepink FF99D2
 ];
 
 function getRandom(min: number, max: number): number {
   return Math.random() * (max - min) + min;
 }
 
+function reduceVector(vector: number[]) {
+  vector = vector.slice(0, 1536) //openai embedding dimension
+  const projectionMatrix = new Array(vector.length).fill(0).map(() =>
+    [Math.random() * 2 - 1, Math.random() * 2 - 1]
+  );
+  const reduced = [0, 0];
+  for (let i = 0; i < vector.length; i++) {
+    reduced[0] += vector[i] * projectionMatrix[i][0];
+    reduced[1] += vector[i] * projectionMatrix[i][1];
+  }
+  return reduced;
+}
 
 /*********************************************************************************************
  * 
@@ -46,11 +59,15 @@ async function fetchPointPositions() {
     const concepts_response = await axios.get('http://localhost:8112/api/concepts');
     if (concepts_response.data.status === 'success') {
       const concepts: Concept[] = concepts_response.data.data;
+
       const results = new Float32Array(concepts.length * 2);
       for (let i = 0; i < concepts.length; i++) {
         const concept = concepts[i];
-        results[concept.id * 2]     = getRandom(1,concepts.length);
-        results[concept.id * 2 + 1] = getRandom(1,concepts.length);
+        const embedding_numarray = concept.embedding.split(",").map(parseFloat);
+        const coordinate = reduceVector(embedding_numarray);
+        results[concept.id * 2]     = coordinate[0] * 100 + 200;
+        results[concept.id * 2 + 1] = coordinate[1] * 100 + 200;
+        console.log(coordinate[0], coordinate[1]);
       }
 
       // point

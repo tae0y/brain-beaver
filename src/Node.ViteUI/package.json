@@ -23,6 +23,7 @@
         "d3-scale": "^4.0.2",
         "d3-scale-chromatic": "^3.1.0",
         "lorem-ipsum-kr": "^0.0.2",
+        "ml-pca": "^4.1.1",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
         "vaul": "^1.1.2"
