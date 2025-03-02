@@ -26,5 +26,6 @@ body {
   font-size: 10pt;
   text-decoration: underline;
   cursor: pointer;
+  -webkit-user-select: none;
   user-select: none;
 }

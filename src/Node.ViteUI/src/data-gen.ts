@@ -1,7 +1,4 @@
 import axios from 'axios';
-import { scaleLinear, scaleSequential } from 'd3-scale'
-import { getRgbaColor } from '@cosmograph/cosmos'
-import { interpolateWarm } from 'd3-scale-chromatic'
 
 /*********************************************************************************************
  * 
@@ -87,7 +84,6 @@ async function fetchLinks(){
 }
 
 function fetchPointColors(){
-  const pointColorScale = scaleSequential(interpolateWarm)
   const results = new Float32Array(pointPositions.length / 2 * 4);
   for (let i = 0; i < pointPositions.length/2; i++) {
     //const pointColor = getRgbaColor(pointColorScale(i % 1000))
@@ -100,7 +96,8 @@ function fetchPointColors(){
   return results;
 }
 
-function fetchPointSizes(concept_list){
+//todo : 백엔드와 프론트가 동일한 객체 정의를 공유할 수는 없을까?
+function fetchPointSizes(concept_list: any[]){
   const results = new Float32Array(pointPositions.length / 2);
   for (let i = 0; i < pointPositions.length/2; i++) {
     const link_num = concept_list[i].source_num + concept_list[i].target_num
@@ -110,7 +107,6 @@ function fetchPointSizes(concept_list){
 }
 
 function fetchLinkColors(){
-  const linkColorScale = scaleSequential(interpolateWarm)
   const results = new Float32Array(links.length / 2 * 4);
   for (let i = 0; i < links.length/2; i++) {
     //const linkColor = getRgbaColor(linkColorScale(i % 1000))
