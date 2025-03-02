@@ -17,6 +17,8 @@
         "@cosmograph/cosmograph": "^1.4.2",
         "@cosmograph/cosmos": "^2.0.0-beta.22",
         "axios": "^1.8.1",
+        "d3-scale": "^4.0.2",
+        "d3-scale-chromatic": "^3.1.0",
         "lorem-ipsum-kr": "^0.0.2"
     },
     "keywords": [
