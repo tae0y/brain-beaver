@@ -1,16 +1,42 @@
 // cosmos v1 : https://cosmograph.app/docs/cosmograph/Introduction
 // cosmos v2 : https://cosmograph-org.github.io/cosmos/?path=/docs/welcome-to-cosmos--docs
+import { createRoot } from 'react-dom/client';
+import { useState } from 'react';
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react'
+import VaulDrawer from './drawer';
 
 import './style.css';
+
 import { 
   onDataReady, // async callback subscription
-  pointPositions, pointColors, pointSizes,  //point
+  pointPositions, pointColors, pointSizes, conceptsRawDataList, //point
   links, linkColors, linkWidths, fullyMappedNetwork,  //link
   pointIndexToLabel, pointLabelToIndex, pointsToShowLabelsFor, //label
 } from './data-gen';
 import { CosmosLabels } from './labels';
 import { Graph, GraphConfigInterface } from '@cosmograph/cosmos';
 
+
+/*********************************************************************************************
+ * 
+ * Dom
+ * 
+ * 
+ *********************************************************************************************/
+
+const drawerContainer = document.createElement('div');
+drawerContainer.id = 'drawer-root';
+document.body.appendChild(drawerContainer);
+const drawerRoot = createRoot(drawerContainer);
+
+
+/*********************************************************************************************
+ * 
+ * Graph
+ * 
+ * 
+ *********************************************************************************************/
 onDataReady(initGraph);
 
 function initGraph(){
@@ -57,6 +83,22 @@ function initGraph(){
       if (index !== undefined) {
         graph.selectPointByIndex(index);
         graph.zoomToPointByIndex(index);
+        
+        // Drawer 렌더링
+        drawerRoot.render(
+          <VaulDrawer 
+            title={conceptsRawDataList[index].title}
+            keywords={conceptsRawDataList[index].keywords.replaceAll('{', '').replaceAll('}', '').replaceAll('"', '').replaceAll('\'', '')}
+            data_name={conceptsRawDataList[index].data_name}
+            summary={conceptsRawDataList[index].summary}
+            isOpen={true}
+            onOpenChange={(open) => {
+              if (!open) {
+                drawerRoot.render(null);
+              }
+            }}
+          />
+        );
       } else {
         graph.unselectPoints();
       }
@@ -79,11 +121,13 @@ function initGraph(){
     //graph.fitView();
   },1000)
 
-  /* ~ Demo Actions ~ */
-  // Start / Pause
-  let isPaused = false;
-  const pauseButton = document.getElementById('pause') as HTMLDivElement;
 
+  // ------------------------------------------------------------------------------
+  // Start / Pause
+  const pauseButton = document.getElementById('pause') as HTMLDivElement;
+  pauseButton.addEventListener('click', togglePause);
+
+  let isPaused = false;
   function pause() {
     isPaused = true;
     pauseButton.textContent = 'Start';
@@ -101,9 +145,14 @@ function initGraph(){
     else pause();
   }
 
-  pauseButton.addEventListener('click', togglePause);
-
   // Zoom and Select
+  document.getElementById('fit-view')?.addEventListener('click', fitView);
+  document.getElementById('zoom')?.addEventListener('click', zoomIn);
+  document.getElementById('select-point')?.addEventListener('click', selectPoint);
+  document.getElementById('select-points-in-area')?.addEventListener('click', selectPointsInArea);
+  document.getElementById('select-most-linked-point')?.addEventListener('click', selectMostLinkedPoint);
+  document.getElementById('select-most-linked-network')?.addEventListener('click', selectMostLinkedNetwork);
+
   function getRandomPointIndex() {
     return Math.floor((Math.random() * pointPositions.length) / 2);
   }
@@ -159,11 +208,5 @@ function initGraph(){
     //graph.zoomToPointByIndex(pointLabelToIndex.get(`${root}`) ?? -1);
   }
 
-  document.getElementById('fit-view')?.addEventListener('click', fitView);
-  document.getElementById('zoom')?.addEventListener('click', zoomIn);
-  document.getElementById('select-point')?.addEventListener('click', selectPoint);
-  document.getElementById('select-points-in-area')?.addEventListener('click', selectPointsInArea);
-  document.getElementById('select-most-linked-point')?.addEventListener('click', selectMostLinkedPoint);
-  document.getElementById('select-most-linked-network')?.addEventListener('click', selectMostLinkedNetwork);
 
 }

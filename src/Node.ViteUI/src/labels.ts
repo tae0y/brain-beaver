@@ -42,7 +42,6 @@ export class CosmosLabels {
 
     // Pass labels configuration to the renderer and draw them
     this.labelRenderer.setLabels(this.labels)
-    debugger;
     this.labelRenderer.draw(true)
   }
 }

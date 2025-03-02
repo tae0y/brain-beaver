@@ -68,13 +68,13 @@ async function fetchPointPositions() {
         const concept = concepts[i];
         //pointLabelToIndex.set(`${concept.id}: ${concept.title}` , concept.id);
         //pointIndexToLabel.set(concept.id, `${concept.id}: ${concept.title}`);
-        pointLabelToIndex.set(`${concept.id}` , concept.id);
-        pointIndexToLabel.set(concept.id, `${concept.id}`);
+        pointLabelToIndex.set(`${concept.id}:${concept.category}` , concept.id); // fix here for label text 1/3
+        pointIndexToLabel.set(concept.id, `${concept.id}:${concept.category}`);  // fix here for label text 2/3
       }
       // labels display
       const concepts_sorted = concepts.sort( (a, b) => { if (a.source_num + a.target_num > b.source_num + b.target_num) { return -1; } else if (a.source_num + a.target_num < b.source_num + b.target_num) { return 1; } return 0; });
       for (let i = 0; i < concepts.length/10; i++) {
-        pointsToShowLabelsFor.push(`${concepts_sorted[i].id}`);
+        pointsToShowLabelsFor.push(`${concepts_sorted[i].id}:${concepts_sorted[i].category}`); // fix here for label text 3/3
       }
 
     } else {
@@ -227,4 +227,5 @@ export {
   , pointLabelToIndex
   , pointsToShowLabelsFor
   , fullyMappedNetwork
+  , conceptsRawDataList
 };

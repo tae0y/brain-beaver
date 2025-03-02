@@ -1,9 +1,10 @@
 {
     "compilerOptions": {
-      "target": "es2017",
-      "module": "commonjs",
-      "forceConsistentCasingInFileNames": true,
-      "strict": true
+      "target": "ESNext",
+      "module": "ESNext",
+      "moduleResolution": "bundler",
+      "strict": true,
+      "jsx": "react-jsx"
     },
     "name": "cosmos-usage-example",
     "private": true,
@@ -27,5 +28,5 @@
       "webgl",
       "simulation",
       "data visualization"
-    ]
+    ],
 }
