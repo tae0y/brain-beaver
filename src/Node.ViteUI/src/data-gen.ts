@@ -45,9 +45,23 @@ async function fetchPointPositions() {
         results[concepts[i].id * 2]     = getRandom(1,concepts.length);
         results[concepts[i].id * 2 + 1] = getRandom(1,concepts.length);
       }
+
+      // point
       pointPositions = results;
+      // color, list
       pointColors = fetchPointColors();
       pointSizes  = fetchPointSizes(concepts_response.data.data);
+      // raw data
+      //conceptsRawDataList = concepts_response.data.data;
+
+      // labels
+      pointLabelToIndex = new Map<string, number>();
+      pointIndexToLabel = new Map<number, string>();
+      for (let i = 0; i < concepts.length; i++) {
+        const concept = concepts[i];
+        pointLabelToIndex.set(concept.title, concept.id);
+        pointIndexToLabel.set(concept.id, concept.title);
+      }
 
     } else {
       console.error('Failed to fetch concepts:', concepts_response.data.message);
@@ -71,7 +85,11 @@ async function fetchLinks(){
         results[i * 2] = network.source_concept_id;
         results[i * 2 + 1] = network.target_concept_id;
       }
+
+      // links
       links = results;
+
+      // link color, width
       linkColors = fetchLinkColors();
       linkWidths = fetchLinkWidths();
     } else {
@@ -91,7 +109,7 @@ function fetchPointColors(){
     results[i * 4]     = pointColor[0]
     results[i * 4 + 1] = pointColor[1]
     results[i * 4 + 2] = pointColor[2]
-    results[i * 4 + 3] = 0.9
+    results[i * 4 + 3] = 0.8
   }
   return results;
 }
@@ -100,8 +118,9 @@ function fetchPointColors(){
 function fetchPointSizes(concept_list: any[]){
   const results = new Float32Array(pointPositions.length / 2);
   for (let i = 0; i < pointPositions.length/2; i++) {
-    const link_num = concept_list[i].source_num + concept_list[i].target_num
-    results[i * 4]     = getRandom(link_num, link_num+1);
+    const concept = concept_list[i]
+    const link_num = concept.source_num + concept.target_num
+    results[concept.id] = getRandom(link_num, link_num+1);
   }
   return results;
 }
@@ -114,7 +133,7 @@ function fetchLinkColors(){
     results[i * 4]     = linkColor[0]
     results[i * 4 + 1] = linkColor[1]
     results[i * 4 + 2] = linkColor[2]
-    results[i * 4 + 3] = 0.7
+    results[i * 4 + 3] = 0.6
   }
   return results;
 }
@@ -122,11 +141,10 @@ function fetchLinkColors(){
 function fetchLinkWidths(){
   const results = new Float32Array(links.length / 2);
   for (let i = 0; i < links.length/2; i++) {
-    results[i * 4]     = getRandom(0.1, 0.5);
+    results[i * 4]     = getRandom(0.1, 0.2);
   }
   return results;
 }
-
 
 /*********************************************************************************************
  * 
@@ -152,13 +170,15 @@ export function onDataReady(callback: (data: { pointPositions: Float32Array, lin
  * 
  * 
  *********************************************************************************************/
-
-let pointPositions: Float32Array;
-let pointColors: Float32Array;
-let pointSizes: Float32Array;
-let links: Float32Array; //source, target 순서로 flat하게
-let linkColors: Float32Array;
-let linkWidths: Float32Array;
+let conceptsRawDataList: any[];
+let pointPositions     : Float32Array;
+let pointColors        : Float32Array;
+let pointSizes         : Float32Array;
+let links              : Float32Array; //source, target 순서로 flat하게
+let linkColors         : Float32Array;
+let linkWidths         : Float32Array;
+let pointLabelToIndex  : Map<string, number>;
+let pointIndexToLabel  : Map<number, string>;
 
 (async () => {
   await fetchPointPositions();
@@ -173,4 +193,5 @@ export {
   , links
   , linkColors
   , linkWidths
+  , pointIndexToLabel
 };

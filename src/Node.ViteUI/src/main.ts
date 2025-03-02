@@ -1,13 +1,38 @@
 // refer to https://cosmograph.app/docs/cosmograph/Introduction
 
 import './style.css';
-import { onDataReady, pointPositions, links, pointColors, pointSizes, linkColors, linkWidths } from './data-gen';
+import { 
+  onDataReady, // async callback subscription
+  pointPositions, pointColors, pointSizes,  //point
+  links, linkColors, linkWidths,  //link
+  pointIndexToLabel, //index-label
+} from './data-gen';
+import { CosmosLabels } from './labels';
 import { Graph, GraphConfigInterface } from '@cosmograph/cosmos';
 
 onDataReady(initGraph);
 
 function initGraph(){
-  const div = document.getElementById('graph') as HTMLDivElement;
+  // ------------------------------------------------------------------------------
+  // 화면 초기설정
+  const appDiv = document.getElementsByClassName('app')[0];
+
+  const labelsDiv = document.createElement('div');
+  labelsDiv.className = 'labels';
+  appDiv.appendChild(labelsDiv)
+
+  const graphDiv = document.createElement('div')
+  graphDiv.className = 'graph'
+  appDiv.appendChild(graphDiv)
+
+
+  // ------------------------------------------------------------------------------
+  // 라벨 뷰
+  const cosmosLabels = new CosmosLabels(labelsDiv, pointIndexToLabel)
+
+
+  // ------------------------------------------------------------------------------
+  // 그래프 뷰
   let graph: Graph;
   const config: GraphConfigInterface = {
     spaceSize: 4096,
@@ -28,7 +53,9 @@ function initGraph(){
     simulationRepulsion: 0.5,
     simulationGravity: 0.1,
     simulationDecay: 100000,
-    fitViewPadding: 0.3,
+    fitViewOnInit: true,
+    onSimulationTick: () => graph && cosmosLabels.update(graph),
+    onZoom: () => graph && cosmosLabels.update(graph),
     onClick: (
       index: number | undefined,
       pointPosition: [number, number] | undefined,
@@ -44,7 +71,7 @@ function initGraph(){
     },
   };
 
-  graph = new Graph(div, config);
+  graph = new Graph(graphDiv, config);
   graph.setPointPositions(pointPositions);
   graph.setPointColors(pointColors);
   graph.setPointSizes(pointSizes);
@@ -52,8 +79,7 @@ function initGraph(){
   graph.setLinkColors(linkColors);
   graph.setLinkWidths(linkWidths);
 
-  //graph.zoom(0.9);
-  graph.render();
+  graph.render(0.01);
 
   /* ~ Demo Actions ~ */
   // Start / Pause
