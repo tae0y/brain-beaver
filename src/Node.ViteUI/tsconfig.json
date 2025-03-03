@@ -1,0 +1,32 @@
+{
+    "compilerOptions": {
+      "target": "ESNext",
+      "module": "ESNext",
+      "moduleResolution": "bundler",
+      "strict": true,
+      "jsx": "react-jsx"
+    },
+    "name": "cosmos-usage-example",
+    "private": true,
+    "description": "How to use @cosmograph/cosmos",
+    "type": "module",
+    "scripts": {
+      "dev": "vite",
+      "build": "tsc && vite build",
+      "preview": "vite preview"
+    },
+    "devDependencies": {
+      "typescript": "^5.2.2",
+      "vite": "^5.3.1"
+    },
+    "dependencies": {
+      "@cosmograph/cosmos": "^2.0.0-beta.22"
+    },
+    "keywords": [
+      "network",
+      "force graph",
+      "webgl",
+      "simulation",
+      "data visualization"
+    ],
+}

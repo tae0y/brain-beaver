@@ -5,6 +5,7 @@ from starlette import status as status
 from concepts.conceptsservice import ConceptsService
 from concepts.conceptsmodel import Concepts
 from common.models.responseDTO import ResponseDTO
+import json
 
 router = APIRouter(
     prefix="/api/concepts",
@@ -112,7 +113,9 @@ def get_concepts(
     result = service.get_concepts()
     if result['status'] == 'success':
         data = result['data'] #concepts object list
-        content = ResponseDTO( status='success', message='data selected', data=str(data) )
+        data = [o.to_dict() for o in data]
+        data = json.loads(json.dumps(data, default=str))
+        content = ResponseDTO( status='success', message='data selected', data=data )
         return JSONResponse(status_code=200, content=dict(content))
     else:
         data = result['data'] #error message string
@@ -138,7 +141,9 @@ def get_concept(
     result = service.get_concept(concept_id)
     if result['status'] == 'success':
         data = result['data'] #concepts object
-        content = ResponseDTO( status='success', message='data selected', data=str(data) )
+        data = data.to_dict()
+        data = json.loads(json.dumps(data, default=str))
+        content = ResponseDTO( status='success', message='data selected', data=data )
         return JSONResponse(status_code=200, content=dict(content))
     else:
         data = result['data'] #error message string

@@ -1,0 +1,93 @@
+body {
+  font-family: sans-serif;
+  margin: 0px;
+  background-color: #2d313a;
+}
+
+.app {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  color: white;
+}
+
+.graph {
+  width: 100%;
+  height: 100vh;
+}
+
+.labels {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.actions {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  color: #ccc;
+}
+
+.actions-header {
+  font-weight: bold;
+  margin-bottom: 2px;
+}
+
+.action {
+  margin-left: 2p0;
+  font-size: 10pt;
+  text-decoration: underline;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 50;
+}
+
+.drawer-content {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: white;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  padding: 16px;
+  z-index: 51;
+  height: 30%;
+}
+
+.drawer-handle {
+  width: 48px;
+  height: 6px;
+  background-color: #e5e7eb;
+  border-radius: 9999px;
+  margin: 0 auto 32px auto;
+}
+
+.drawer-title {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #111827;
+  margin-bottom: 16px;
+}
+
+.drawer-content p {
+  color: #4b5563;
+  margin-bottom: 8px;
+}
+
+.loader {
+  width: 100px;
+  height: 100px;
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}

@@ -1,0 +1,42 @@
+{
+    "name": "cosmos-usage-example",
+    "private": true,
+    "version": "0.0.0",
+    "description": "How to use @cosmograph/cosmos",
+    "type": "module",
+    "scripts": {
+        "dev": "vite --host --port 5173",
+        "build": "tsc && vite build",
+        "preview": "vite preview"
+    },
+    "devDependencies": {
+        "@types/react": "^19.0.10",
+        "@types/react-dom": "^19.0.4",
+        "@vitejs/plugin-react": "^4.3.4",
+        "typescript": "^5.2.2",
+        "vite": "^5.3.1"
+    },
+    "dependencies": {
+        "@agney/react-loading": "^0.1.2",
+        "@cosmograph/cosmograph": "^1.4.2",
+        "@cosmograph/cosmos": "^2.0.0-beta.22",
+        "axios": "^1.8.1",
+        "d3-scale": "^4.0.2",
+        "d3-scale-chromatic": "^3.1.0",
+        "lorem-ipsum-kr": "^0.0.2",
+        "ml-pca": "^4.1.1",
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0",
+        "vaul": "^1.1.2"
+    },
+    "keywords": [
+        "network",
+        "force graph",
+        "webgl",
+        "simulation",
+        "data visualization"
+    ],
+    "optionalDependencies": {
+        "fsevents": "*"
+    }
+}

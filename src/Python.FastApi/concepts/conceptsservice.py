@@ -3,6 +3,7 @@ import pika
 import json
 import logging
 import threading
+import time
 from typing import Tuple
 from common.datasources.markdown import Markdown
 from concepts.conceptsreposigory import ConceptsRepository
@@ -22,7 +23,7 @@ class ConceptsService:
     def __init__(self):
         self.repository = ConceptsRepository()
         self.constants = Constants.get_instance()
-        threading.Thread(target=self.start_consumer, daemon=True).start() # 별도스레드에서 실행
+        threading.Thread(target=self.start_consumer_retry, daemon=True).start() # 별도스레드에서 실행
         pass
 
     # ---------------------------------------------------
@@ -153,10 +154,8 @@ class ConceptsService:
         concepts = json.loads(body)
         self.create_concepts(concepts)
         channel.basic_ack(delivery_tag=method.delivery_tag)
-        logger.info("callback end")
 
     def start_consumer(self):
-        logger.info("start_consumer called")
         credentials = pika.PlainCredentials(self.constants.rabbitmq_user, self.constants.rabbitmq_passwd)
         connection_params = pika.ConnectionParameters(RABBITMQ_HOST, credentials=credentials)
         with pika.BlockingConnection(connection_params) as connection:
@@ -164,7 +163,19 @@ class ConceptsService:
             channel.queue_declare(queue=QUEUE_NAME, durable=True)
             channel.basic_consume(queue=QUEUE_NAME, on_message_callback=self.callback)
             channel.start_consuming()
-            logger.info("start_consumer ongoing")
+
+    def start_consumer_retry(self):
+        retry_max_num = 10
+        retry_index = 0
+        while retry_index < retry_max_num:
+            try:
+                self.start_consumer()
+                logger.iinfo("message queue connection success")
+            except Exception as e:
+                logger.error(f"start_consumer error: {str(e)}")
+                retry_index += 1
+                logger.info(f"message queue connection failed. retry after 10 seconds... ({retry_index}/{retry_max_num}) ")
+                time.sleep(10)
 
     # ---------------------------------------------------
     def pad_vector_to4096(self, vector: list) -> list:

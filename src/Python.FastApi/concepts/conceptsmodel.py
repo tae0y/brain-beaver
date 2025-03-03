@@ -33,7 +33,7 @@ class Concepts(Base):
             "target_num": self.target_num,
             "create_time": self.create_time.isoformat() if self.create_time else None,
             "update_time": self.update_time.isoformat() if self.update_time else None,
-            "embedding": self.embedding # 필요에 따라 적절히 변환
+            "embedding": self.getEmbeddingString()
         }
 
     def __repr__(self):
@@ -41,3 +41,6 @@ class Concepts(Base):
 
     def __str__(self):
         return str(self.to_dict())
+
+    def getEmbeddingString(self):
+        return ','.join(map(str,self.embedding))
