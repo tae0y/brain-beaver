@@ -2,9 +2,9 @@
 // cosmos v2 : https://cosmograph-org.github.io/cosmos/?path=/docs/welcome-to-cosmos--docs
 import { createRoot } from 'react-dom/client';
 import VaulDrawer from './drawer';
-
+import { useLoading, LoaderProvider, Grid } from '@agney/react-loading'
+import React, { useState, useEffect } from 'react';
 import './style.css';
-
 import { 
   onDataReady, // async callback subscription
   pointPositions, pointColors, pointSizes, conceptsRawDataList, //point
@@ -22,6 +22,47 @@ import { Graph, GraphConfigInterface } from '@cosmograph/cosmos';
  * 
  *********************************************************************************************/
 
+function App() {
+  const [loading, setLoading] = useState(true);
+  const { containerProps, indicatorEl } = useLoading({ 
+    loading: true,
+  });
+  useEffect(() => {
+    onDataReady(() => {
+      setLoading(false);
+      initGraph();
+    });
+  }, []);
+  return loading ? (
+    <section 
+      {...containerProps}>
+        {indicatorEl}
+    </section>
+  ) : null;
+}
+
+// ------------------------------------------------------------------------------
+// 화면 초기설정
+const appDiv = document.getElementsByClassName('app')[0];
+
+const loaderDiv = document.createElement('div');
+loaderDiv.className = 'loader';
+appDiv.appendChild(loaderDiv);
+const loaderRoot = createRoot(loaderDiv)
+loaderRoot.render(
+  <LoaderProvider indicator={<Grid />}>
+    <App />
+  </LoaderProvider>
+);
+
+const labelsDiv = document.createElement('div');
+labelsDiv.className = 'labels';
+appDiv.appendChild(labelsDiv)
+
+const graphDiv = document.createElement('div')
+graphDiv.className = 'graph'
+appDiv.appendChild(graphDiv)
+
 const drawerContainer = document.createElement('div');
 drawerContainer.id = 'drawer-root';
 document.body.appendChild(drawerContainer);
@@ -34,26 +75,12 @@ const drawerRoot = createRoot(drawerContainer);
  * 
  * 
  *********************************************************************************************/
-onDataReady(initGraph);
+//onDataReady(initGraph);
 
 function initGraph(){
   // ------------------------------------------------------------------------------
-  // 화면 초기설정
-  const appDiv = document.getElementsByClassName('app')[0];
-
-  const labelsDiv = document.createElement('div');
-  labelsDiv.className = 'labels';
-  appDiv.appendChild(labelsDiv)
-
-  const graphDiv = document.createElement('div')
-  graphDiv.className = 'graph'
-  appDiv.appendChild(graphDiv)
-
-
-  // ------------------------------------------------------------------------------
   // 라벨 뷰
   const cosmosLabels = new CosmosLabels(labelsDiv, pointIndexToLabel)
-
 
   // ------------------------------------------------------------------------------
   // 그래프 뷰
@@ -72,6 +99,12 @@ function initGraph(){
     simulationRepulsion: 0.4,
     simulationDecay: 3000,
     useQuadtree: true,
+    onSimulationStart() {
+        console.log('Simulation started');
+    },
+    onSimulationEnd() {
+        console.log('Simulation ended');
+    },
     onSimulationTick: () => graph && cosmosLabels.update(graph),
     onZoom: () => graph && cosmosLabels.update(graph),
     onClick: (

@@ -67,7 +67,7 @@ async function fetchPointPositions() {
         const coordinate = reduceVector(embedding_numarray);
         results[concept.id * 2]     = coordinate[0] * 100 + 200;
         results[concept.id * 2 + 1] = coordinate[1] * 100 + 200;
-        console.log(coordinate[0], coordinate[1]);
+        //console.log(coordinate[0], coordinate[1]);
       }
 
       // point

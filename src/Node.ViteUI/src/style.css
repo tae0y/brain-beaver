@@ -1,6 +1,7 @@
 body {
   font-family: sans-serif;
   margin: 0px;
+  background-color: #2d313a;
 }
 
 .app {
@@ -80,4 +81,13 @@ body {
 .drawer-content p {
   color: #4b5563;
   margin-bottom: 8px;
+}
+
+.loader {
+  width: 100px;
+  height: 100px;
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
