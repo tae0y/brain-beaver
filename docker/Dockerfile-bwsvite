@@ -27,6 +27,6 @@ WORKDIR /app
 RUN npm install -g npm
 
 # package*.json 파일 변경감지하여 이후 구문을 실행함
-COPY vite.conf/package*.json .
+COPY ./configs/vite.conf/package*.json .
 RUN rm -rf node_modules
 RUN npm install
