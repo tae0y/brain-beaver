@@ -15,4 +15,4 @@ RUN apk add tzdata && \
         echo "Asia/Seoul" > /etc/timezone
 
 # 설정파일 복사
-COPY ./mq.conf/ /etc/rabbitmq/
+COPY ./configs/mq.conf/ /etc/rabbitmq/

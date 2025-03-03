@@ -9,7 +9,7 @@ services:
       - "9000:9000"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./portainer_volume:/data
+      - ./volumes/portainer_volume:/data
 
   bws_db:
     container_name: bws_db
@@ -24,8 +24,8 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./postgresql_volume:/var/lib/postgresql/data
-      - ./initdb.d:/docker-entrypoint-initdb.d
+      - ./volumes/postgresql_volume:/var/lib/postgresql/data
+      - ./configs/initdb.d:/docker-entrypoint-initdb.d
 
   bws_db_admin:
     container_name: bws_db_admin
@@ -39,7 +39,7 @@ services:
     ports:
       - "5050:80"
     volumes:
-      - ./pgadmin_volume:/var/lib/pgadmin
+      - ./volumes/pgadmin_volume:/var/lib/pgadmin
 
   bws_mq:
     container_name: bws_mq
@@ -51,8 +51,8 @@ services:
       - "5672:5672"
       - "15672:15672"
     volumes:
-      - ./mq.conf/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
-      - ./rabbitmq_volume:/var/lib/rabbitmq
+      - ./configs/mq.conf/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - ./volumes/rabbitmq_volume:/var/lib/rabbitmq
 
   #bwsotelcollector:
   #  container_name: bwsotelcollector

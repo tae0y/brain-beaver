@@ -5,7 +5,7 @@
     "description": "How to use @cosmograph/cosmos",
     "type": "module",
     "scripts": {
-        "dev": "vite",
+        "dev": "vite --host --port 5173",
         "build": "tsc && vite build",
         "preview": "vite preview"
     },
@@ -17,6 +17,7 @@
         "vite": "^5.3.1"
     },
     "dependencies": {
+        "@agney/react-loading": "^0.1.2",
         "@cosmograph/cosmograph": "^1.4.2",
         "@cosmograph/cosmos": "^2.0.0-beta.22",
         "axios": "^1.8.1",
