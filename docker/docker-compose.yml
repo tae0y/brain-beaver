@@ -135,3 +135,17 @@ services:
     #  options:
     #    loki-url: http://bws_loki:3100/loki/api/v1/push
     command: uvicorn app:app --host 0.0.0.0 --port 8111
+
+  bws_vite:
+    container_name: bws_vite
+    build:
+      context: .
+      dockerfile: Dockerfile-bwsvite
+    ports:
+      - 5173:5173
+    volumes:
+      - ../src/Node.ViteUI:/app
+      - /app/node_modules
+    depends_on:
+      - bws_backend
+    command: npm run dev --host

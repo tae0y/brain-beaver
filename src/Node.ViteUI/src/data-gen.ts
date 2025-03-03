@@ -55,7 +55,7 @@ function reduceVector(vector: number[]) {
 
 async function fetchPointPositions() {
   try {
-    //const response = await axios.get('http://bws_backend:8112/api/concepts');
+    //const concepts_response = await axios.get('http://bws_backend:8112/api/concepts');
     const concepts_response = await axios.get('http://localhost:8112/api/concepts');
     if (concepts_response.data.status === 'success') {
       const concepts: Concept[] = concepts_response.data.data;
@@ -110,7 +110,7 @@ async function fetchPointPositions() {
 
 async function fetchLinks(){
   try {
-    //const response = await axios.get('http://bws_backend:8112/api/concepts');
+    //const networks_response = await axios.get('http://bws_backend:8112/api/networks');
     const networks_response = await axios.get('http://localhost:8112/api/networks');
     if (networks_response.data.status === 'success') {
       const networks = networks_response.data.data;
