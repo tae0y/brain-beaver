@@ -1,4 +1,8 @@
 # --------------------------------------------
+# Docker backup
+backup/**
+
+# --------------------------------------------
 # Docker volume
 **/postgresql_volume/**
 **/pgadmin_volume/**
@@ -6,6 +10,7 @@
 **/rabbitmq_volume/**
 #**/otelcollector_volume/**
 **/grafana_volume/**
+**/jenkins_volume/**
 
 
 # --------------------------------------------
