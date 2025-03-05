@@ -1,0 +1,16 @@
+FROM jenkins/jenkins:lts
+
+# packages defaults
+USER root
+RUN apt-get update
+RUN apt-get install -y curl vim git
+
+# timezone
+RUN apt-get install -y tzdata && \
+        cp /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
+        echo "Asia/Seoul" > /etc/timezone
+
+# packages for scheduling job
+RUN apt-get install cpio
+
+USER jenkins

@@ -149,3 +149,20 @@ services:
     depends_on:
       - bws_backend
     command: npm run dev --host
+
+  bws_backup:
+    container_name: bws_backup
+    build:
+      context: .
+      dockerfile : Dockerfile-backup
+    ports:
+      - 8080:8080
+    volumes:
+      - ./volumes/jenkins_volume:/var/jenkins_home/
+      - ./configs/backup.conf/job.sh/:/job.sh/ #chmod +x
+      - ./volumes/pgadmin_volume/:/backup/in/pgadmin/
+      - ./volumes/portainer_volume/:/backup/in/portainer/
+      - ./volumes/postgresql_volume/:/backup/in/postgresql/
+      - ./volumes/rabbitmq_volume/:/backup/in/rabbitmq/
+      - ../backup:/backup/out/
+    restart: on-failure
