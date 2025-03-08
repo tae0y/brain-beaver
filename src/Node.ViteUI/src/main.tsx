@@ -2,7 +2,7 @@
 // cosmos v2 : https://cosmograph-org.github.io/cosmos/?path=/docs/welcome-to-cosmos--docs
 import { createRoot } from 'react-dom/client';
 import VaulDrawer from './drawer';
-import { useLoading, LoaderProvider, Grid } from '@agney/react-loading'
+import { useLoading, LoaderProvider, Circles } from '@agney/react-loading'
 import React, { useState, useEffect } from 'react';
 import './style.css';
 import { 
@@ -50,7 +50,7 @@ loaderDiv.className = 'loader';
 appDiv.appendChild(loaderDiv);
 const loaderRoot = createRoot(loaderDiv)
 loaderRoot.render(
-  <LoaderProvider indicator={<Grid />}>
+  <LoaderProvider indicator={<Circles />}>
     <App />
   </LoaderProvider>
 );
