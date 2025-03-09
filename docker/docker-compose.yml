@@ -123,7 +123,7 @@ services:
       - ../src/Python.FastAPI:/SRC
       - /SRC/.venv
       - /SRC/__pycache__
-      - /Users/bachtaeyeong/20_DocHub/TIL:/TIL:ro
+    #  - /Users/bachtaeyeong/20_DocHub/TIL:/TIL:ro
     depends_on:
       - bws_db
       - bws_mq
