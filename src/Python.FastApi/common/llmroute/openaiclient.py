@@ -7,6 +7,7 @@ import numpy as np
 from common.llmroute.baseclient import BaseClient
 from common.models.simpleDTO import SimpleDTO as ResponseDTO
 import json
+from concurrent.futures import ThreadPoolExecutor
 
 class OpenAIClient(BaseClient):
     """
@@ -63,6 +64,11 @@ class OpenAIClient(BaseClient):
     '''
     currency_rates: float
 
+    '''
+    ThreadPoolExecutor
+    '''
+    thread_pool: ThreadPoolExecutor
+
 
     def __init__(self, model_name: str, options: dict):
         self.client = OpenAI(
@@ -92,6 +98,8 @@ class OpenAIClient(BaseClient):
         except:
             self.currency_rates = 1500.0
             print("LOG-ERROR: 환율 조회 실패, 1500원으로 가정합니다!!")
+
+        self.thread_pool = ThreadPoolExecutor(max_workers=10)
 
 
     def generate(self, prompt: str, options: dict) -> ResponseDTO:
@@ -165,11 +173,16 @@ class OpenAIClient(BaseClient):
             raise ValueError(f"지원되지 않는 모델입니다: {self.model_name}")
 
         try:
-            response = self.client.embeddings.create(
-                model = self.model_name,
-                input = input
-            )
-            return ResponseDTO(status=100, message='Success', data=response.data[0].embedding)
+            if operation == 'batch':
+                futures = [self.thread_pool.submit(self.client.embeddings.create, model=self.model_name, input=inp) for inp in input]
+                embeddings = [future.result().data[0].embedding for future in futures]
+                return ResponseDTO(status=100, message='Success', data=embeddings)
+            else:
+                response = self.client.embeddings.create(
+                    model = self.model_name,
+                    input = input
+                )
+                return ResponseDTO(status=100, message='Success', data=response.data[0].embedding)
 
         except Exception as e:
             return ResponseDTO(status=900, message=f"Internal Server Error - {str(e)}", data=None)
