@@ -9,9 +9,6 @@ RUN wget http://cdn.naver.com/naver/NanumFont/fontfiles/NanumFont_TTF_ALL.zip
 RUN unzip NanumFont_TTF_ALL.zip -d /usr/share/fonts/nanumfont
 RUN fc-cache -f && rm -rf /var/cache/*
 
-# 배시 설치
-#RUN apk add --no-cache bash
-
 # 언어 설정
 ENV LANG=ko_KR.UTF-8 \
     LANGUAGE=ko_KR.UTF-8

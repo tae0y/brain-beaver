@@ -4,7 +4,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-dockeradmin
-    #restart: always
     ports:
       - "9000:9000"
     volumes:
@@ -16,7 +15,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-bwsdb
-    #restart: always
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
@@ -32,7 +30,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-bwsdbadmin
-    #restart: always
     environment:
       PGADMIN_DEFAULT_EMAIL: root@admin.com
       PGADMIN_DEFAULT_PASSWORD: root
@@ -46,70 +43,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-bwsmq
-    #restart: always
     ports:
       - "5672:5672"
       - "15672:15672"
     volumes:
       - ./configs/mq.conf/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
       - ./volumes/rabbitmq_volume:/var/lib/rabbitmq
-
-  #bwsotelcollector:
-  #  container_name: bwsotelcollector
-  #  build:
-  #    context: .
-  #    dockerfile: Dockerfile-otelcollector
-  #  #restart: always
-  #  ports:
-  #    - "18889:4317"
-  #    - "18888:4318"
-  #  volumes:
-  #    - ./otel.conf/otel-collector-config.yaml:/etc/otel-collector-config.yaml
-  #    #- ./otelcollector_volume:/otelcol
-
-  #bws_grafana:
-  #  container_name: bws_grafana
-  #  image: grafana/grafana:8.2.0
-  #  #build:
-  #  #  context: .
-  #  #  dockerfile: Dockerfile-bwsgrafana
-  #  #restart: always
-  #  ports:
-  #    - 3000:3000
-  #  volumes:
-  #    - ./graf.conf/grafana.ini:/etc/grafana/grafana.ini
-  #    - ./graf.conf/grafana-datasources.yml:/etc/grafana/provisioning/datasources/datasources.yaml
-  #    #- ./graf.conf/defaults.ini:/usr/share/grafana/conf/defaults.ini
-  #    #- ./grafana_volume:/var/lib/grafana
-  #  environment:
-  #    # 개발환경을 위한 보안설정 해제
-  #    - GF_AUTH_ANONYMOUS_ENABLED=true
-  #    - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
-  #    - GF_AUTH_DISABLE_LOGIN_FORM=true
-  #  depends_on:
-  #    - bws_tempo
-
-  #bws_loki:
-  #  container_name: bws_loki
-  #  image: grafana/loki:2.3.0
-  #  ports:
-  #    - 3100:3100
-  #  #volumes:
-  #  #  - ./loki.conf/loki-config.yaml:/etc/loki/local-config.yaml
-  #  command:
-  #    -config.file=/etc/loki/local-config.yaml
-
-  #bws_tempo:
-  #  container_name: bws_tempo
-  #  image: grafana/tempo:1.2.0
-  #  command: [ "-search.enabled=true", "-config.file=/etc/tempo.yaml" ]
-  #  volumes:
-  #    - ./graf.conf/tempo.yaml:/etc/tempo.yaml
-  #  ports:
-  #    - 8000:8000
-  #    - 4317:4317  # OTLP gRPC
-  #    - 4318:4318  # OTLP HTTP
-  #    - 9095:9095  # API
 
   bws_backend:
     container_name: bws_backend
@@ -123,17 +62,11 @@ services:
       - ../src/Python.FastAPI:/SRC
       - /SRC/.venv
       - /SRC/__pycache__
-    #  - /Users/bachtaeyeong/20_DocHub/TIL:/TIL:ro
     depends_on:
       - bws_db
       - bws_mq
-    #  - bws_tempo
     environment:
       - OTEL_PYTHON_LOG_CORRELATION=true
-    #logging:
-    #  driver: loki # 오류를 피하려면, 플러그인 적용시 컨테이너 이미지를 새로 만들자
-    #  options:
-    #    loki-url: http://bws_loki:3100/loki/api/v1/push
     command: uvicorn app:app --host 0.0.0.0 --port 8111
 
   bws_vite:
