@@ -11,7 +11,8 @@ from concepts.conceptsmodel import Concepts
 from common.system.constants import Constants
 
 
-RABBITMQ_HOST = 'bws_mq'
+# RABBITMQ_HOST = 'bws_mq'
+RABBITMQ_HOST = 'localhost'
 QUEUE_NAME = 'extract_dataloader_queue'
 
 
