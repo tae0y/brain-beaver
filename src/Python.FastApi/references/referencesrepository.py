@@ -16,7 +16,7 @@ class ReferencesRepository:
         rtncd = 900
         rtnmsg = '실패'
 
-        session = self.db.get_session()
+        session = self.db.get_session(write=True)
         try:
             session.execute(insert(References), reference_list)
             session.commit()
@@ -36,7 +36,7 @@ class ReferencesRepository:
         rtncd = 900
         rtnmsg = '실패'
 
-        session = self.db.get_session()
+        session = self.db.get_session(write=False)
         try:
             query = session.query(References)
             rtndata = query.all()
@@ -56,7 +56,7 @@ class ReferencesRepository:
         rtncd = 900
         rtnmsg = '실패'
 
-        session = self.db.get_session()
+        session = self.db.get_session(write=True)
         try:
             session.query(References).delete()
             session.commit()
