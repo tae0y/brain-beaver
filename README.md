@@ -10,11 +10,29 @@
   
 ## 시작하기
 
-- 모든 컨테이너를 빌드하고 기동합니다.
+- docker
 ```bash
+# docker compose, build
 cd docker
 docker compose up --build
 ```
+
+- docker swarm
+```bash
+# docker build
+cd docker
+docker build -t bws_container_admin -f Dockerfile-dockeradmin .
+docker build -t bws_db -f Dockerfile-bwsdb .
+docker build -t bws_db_admin -f Dockerfile-bwsdbadmin .
+docker build -t bws_db_bwsmq -f Dockerfile-bwsmq .
+docker build -t bws_backend -f Dockerfile-pythonfastapi .
+docker build -t bws_vite -f Dockerfile-bwsvite .
+docker build -t bws_backup -f Dockerfile-backup .
+
+# docker stack
+sudo docker stack deploy -c docker-swarm-compose.yml bws_stack --detach=false
+```
+
   
 ## 앱의 구조
 - FrontEnd : Node ViteUI

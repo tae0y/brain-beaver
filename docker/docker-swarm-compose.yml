@@ -1,0 +1,162 @@
+services:
+  bws_container_admin:
+    container_name: bws_container_admin
+    image: bws_container_admin
+    ports:
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./volumes/portainer_volume:/data
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+
+  bws_db:
+    container_name: bws_db
+    image: bws_db
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: bwsdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./volumes/postgresql_volume:/var/lib/postgresql/data
+      - ./configs/initdb.d:/docker-entrypoint-initdb.d
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+
+  bws_db_admin:
+    container_name: bws_db_admin
+    image: bws_db_admin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: root@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5050:80"
+    volumes:
+      - ./volumes/pgadmin_volume:/var/lib/pgadmin
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+
+  bws_mq:
+    container_name: bws_mq
+    image: bws_db_bwsmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - ./configs/mq.conf/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - ./volumes/rabbitmq_volume:/var/lib/rabbitmq
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+
+  bws_backend:
+    container_name: bws_backend
+    image: bws_backend
+    ports:
+      - 8112:8111
+    volumes:
+      - ../src/Python.FastAPI:/SRC
+      - /SRC/.venv
+      - /SRC/__pycache__
+    depends_on:
+      - bws_db
+      - bws_mq
+    environment:
+      - OTEL_PYTHON_LOG_CORRELATION=true
+    command: uvicorn app:app --host 0.0.0.0 --port 8111
+    deploy:
+      replicas: 2 # active-active
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+
+  bws_vite:
+    container_name: bws_vite
+    image: bws_vite
+    ports:
+      - 5173:5173
+    volumes:
+      - ../src/Node.ViteUI:/app
+      - /app/node_modules
+    depends_on:
+      - bws_backend
+    command: npm run dev --host
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+
+  bws_backup:
+    container_name: bws_backup
+    image: bws_backup
+    ports:
+      - 8080:8080
+    volumes:
+      - ./volumes/jenkins_volume:/var/jenkins_home/
+      - ./configs/backup.conf/job.sh/:/job.sh/ #chmod +x
+      - ./volumes/pgadmin_volume/:/backup/in/pgadmin/
+      - ./volumes/portainer_volume/:/backup/in/portainer/
+      - ./volumes/postgresql_volume/:/backup/in/postgresql/
+      - ./volumes/rabbitmq_volume/:/backup/in/rabbitmq/
+      - ../backup:/backup/out/
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
