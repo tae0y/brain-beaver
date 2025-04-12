@@ -14,6 +14,7 @@ class Constants:
     # ---------- Secret Configs ---------- 
     # DB
     db_connection_string :str
+    db_connection_string_readonly : str
 
     # GooglePSE constants
     google_pse_api_url :str
@@ -74,6 +75,7 @@ class Constants:
 
         # DB
         self.db_connection_string = secret.get('DB', 'CONNECTION_STRING')
+        self.db_connection_string_readonly = secret.get('DB', 'CONNECTION_STRING_READONLY')
 
         # GooglePSE
         self.google_pse_api_url = secret.get('GooglePSE', 'API_URL')

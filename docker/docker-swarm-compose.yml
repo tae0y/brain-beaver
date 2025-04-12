@@ -19,10 +19,13 @@ services:
         max_attempts: 3
         window: 120s
 
-  bws_db:
-    container_name: bws_db
+  bws_db_write:
+    container_name: bws_db_write
     image: bws_db
     environment:
+      POSTGRESQL_REPLICATION_MODE: master
+      POSTGRESQL_REPLICATION_USER: u_repl
+      POSTGRESQL_REPLICATION_PASSWORD: 1!(u_repl)
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
       POSTGRES_DB: bwsdb
@@ -33,6 +36,31 @@ services:
       - ./configs/initdb.d:/docker-entrypoint-initdb.d
     deploy:
       replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+
+  bws_db_read:
+    container_name: bws_db_read
+    image: bws_db
+    environment:
+      POSTGRESQL_REPLICATION_MODE: slave
+      POSTGRESQL_REPLICATION_USER: u_repl
+      POSTGRESQL_REPLICATION_PASSWORD: 1!(u_repl)
+      POSTGRESQL_MASTER_HOST: bws_db_write
+      POSTGRESQL_MASTER_PORT: 5432
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5433:5432"
+    deploy:
+      replicas: 2
       resources:
         limits:
           cpus: '0.5'

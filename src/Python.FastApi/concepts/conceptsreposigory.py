@@ -19,7 +19,7 @@ class ConceptsRepository():
         rtncd = 900
         rtnmsg = '실패'
 
-        session = self.db.get_session()
+        session = self.db.get_session(write=True)
         try:
             session.execute(insert(Concepts), keyconcept_list)
             rtncd = 200
@@ -39,7 +39,7 @@ class ConceptsRepository():
         """
         tb_concepts 테이블의 모든 데이터를 읽어온다
         """
-        session = self.db.get_session()
+        session = self.db.get_session(write=False)
         try:
             query = session.query(Concepts)
             rtndata = query.all()
@@ -54,7 +54,7 @@ class ConceptsRepository():
         """
         tb_concepts 테이블에서 concpet_id로 데이터를 읽어온다
         """
-        session = self.db.get_session()
+        session = self.db.get_session(write=False)
         try:
             query = session.query(Concepts).filter(Concepts.id == concpet_id)
             rtndata = query.first()
@@ -68,7 +68,7 @@ class ConceptsRepository():
         """
         tb_concepts 테이블의 데이터 수를 읽어온다
         """
-        session = self.db.get_session()
+        session = self.db.get_session(write=False)
         try:
             query = session.query(Concepts)
             rtndata = query.count()
@@ -83,7 +83,7 @@ class ConceptsRepository():
         """
         tb_concepts 테이블에서 상위 limit개의 데이터를 읽어온다
         """
-        session = self.db.get_session()
+        session = self.db.get_session(write=False)
         try:
             query = session.query(Concepts).order_by(desc(Concepts.source_num+Concepts.target_num)).limit(limit)
             rtndata = query.all()
@@ -98,7 +98,7 @@ class ConceptsRepository():
         """
         tb_concepts 테이블에서 concept_id로 데이터를 읽어온다
         """
-        session = self.db.get_session()
+        session = self.db.get_session(write=False)
         try:
             query = session.query(Concepts).filter(Concepts.id == concept_id)
             rtndata = query.first()
@@ -113,7 +113,7 @@ class ConceptsRepository():
         """
         tb_concepts 테이블에서 source와 가장 가까운 개념을 operation에 따라 limit개수만큼 읽어온다
         """
-        session = self.db.get_session()
+        session = self.db.get_session(write=False)
         rtndata = []
 
         try:
@@ -159,7 +159,7 @@ class ConceptsRepository():
         """
         rtncd = 900
         rtnmsg = '실패'
-        session = self.db.get_session()
+        session = self.db.get_session(write=True)
         try:
             session.execute(update(Concepts)
                             .where(Concepts.id == concepts['id'])
@@ -197,7 +197,7 @@ class ConceptsRepository():
         """
         rtncd = 900
         rtnmsg = '실패'
-        session = self.db.get_session()
+        session = self.db.get_session(write=True)
         try:
             session.execute(update(Concepts)
                             .where(Concepts.id == concept_id)
@@ -221,7 +221,7 @@ class ConceptsRepository():
         """
         tb_concepts 테이블의 모든 id를 읽어온다
         """
-        session = self.db.get_session()
+        session = self.db.get_session(write=False)
         try:
             query = session.query(Concepts.id)
             rtndata = query.all()
@@ -238,7 +238,7 @@ class ConceptsRepository():
         """
         rtncd = 900
         rtnmsg = '실패'
-        session = self.db.get_session()
+        session = self.db.get_session(write=True)
         try:
             session.query(Concepts).delete()
             session.commit()

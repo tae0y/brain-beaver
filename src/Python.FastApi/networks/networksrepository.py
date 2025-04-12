@@ -24,7 +24,7 @@ class NetworksRepository():
         rtncd = 900
         rtnmsg = '실패'
 
-        session = self.db.get_session()
+        session = self.db.get_session(write=True)
         try:
             session.execute(insert(Networks), {'source_concept_id':source, 'target_concept_id':target})
             session.commit()
@@ -44,7 +44,7 @@ class NetworksRepository():
         rtncd = 900
         rtnmsg = '실패'
 
-        session = self.db.get_session()
+        session = self.db.get_session(write=False)
         try:
             query = session.query(Networks)
             rtndata = query.all()
@@ -64,7 +64,7 @@ class NetworksRepository():
         rtncd = 900
         rtnmsg = '실패'
 
-        session = self.db.get_session()
+        session = self.db.get_session(write=True)
         try:
             session.query(Networks).delete()
             session.commit()
