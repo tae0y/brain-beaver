@@ -4,6 +4,8 @@ services:
     image: bws_container_admin
     ports:
       - "9000:9000"
+    networks:
+      - bws_network
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./volumes/portainer_volume:/data
@@ -31,9 +33,11 @@ services:
       POSTGRES_DB: bwsdb
     ports:
       - "5432:5432"
-    volumes:
-      - ./volumes/postgresql_volume:/var/lib/postgresql/data
-      - ./configs/initdb.d:/docker-entrypoint-initdb.d
+    networks:
+      - bws_network
+    # volumes:
+    #   - ./volumes/postgresql_volume:/bitnami/postgresql/data
+    #   - ./configs/initdb.d:/docker-entrypoint-initdb.d
     deploy:
       replicas: 1
       resources:
@@ -59,6 +63,8 @@ services:
       POSTGRES_PASSWORD: root
     ports:
       - "5433:5432"
+    networks:
+      - bws_network
     deploy:
       replicas: 2
       resources:
@@ -81,6 +87,8 @@ services:
       - "5050:80"
     volumes:
       - ./volumes/pgadmin_volume:/var/lib/pgadmin
+    networks:
+      - bws_network
     deploy:
       replicas: 1
       resources:
@@ -102,6 +110,8 @@ services:
     volumes:
       - ./configs/mq.conf/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
       - ./volumes/rabbitmq_volume:/var/lib/rabbitmq
+    networks:
+      - bws_network
     deploy:
       replicas: 1
       resources:
@@ -129,6 +139,8 @@ services:
     environment:
       - OTEL_PYTHON_LOG_CORRELATION=true
     command: uvicorn app:app --host 0.0.0.0 --port 8111
+    networks:
+      - bws_network
     deploy:
       replicas: 2 # active-active
       resources:
@@ -152,6 +164,8 @@ services:
     depends_on:
       - bws_backend
     command: npm run dev --host
+    networks:
+      - bws_network
     deploy:
       replicas: 1
       resources:
@@ -188,3 +202,7 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
+
+networks:
+  bws_network:
+    driver: overlay

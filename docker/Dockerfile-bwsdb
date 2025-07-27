@@ -1,12 +1,16 @@
-FROM postgres:15.10-bookworm
+FROM bitnami/postgresql:latest
 
-RUN apt update && apt install -y wget unzip bash
+USER root
+
+RUN echo "deb http://deb.debian.org/debian unstable main" >> /etc/apt/sources.list
+RUN apt-get update && apt-get upgrade -y
+RUN apt install -y wget unzip bash sudo vim
 
 # 한글 폰트 설치
-RUN apt install -y fonts-nanum
+RUN apt-get install -y fonts-nanum
 
 # 시간대 설정
-RUN apt install -y tzdata && \
+RUN apt-get install -y tzdata && \
         cp /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
         echo "Asia/Seoul" > /etc/timezone
 
@@ -16,4 +20,9 @@ ENV POSTGRES_INITDB_ARGS="--encoding=UTF-8"
 ENV ALLOW_IP_RANGE=0.0.0.0/0
 
 # pgvector 설치
-RUN apt install -y postgresql-15-pgvector
+RUN apt-get install -y postgresql-17-pgvector
+
+# 권한 정리
+RUN chown -R postgres:postgres /bitnami/postgresql
+RUN chown -R postgres:postgres /opt/bitnami/postgresql
+USER postgres

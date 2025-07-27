@@ -4,6 +4,7 @@ backup/**
 
 # --------------------------------------------
 # Docker volume
+**/postgresql_volume_old/**
 **/postgresql_volume/**
 **/pgadmin_volume/**
 **/portainer_volume/**
@@ -19,6 +20,8 @@ docker_new/**
 python_new/**
 docker_bak/**
 python_bak/**
+docker/data/**
+restore/**
 *.ipynb
 .ipynb_checkpoints
 
