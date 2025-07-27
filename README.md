@@ -9,21 +9,28 @@
 1. 저장소를 복제합니다.
     ```bash
     git clone https://github.com/tae0y/brain-beaver.git
+    REPOSITORY_ROOT=$(git rev-parse --show-toplevel)
     ```
 
 2. OpenAI(Optional), Naver검색 API(Required) 키를 발급받아 설정합니다.
     ```bash
     # 설정 템플릿 복사
-    cd src/Python.FastAPI/properties/
+    cd $REPOSITORY_ROOT/src/Python.FastAPI/properties/
     cp secret.sample.properties secret.properties
-
-    # 파일을 열어 입력
+    vim secret.properties
     ```
     > OpenAI 키는 선택사항이며, Ollama로 대체할 수 있습니다.
 
 3. docker 폴더로 이동하여 컨테이너를 기동합니다.
     ```bash
-    cd docker
+    cd $REPOSITORY_ROOT/docker
     docker compose up -d
     ```
     > Docker가 설치되어 있어야 합니다. [Docker 설치 가이드](https://docs.docker.com/desktop/setup/install/mac-install/)를 참고하세요.
+
+4. 다음 앱URL로 접속합니다. 각 관리자 계정 정보는 `docker-compose.yml` 파일에서 확인합니다.
+    - 프론트:beaver: http://localhost:5173
+    - 백엔드:brain: http://localhost:8112/docs
+    - DB관리:gear: http://localhost:5050
+    - Docker관리:whale: http://localhost:9000
+    - 스케줄러⏰ http://localhost:8080
