@@ -10,7 +10,8 @@ from concepts.conceptsreposigory import ConceptsRepository
 from common.system.constants import Constants
 #from networks.networksservice import NetworksService #순환참조 발생으로 각주처리
 
-RABBITMQ_HOST = 'bws_mq'
+# RABBITMQ_HOST = 'bws_mq'
+RABBITMQ_HOST = 'localhost'
 QUEUE_NAME = 'extract_dataloader_queue'
 
 logging.basicConfig(level=logging.INFO)
