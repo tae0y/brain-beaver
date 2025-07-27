@@ -1,21 +1,39 @@
 # Brain Beaver :beaver:
-  
+
 ## 개요
-  
+
 - 마크다운 파일을 대신 읽고, 연관관계를 `별자리`처럼 표현합니다.
 ![](./demo_001.png)
 
 - 파란색, 하늘색, 분홍색의 각 노드를 클릭하면 세부정보를 볼 수 있습니다.
-![](./demo_002.png)  
+  ![](./demo_002.png)  
   
 ## 시작하기
 
-- 모든 컨테이너를 빌드하고 기동합니다.
+- docker
 ```bash
+# docker compose, build
 cd docker
 docker compose up --build
 ```
-  
+
+- docker swarm
+```bash
+# docker build
+cd docker
+docker build -t bws_container_admin -f Dockerfile-dockeradmin .
+docker build -t bws_db -f Dockerfile-bwsdb .
+docker build -t bws_db_admin -f Dockerfile-bwsdbadmin .
+docker build -t bws_db_bwsmq -f Dockerfile-bwsmq .
+docker build -t bws_backend -f Dockerfile-pythonfastapi .
+docker build -t bws_vite -f Dockerfile-bwsvite .
+docker build -t bws_backup -f Dockerfile-backup .
+
+# docker stack
+sudo docker stack deploy -c docker-swarm-compose.yml bws_stack
+```
+
+
 ## 앱의 구조
 - FrontEnd : Node ViteUI
 - BackEnd : Python FastAPI

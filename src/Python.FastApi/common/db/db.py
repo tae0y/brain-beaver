@@ -26,11 +26,14 @@ class DB():
         return DB._instance
 
 
-    def get_session(self):
+    def get_session(self, write:bool = False):
         """
         DB 세션 생성자로 세션을 반환.
         """
-        return self.sessionmaker()
+        if write:
+            return self.write_sessionmaker()
+        else:
+            return self.read_sessionmaker()
 
 
     def load_db(self):
@@ -39,17 +42,30 @@ class DB():
         """
         constants = Constants.get_instance()
 
-        engine = create_engine(
+        write_engine = create_engine(
             url = constants.db_connection_string,
             echo = constants.db_echo_truefalse,
             pool_size = constants.db_pool_size,
             max_overflow = constants.db_max_overflow
         )
-        self.sessionmaker = sessionmaker(
+        self.write_sessionmaker = sessionmaker(
             autocommit=False, 
             autoflush=False, 
-            bind=engine
+            bind=write_engine
         )
+
+        read_engine = create_engine(
+            url = constants.db_connection_string_readonly,
+            echo = constants.db_echo_truefalse,
+            pool_size = constants.db_pool_size,
+            max_overflow = constants.db_max_overflow
+        )
+        self.read_sessionmaker = sessionmaker(
+            autocommit=False, 
+            autoflush=False, 
+            bind=read_engine
+        )
+
         print("LOG-DEBUG: DB session created. (load_db)")
 
         pass
