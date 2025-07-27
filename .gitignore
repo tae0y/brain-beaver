@@ -1,6 +1,9 @@
 # --------------------------------------------
 # Docker backup
 backup/**
+docker/data/**
+docker/volumes/**
+restore/**
 
 # --------------------------------------------
 # Docker volume
