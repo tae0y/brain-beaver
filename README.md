@@ -1,31 +1,29 @@
-# Brain Beaver :beaver:
+# README
   
-## 개요
-  
-- 마크다운 파일을 대신 읽고, 연관관계를 `별자리`처럼 표현합니다.
-![](./demo_001.png)
+이 프로젝트는 **LLM 기반의 지식 관리 도구**로, 사용자는 자신의 지식이 **어떻게 분포하고** 있으며 **어디를 보완해야하는지** 알 수 있습니다. 웹URL 혹은 마크다운 문서를 입력하면, 해당 내용을 분석하여 그래프 형태로 시각화합니다. 또한, 오래되거나 잘못된 정보를 식별합니다.
 
-- 파란색, 하늘색, 분홍색의 각 노드를 클릭하면 세부정보를 볼 수 있습니다.
-![](./demo_002.png)  
-  
-## 시작하기
+마치 댐을 짓기 위해 통나무를 손질하는 비버처럼:beaver:, 이 프로젝트는 사용자의 데이터를 정제하고, 재구성하며, 확장합니다.
 
-- 모든 컨테이너를 빌드하고 기동합니다.
-```bash
-cd docker
-docker compose up --build
-```
-  
-## 앱의 구조
-- FrontEnd : Node ViteUI
-- BackEnd : Python FastAPI
-  - API 문서는 `/swagger`에서 확인
-  - 마크다운 데이터 경로, 모델 종류 등은 `app.py`에서 설정
-  - OpenAI, Naver 검색 키 등은 `config.properties`, `secret.properties`에서 설정
-  - `secret.properties`는 `secret.sample.properties`을 참고해 작성
-  - `Python 3.12`, `Mac M1`에서 작업함. `Python 3.13`에서 일부 의존성 충돌 있음
-  - Debian OS는 `psycopg2` 대신 apt 등으로 `psycopg2-binary` 패키지 설치 필요
-- MessqgeQueue : RabbitMQ
-- DataBase : PostgeSql, PgAdmin
-- DevOps : Portainer, Grafana/Loki/Tempo, Jenkins
-- 그외(계획중) : Spring Batch, NestJS BFF, Aspire ServiceDefaults
+## 설치
+
+1. 저장소를 복제합니다.
+    ```bash
+    git clone https://github.com/tae0y/brain-beaver.git
+    ```
+
+2. OpenAI(Optional), Naver검색 API(Required) 키를 발급받아 설정합니다.
+    ```bash
+    # 설정 템플릿 복사
+    cd src/Python.FastAPI/properties/
+    cp secret.sample.properties secret.properties
+
+    # 파일을 열어 입력
+    ```
+    > OpenAI 키는 선택사항이며, Ollama로 대체할 수 있습니다.
+
+3. docker 폴더로 이동하여 컨테이너를 기동합니다.
+    ```bash
+    cd docker
+    docker compose up -d
+    ```
+    > Docker가 설치되어 있어야 합니다. [Docker 설치 가이드](https://docs.docker.com/desktop/setup/install/mac-install/)를 참고하세요.
