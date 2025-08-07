@@ -67,6 +67,7 @@ services:
       - bws_mq
     environment:
       - OTEL_PYTHON_LOG_CORRELATION=true
+      - OLLAMA_HOST=http://host.docker.internal:11434 # Use Host network for Ollama
     command: uvicorn app:app --host 0.0.0.0 --port 8111
 
   bws_vite:
