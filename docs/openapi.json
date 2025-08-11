@@ -1,0 +1,1150 @@
+{
+  "openapi": "3.1.0",
+  "info": { "title": "FastAPI", "version": "0.1.0" },
+  "paths": {
+    "/api/concepts": {
+      "get": {
+        "tags": ["Concepts"],
+        "summary": "주요개념 전체를 조회한다",
+        "description": "tb_concepts에서 데이터를 조회한다.",
+        "operationId": "get_concepts_api_concepts_get",
+        "responses": {
+          "200": {
+            "description": "데이터 조회 성공",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" },
+                "example": {
+                  "status": "success",
+                  "message": "data selected",
+                  "data": "..."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "데이터 조회 실패",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" },
+                "example": {
+                  "status": "error",
+                  "message": "essential input missing",
+                  "data": "..."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "데이터 조회 실패",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" },
+                "example": {
+                  "status": "error",
+                  "message": "input validation error",
+                  "data": "..."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "데이터 조회 실패",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" },
+                "example": {
+                  "status": "error",
+                  "message": "internal server error",
+                  "data": "XXXException occured during ..."
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Concepts"],
+        "summary": "주요개념을 DB에 저장한다",
+        "description": "메시지큐에서 추출된 개념을 받아온다. tb_concepts에 저장한다.",
+        "operationId": "create_concepts_api_concepts_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "items": { "type": "object" },
+                "type": "array",
+                "title": "Concepts List",
+                "description": "concept list",
+                "examples": [
+                  [
+                    {
+                      "title": "개념명",
+                      "keywords": "키워드",
+                      "category": "카테고리",
+                      "summary": "개요",
+                      "status": "상태",
+                      "data_name": "데이터명",
+                      "source_num": 0,
+                      "target_num": 0,
+                      "create_time": "2021-01-01 00:00:00",
+                      "update_time": "2021-01-01 00:00:00",
+                      "embedding": [0, 0]
+                    },
+                    {
+                      "title": "개념명2",
+                      "keywords": "키워드2",
+                      "category": "카테고리2",
+                      "summary": "개요2",
+                      "status": "상태2",
+                      "data_name": "데이터명2",
+                      "source_num": 0,
+                      "target_num": 0,
+                      "create_time": "2021-01-01 00:00:00",
+                      "update_time": "2021-01-01 00:00:00",
+                      "embedding": [0, 0]
+                    }
+                  ]
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "데이터 저장 성공",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" },
+                "example": {
+                  "status": "success",
+                  "message": "data created",
+                  "data": "..."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "데이터 저장 실패",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" },
+                "example": {
+                  "status": "error",
+                  "message": "essential input missing",
+                  "data": "..."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "데이터 저장 실패",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" },
+                "example": {
+                  "status": "error",
+                  "message": "input validation error",
+                  "data": "..."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "데이터 저장 실패",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" },
+                "example": {
+                  "status": "error",
+                  "message": "internal server error",
+                  "data": "XXXException occured during ..."
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Concepts"],
+        "summary": "주요개념 전체를 삭제한다",
+        "description": "tb_concepts에서 데이터를 삭제한다.",
+        "operationId": "delete_concepts_all_api_concepts_delete",
+        "responses": {
+          "200": {
+            "description": "데이터 삭제 성공",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" },
+                "example": {
+                  "status": "success",
+                  "message": "data deleted",
+                  "data": "..."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "데이터 삭제 실패",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" },
+                "example": {
+                  "status": "error",
+                  "message": "essential input missing",
+                  "data": "..."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "데이터 삭제 실패",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" },
+                "example": {
+                  "status": "error",
+                  "message": "internal server error",
+                  "data": "XXXException occured during ..."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/concepts/{concept_id}": {
+      "put": {
+        "tags": ["Concepts"],
+        "summary": "주요개념을 DB에서 수정한다",
+        "description": "tb_concepts에서 데이터를 수정한다.",
+        "operationId": "update_concept_api_concepts__concept_id__put",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "examples": [
+                  {
+                    "id": 1,
+                    "title": "개념명-수정00",
+                    "keywords": "키워드-수정00",
+                    "category": "카테고리-수정00",
+                    "summary": "개요-수정00",
+                    "status": "상태-수정00",
+                    "data_name": "데이터명-수정00",
+                    "source_num": 99,
+                    "target_num": 99,
+                    "create_time": "2022-01-01 00:00:00",
+                    "update_time": "2022-01-01 00:00:00",
+                    "embedding": [0, 0]
+                  }
+                ],
+                "title": "Concepts List"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "데이터 수정 성공",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" },
+                "example": {
+                  "status": "success",
+                  "message": "data updated",
+                  "data": "..."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "데이터 수정 실패",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": "error",
+                  "message": "essential input missing",
+                  "data": "..."
+                },
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" }
+              }
+            }
+          },
+          "404": {
+            "description": "데이터 수정 실패",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": "error",
+                  "message": "data not found",
+                  "data": "..."
+                },
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" }
+              }
+            }
+          },
+          "422": {
+            "description": "데이터 수정 실패",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": "error",
+                  "message": "input validation error",
+                  "data": "..."
+                },
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" }
+              }
+            }
+          },
+          "500": {
+            "description": "데이터 수정 실패",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": "error",
+                  "message": "internal server error",
+                  "data": "XXXException occured during ..."
+                },
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Concepts"],
+        "summary": "id를 기준으로 특정 주요개념을 조회한다",
+        "description": "tb_concepts에서 데이터를 조회한다.",
+        "operationId": "get_concept_api_concepts__concept_id__get",
+        "parameters": [
+          {
+            "name": "concept_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "title": "Concept Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "데이터 조회 성공",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" },
+                "example": {
+                  "status": "success",
+                  "message": "data selected",
+                  "data": "..."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "데이터 조회 실패",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": "error",
+                  "message": "essential input missing",
+                  "data": "..."
+                },
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" }
+              }
+            }
+          },
+          "404": {
+            "description": "데이터 조회 실패",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": "error",
+                  "message": "data not found",
+                  "data": "..."
+                },
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" }
+              }
+            }
+          },
+          "422": {
+            "description": "데이터 조회 실패",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": "error",
+                  "message": "input validation error",
+                  "data": "..."
+                },
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" }
+              }
+            }
+          },
+          "500": {
+            "description": "데이터 조회 실패",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": "error",
+                  "message": "internal server error",
+                  "data": "XXXException occured during ..."
+                },
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/concepts/{concept_id}/source-target-count": {
+      "put": {
+        "tags": ["Concepts", "Concepts"],
+        "summary": "주요개념의 출처와 대상 개수만 수정한다",
+        "description": "tb_concepts에서 데이터를 수정한다.",
+        "operationId": "update_concept_source_target_count_api_concepts__concept_id__source_target_count_put",
+        "parameters": [
+          {
+            "name": "concept_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "title": "Concept Id" }
+          },
+          {
+            "name": "source_num",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "integer", "title": "Source Num" }
+          },
+          {
+            "name": "target_num",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "integer", "title": "Target Num" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "데이터 수정 성공",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" },
+                "example": {
+                  "status": "success",
+                  "message": "data updated",
+                  "data": "..."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "데이터 수정 실패",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": "error",
+                  "message": "essential input missing",
+                  "data": "..."
+                },
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" }
+              }
+            }
+          },
+          "404": {
+            "description": "데이터 수정 실패",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": "error",
+                  "message": "data not found",
+                  "data": "..."
+                },
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" }
+              }
+            }
+          },
+          "422": {
+            "description": "데이터 수정 실패",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": "error",
+                  "message": "input validation error",
+                  "data": "..."
+                },
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" }
+              }
+            }
+          },
+          "500": {
+            "description": "데이터 수정 실패",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": "error",
+                  "message": "internal server error",
+                  "data": "XXXException occured during ..."
+                },
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/concepts/count": {
+      "get": {
+        "tags": ["Concepts"],
+        "summary": "주요개념의 개수를 조회한다",
+        "description": "tb_concepts에서 데이터를 조회한다.",
+        "operationId": "get_concepts_count_api_concepts_count_get",
+        "responses": {
+          "200": {
+            "description": "데이터 조회 성공",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" },
+                "example": {
+                  "status": "success",
+                  "message": "data selected",
+                  "data": "..."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "데이터 조회 실패",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" },
+                "example": {
+                  "status": "error",
+                  "message": "essential input missing",
+                  "data": "..."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "데이터 조회 실패",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" },
+                "example": {
+                  "status": "error",
+                  "message": "input validation error",
+                  "data": "..."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "데이터 조회 실패",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" },
+                "example": {
+                  "status": "error",
+                  "message": "internal server error",
+                  "data": "XXXException occured during ..."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/networks/engage": {
+      "post": {
+        "tags": ["Networks"],
+        "summary": "주요개념을 네트워크로 연결한다.",
+        "description": "임베딩 벡터 유사도를 기준으로 관련개념을 연결한다.",
+        "operationId": "engage_keyconcepts_into_networks_api_networks_engage_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "title": "Options",
+                "examples": [
+                  { "operation": "cosine_distance", "cosine_sim_check": "true" }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "네트워크 연결 성공",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" },
+                "example": {
+                  "status": "success",
+                  "message": "data extracted",
+                  "data": "..."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "네트워크 연결 실패",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" },
+                "example": {
+                  "status": "error",
+                  "message": "essential input missing",
+                  "data": "options"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "네트워크 연결 실패",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" },
+                "example": {
+                  "status": "error",
+                  "message": "input validation error",
+                  "data": "..."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "네트워크 연결 실패",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" },
+                "example": {
+                  "status": "error",
+                  "message": "internal server error",
+                  "data": "XXXException occured during ..."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/networks": {
+      "get": {
+        "tags": ["Networks"],
+        "summary": "네트워크 전체를 조회한다.",
+        "description": "네트워크 테이블 전체를 조회한다.",
+        "operationId": "get_networks_api_networks_get",
+        "responses": {
+          "200": {
+            "description": "네트워크 조회 성공",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" },
+                "example": {
+                  "status": "success",
+                  "message": "data extracted",
+                  "data": "..."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "네트워크 조회 실패",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" },
+                "example": {
+                  "status": "error",
+                  "message": "internal server error",
+                  "data": "XXXException occured during ..."
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Networks"],
+        "summary": "네트워크 전체를 삭제한다.",
+        "description": "네트워크 테이블 전체를 삭제한다.",
+        "operationId": "delete_networks_all_api_networks_delete",
+        "responses": {
+          "200": {
+            "description": "네트워크 삭제 성공",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" },
+                "example": {
+                  "status": "success",
+                  "message": "data deleted",
+                  "data": ""
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "네트워크 삭제 실패",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" },
+                "example": {
+                  "status": "error",
+                  "message": "internal server error",
+                  "data": "XXXException occured during ..."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/references": {
+      "get": {
+        "tags": ["References"],
+        "summary": "레퍼런스 전체를 조회한다.",
+        "description": "레퍼런스 테이블 전체를 조회한다.",
+        "operationId": "get_references_api_references_get",
+        "responses": {
+          "200": {
+            "description": "레퍼런스 조회 성공",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" },
+                "example": {
+                  "status": "success",
+                  "message": "data extracted",
+                  "data": "..."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "레퍼런스 조회 실패",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" },
+                "example": {
+                  "status": "error",
+                  "message": "internal server error",
+                  "data": "XXXException occured during ..."
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["References"],
+        "summary": "레퍼런스 전체를 삭제한다.",
+        "description": "레퍼런스 테이블을 모두 삭제한다.",
+        "operationId": "delete_refereces_all_api_references_delete",
+        "responses": {
+          "200": {
+            "description": "레퍼런스 테이블 초기화 성공",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" },
+                "example": {
+                  "status": "success",
+                  "message": "data extracted",
+                  "data": "..."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "레퍼런스 테이블 초기화 실패",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" },
+                "example": {
+                  "status": "error",
+                  "message": "essential input missing",
+                  "data": "options"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "레퍼런스 테이블 초기화 실패",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" },
+                "example": {
+                  "status": "error",
+                  "message": "internal server error",
+                  "data": "XXXException occured during ..."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/references/expand": {
+      "post": {
+        "tags": ["References"],
+        "summary": "주요개념 확장을 위해 웹검색을 수행하고 저장한다.",
+        "description": "주요개념 확장을 위해 웹검색을 수행하고 저장한다.",
+        "operationId": "expand_keyconcepts_with_websearch_api_references_expand_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "title": "Options",
+                "examples": [
+                  {
+                    "action_type": "top",
+                    "action_limit": 10,
+                    "reason_model_name": "gemma2:9b-instruct-q5_K_M",
+                    "quorum_check": "true"
+                  },
+                  { "action_type": "all" }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "웹검색 성공",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" },
+                "example": {
+                  "status": "success",
+                  "message": "data extracted",
+                  "data": "..."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "웹검색 실패",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" },
+                "example": {
+                  "status": "error",
+                  "message": "essential input missing",
+                  "data": "options"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "웹검색 실패",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" },
+                "example": {
+                  "status": "error",
+                  "message": "internal server error",
+                  "data": "XXXException occured during ..."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/extract/check-budget": {
+      "post": {
+        "tags": ["Extract"],
+        "summary": "데이터에서 주요개념을 추출하는 비용을 추정한다.",
+        "description": "데이터타입에 따라 데이터소스로부터 데이터를 읽어들인다. 데이터 양에 따라 필요한 토큰 값을 추정한다.",
+        "operationId": "check_budget_api_extract_check_budget_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_check_budget_api_extract_check_budget_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "데이터 추출 성공",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" },
+                "example": {
+                  "status": "success",
+                  "message": "data extracted",
+                  "data": { "reasoning_sum": 1000, "embedding_sum": 1000 }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "데이터 추출 실패",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" },
+                "example": {
+                  "status": "error",
+                  "message": "essential input missing",
+                  "data": "datatype"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "데이터 추출 실패",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" },
+                "example": {
+                  "status": "error",
+                  "message": "input validation error",
+                  "data": ""
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "데이터 추출 실패",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" },
+                "example": {
+                  "status": "error",
+                  "message": "internal server error",
+                  "data": "XXXException occured during ..."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/extract": {
+      "post": {
+        "tags": ["Extract"],
+        "summary": "데이터에서 주요개념을 추출한다.",
+        "description": "데이터타입에 따라 데이터소스로부터 데이터를 읽어들인다. 정해진 프롬프트/포맷에 따라 LLM을 활용해 주요개념을 추출한다. 추출한 데이터는 메시지큐로 발행한다.",
+        "operationId": "extract_api_extract_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_extract_api_extract_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "데이터 추출 성공",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" },
+                "example": {
+                  "status": "success",
+                  "message": "data extracted",
+                  "data": { "reasoning_sum": 1000, "embedding_sum": 1000 }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "데이터 추출 실패",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" },
+                "example": {
+                  "status": "error",
+                  "message": "essential input missing",
+                  "data": "datatype"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "데이터 추출 실패",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" },
+                "example": {
+                  "status": "error",
+                  "message": "input validation error",
+                  "data": ""
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "데이터 추출 실패",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseDTO" },
+                "example": {
+                  "status": "error",
+                  "message": "internal server error",
+                  "data": "XXXException occured during ..."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "summary": "Rootpage",
+        "operationId": "rootPage__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "title": "Response Rootpage  Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Body_check_budget_api_extract_check_budget_post": {
+        "properties": {
+          "datasourcetype": {
+            "type": "string",
+            "title": "Datasourcetype",
+            "description": "data type",
+            "examples": ["markdown"]
+          },
+          "datasourcepath": {
+            "type": "string",
+            "title": "Datasourcepath",
+            "description": "data path",
+            "examples": ["/Users/bachtaeyeong/20_DocHub/TIL"]
+          },
+          "options": {
+            "type": "object",
+            "title": "Options",
+            "description": "options, usually not required",
+            "examples": [
+              {
+                "embed_model_name": "text-embedding-3-small",
+                "max_budget": 1000,
+                "max_file_num": 1,
+                "reason_model_name": "gpt-4o-mini",
+                "shuffle_flag": "true"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": ["datasourcetype", "datasourcepath", "options"],
+        "title": "Body_check_budget_api_extract_check_budget_post"
+      },
+      "Body_extract_api_extract_post": {
+        "properties": {
+          "datasourcetype": {
+            "type": "string",
+            "title": "Datasourcetype",
+            "description": "data type",
+            "examples": ["markdown"]
+          },
+          "datasourcepath": {
+            "type": "string",
+            "title": "Datasourcepath",
+            "description": "data path",
+            "examples": ["/Users/bachtaeyeong/20_DocHub/TIL"]
+          },
+          "options": {
+            "type": "object",
+            "title": "Options",
+            "description": "options, usually not required",
+            "examples": [
+              {
+                "embed_model_name": "gemma2:9b-instruct-q5_K_M",
+                "format": "json schema for structured output from llm",
+                "ignore_dir_list": [".git", ".vscode", ".obsidian"],
+                "max_budget": 1000,
+                "max_file_num": 10,
+                "prompt": "prompt text for generate output from llm",
+                "reason_model_name": "gemma2:9b-instruct-q5_K_M",
+                "shuffle_flag": true
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": ["datasourcetype", "datasourcepath", "options"],
+        "title": "Body_extract_api_extract_post"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": { "$ref": "#/components/schemas/ValidationError" },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ResponseDTO": {
+        "properties": {
+          "status": { "type": "string", "title": "Status" },
+          "message": { "type": "string", "title": "Message" },
+          "data": { "title": "Data" }
+        },
+        "type": "object",
+        "required": ["status", "message", "data"],
+        "title": "ResponseDTO"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": { "anyOf": [{ "type": "string" }, { "type": "integer" }] },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": { "type": "string", "title": "Message" },
+          "type": { "type": "string", "title": "Error Type" }
+        },
+        "type": "object",
+        "required": ["loc", "msg", "type"],
+        "title": "ValidationError"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Extract",
+      "description": "데이터 추출과 관련된 요청을 처리한다."
+    },
+    {
+      "name": "Networks",
+      "description": "네트워크 관련 CRUD 요청을 처리한다."
+    },
+    {
+      "name": "References",
+      "description": "참고자료 관련 CRUD 요청을 처리한다."
+    },
+    { "name": "Concepts", "description": "주요개념 관련 CRUD 요청을 처리한다." }
+  ]
+}
