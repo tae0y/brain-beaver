@@ -52,6 +52,23 @@ export default function AdminPanel() {
   const [showDeleteAllDialog, setShowDeleteAllDialog] = useState(false);
   const [showDeleteAllReferencesDialog, setShowDeleteAllReferencesDialog] = useState(false);
   const [showRelationshipMappingDialog, setShowRelationshipMappingDialog] = useState(false);
+  
+  // Search and filter states
+  const [conceptSearch, setConceptSearch] = useState('');
+  const [conceptCategoryFilter, setConceptCategoryFilter] = useState('');
+  const [conceptDataNameFilter, setConceptDataNameFilter] = useState('');
+  const [referenceSearch, setReferenceSearch] = useState('');
+  const [referenceDecisionFilter, setReferenceDecisionFilter] = useState('');
+  const [referenceConceptFilter, setReferenceConceptFilter] = useState('');
+  
+  // Applied filter states (what's actually being used for filtering)
+  const [appliedConceptSearch, setAppliedConceptSearch] = useState('');
+  const [appliedConceptCategoryFilter, setAppliedConceptCategoryFilter] = useState('');
+  const [appliedConceptDataNameFilter, setAppliedConceptDataNameFilter] = useState('');
+  const [appliedReferenceSearch, setAppliedReferenceSearch] = useState('');
+  const [appliedReferenceDecisionFilter, setAppliedReferenceDecisionFilter] = useState('');
+  const [appliedReferenceConceptFilter, setAppliedReferenceConceptFilter] = useState('');
+  
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -483,10 +500,10 @@ export default function AdminPanel() {
   };
 
   const toggleSelectAll = () => {
-    if (selectedItems.size === concepts.length) {
+    if (selectedItems.size === filteredConcepts.length && filteredConcepts.length > 0) {
       setSelectedItems(new Set());
     } else {
-      setSelectedItems(new Set(concepts.map(c => c.id)));
+      setSelectedItems(new Set(filteredConcepts.map(c => c.id)));
     }
   };
 
@@ -501,10 +518,10 @@ export default function AdminPanel() {
   };
 
   const toggleSelectAllReferences = () => {
-    if (selectedReferences.size === references.length) {
+    if (selectedReferences.size === filteredReferences.length && filteredReferences.length > 0) {
       setSelectedReferences(new Set());
     } else {
-      setSelectedReferences(new Set(references.map(r => r.id)));
+      setSelectedReferences(new Set(filteredReferences.map(r => r.id)));
     }
   };
 
@@ -516,6 +533,115 @@ export default function AdminPanel() {
       newSelected.add(id);
     }
     setSelectedReferences(newSelected);
+  };
+
+  // Filter functions using applied states
+  const filteredConcepts = concepts.filter(concept => {
+    // If no applied filters, show nothing (user must explicitly search)
+    if (!appliedConceptSearch && !appliedConceptCategoryFilter && !appliedConceptDataNameFilter) {
+      return false;
+    }
+    
+    // Special case: show all when marked with '*'
+    if (appliedConceptSearch === '*') {
+      return true;
+    }
+    
+    const matchesSearch = appliedConceptSearch === '' || 
+      concept.title.toLowerCase().includes(appliedConceptSearch.toLowerCase()) ||
+      concept.keywords.toLowerCase().includes(appliedConceptSearch.toLowerCase()) ||
+      concept.summary.toLowerCase().includes(appliedConceptSearch.toLowerCase());
+    
+    const matchesCategory = appliedConceptCategoryFilter === '' || 
+      concept.category.toLowerCase().includes(appliedConceptCategoryFilter.toLowerCase());
+    
+    const matchesDataName = appliedConceptDataNameFilter === '' || 
+      concept.data_name.toLowerCase().includes(appliedConceptDataNameFilter.toLowerCase());
+    
+    return matchesSearch && matchesCategory && matchesDataName;
+  });
+
+  const filteredReferences = references.filter(reference => {
+    // If no applied filters, show nothing (user must explicitly search)
+    if (!appliedReferenceSearch && !appliedReferenceDecisionFilter && !appliedReferenceConceptFilter) {
+      return false;
+    }
+    
+    // Special case: show all when marked with '*'
+    if (appliedReferenceSearch === '*') {
+      return true;
+    }
+    
+    const parsed = parseDescription(reference.description);
+    
+    const matchesSearch = appliedReferenceSearch === '' || 
+      reference.description.toLowerCase().includes(appliedReferenceSearch.toLowerCase()) ||
+      parsed.counterArgument.toLowerCase().includes(appliedReferenceSearch.toLowerCase()) ||
+      parsed.finalReview.toLowerCase().includes(appliedReferenceSearch.toLowerCase()) ||
+      parsed.webSearchResults.some(result => 
+        result.persona.toLowerCase().includes(appliedReferenceSearch.toLowerCase()) ||
+        result.detailed.toLowerCase().includes(appliedReferenceSearch.toLowerCase())
+      );
+    
+    const matchesDecision = appliedReferenceDecisionFilter === '' ||
+      parsed.webSearchResults.some(result => 
+        result.decision.toLowerCase() === appliedReferenceDecisionFilter.toLowerCase()
+      );
+    
+    const matchesConcept = appliedReferenceConceptFilter === '' ||
+      (reference.concept && 
+        reference.concept.title.toLowerCase().includes(appliedReferenceConceptFilter.toLowerCase())
+      );
+    
+    return matchesSearch && matchesDecision && matchesConcept;
+  });
+
+  // Get unique values for filter options
+  const uniqueCategories = [...new Set(concepts.map(c => c.category).filter(Boolean))];
+  const uniqueDataNames = [...new Set(concepts.map(c => c.data_name).filter(Boolean))];
+  const uniqueConceptTitles = [...new Set(concepts.map(c => c.title).filter(Boolean))];
+
+  const applyConceptFilters = () => {
+    setAppliedConceptSearch(conceptSearch);
+    setAppliedConceptCategoryFilter(conceptCategoryFilter);
+    setAppliedConceptDataNameFilter(conceptDataNameFilter);
+  };
+
+  const applyReferenceFilters = () => {
+    setAppliedReferenceSearch(referenceSearch);
+    setAppliedReferenceDecisionFilter(referenceDecisionFilter);
+    setAppliedReferenceConceptFilter(referenceConceptFilter);
+  };
+
+  const clearConceptFilters = () => {
+    setConceptSearch('');
+    setConceptCategoryFilter('');
+    setConceptDataNameFilter('');
+    setAppliedConceptSearch('');
+    setAppliedConceptCategoryFilter('');
+    setAppliedConceptDataNameFilter('');
+  };
+
+  const clearReferenceFilters = () => {
+    setReferenceSearch('');
+    setReferenceDecisionFilter('');
+    setReferenceConceptFilter('');
+    setAppliedReferenceSearch('');
+    setAppliedReferenceDecisionFilter('');
+    setAppliedReferenceConceptFilter('');
+  };
+
+  // Show all items (remove applied filters but keep input values)
+  const showAllConcepts = () => {
+    setAppliedConceptSearch('*'); // Use special marker to show all
+    setAppliedConceptCategoryFilter('');
+    setAppliedConceptDataNameFilter('');
+  };
+
+  const showAllReferences = () => {
+    setAppliedReferenceSearch('*'); // Use special marker to show all
+    setAppliedReferenceDecisionFilter('');
+    setAppliedReferenceConceptFilter('');
   };
 
   const goToKnowledgeGraph = () => {
@@ -626,11 +752,75 @@ export default function AdminPanel() {
         </section>
 
         <section className="concept-section">
-          <h2>지식 단위 ({concepts.length}개)</h2>
+          <h2>지식 단위 (전체: {concepts.length}개, 필터링: {filteredConcepts.length}개)</h2>
+          
+          <div className="search-filter-section">
+            <div className="search-box">
+              <input
+                type="text"
+                placeholder="제목, 키워드, 요약으로 검색..."
+                value={conceptSearch}
+                onChange={(e) => setConceptSearch(e.target.value)}
+                disabled={isProcessing}
+                className="search-input"
+              />
+              <span className="search-icon">🔍</span>
+            </div>
+            
+            <div className="filter-row">
+              <select
+                value={conceptCategoryFilter}
+                onChange={(e) => setConceptCategoryFilter(e.target.value)}
+                disabled={isProcessing}
+                className="filter-select"
+              >
+                <option value="">모든 카테고리</option>
+                {uniqueCategories.map((category) => (
+                  <option key={category} value={category}>{category}</option>
+                ))}
+              </select>
+              
+              <select
+                value={conceptDataNameFilter}
+                onChange={(e) => setConceptDataNameFilter(e.target.value)}
+                disabled={isProcessing}
+                className="filter-select"
+              >
+                <option value="">모든 데이터</option>
+                {uniqueDataNames.map((dataName) => (
+                  <option key={dataName} value={dataName}>{dataName}</option>
+                ))}
+              </select>
+              
+              <button 
+                onClick={applyConceptFilters} 
+                disabled={isProcessing}
+                className="search-button"
+              >
+                검색
+              </button>
+              
+              <button 
+                onClick={showAllConcepts} 
+                disabled={isProcessing}
+                className="show-all-button"
+              >
+                전체 조회
+              </button>
+              
+              <button 
+                onClick={clearConceptFilters} 
+                disabled={isProcessing}
+                className="clear-filters-button"
+              >
+                필터 초기화
+              </button>
+            </div>
+          </div>
           
           <div className="concept-controls">
             <button onClick={toggleSelectAll} disabled={isProcessing}>
-              {selectedItems.size === concepts.length ? '전체 해제' : '전체 선택'}
+              {selectedItems.size === filteredConcepts.length && filteredConcepts.length > 0 ? '전체 해제' : '전체 선택'}
             </button>
             <button onClick={handleDeleteAllConcepts} disabled={isProcessing}>
               전체 삭제
@@ -644,39 +834,108 @@ export default function AdminPanel() {
           </div>
 
           <div className="concept-list">
-            {concepts.map((concept) => (
-              <div key={concept.id} className="concept-item">
-                <input
-                  type="checkbox"
-                  checked={selectedItems.has(concept.id)}
-                  onChange={() => toggleSelectItem(concept.id)}
-                  disabled={isProcessing}
-                />
-                <div className="concept-info">
-                  <h4>{concept.title}</h4>
-                  <p>키워드: {concept.keywords}</p>
-                  <p>카테고리: {concept.category}</p>
-                  <p>데이터명: {concept.data_name}</p>
-                  <p className="summary">{concept.summary}</p>
-                </div>
-                <button 
-                  onClick={() => handleDeleteConcept(concept.id)}
-                  disabled={isProcessing}
-                  className="delete-button"
-                >
-                  삭제
-                </button>
+            {filteredConcepts.length === 0 ? (
+              <div className="empty-results">
+                검색 조건에 맞는 지식 단위가 없습니다.
               </div>
-            ))}
+            ) : (
+              filteredConcepts.map((concept) => (
+                <div key={concept.id} className="concept-item">
+                  <input
+                    type="checkbox"
+                    checked={selectedItems.has(concept.id)}
+                    onChange={() => toggleSelectItem(concept.id)}
+                    disabled={isProcessing}
+                  />
+                  <div className="concept-info">
+                    <h4>{concept.title}</h4>
+                    <p>키워드: {concept.keywords}</p>
+                    <p>카테고리: {concept.category}</p>
+                    <p>데이터명: {concept.data_name}</p>
+                    <p className="summary">{concept.summary}</p>
+                  </div>
+                  <button 
+                    onClick={() => handleDeleteConcept(concept.id)}
+                    disabled={isProcessing}
+                    className="delete-button"
+                  >
+                    삭제
+                  </button>
+                </div>
+              ))
+            )}
           </div>
         </section>
 
         <section className="references-section">
-          <h2>웹 검색 참고자료 ({references.length}개)</h2>
+          <h2>웹 검색 참고자료 (전체: {references.length}개, 필터링: {filteredReferences.length}개)</h2>
+          
+          <div className="search-filter-section">
+            <div className="search-box">
+              <input
+                type="text"
+                placeholder="악마의 대변인, 검토의견, 웹검색 결과로 검색..."
+                value={referenceSearch}
+                onChange={(e) => setReferenceSearch(e.target.value)}
+                disabled={isProcessing}
+                className="search-input"
+              />
+              <span className="search-icon">🔍</span>
+            </div>
+            
+            <div className="filter-row">
+              <select
+                value={referenceDecisionFilter}
+                onChange={(e) => setReferenceDecisionFilter(e.target.value)}
+                disabled={isProcessing}
+                className="filter-select"
+              >
+                <option value="">모든 결정</option>
+                <option value="true">찬성만</option>
+                <option value="false">반대만</option>
+              </select>
+              
+              <select
+                value={referenceConceptFilter}
+                onChange={(e) => setReferenceConceptFilter(e.target.value)}
+                disabled={isProcessing}
+                className="filter-select"
+              >
+                <option value="">모든 지식</option>
+                {uniqueConceptTitles.map((title) => (
+                  <option key={title} value={title}>{title}</option>
+                ))}
+              </select>
+              
+              <button 
+                onClick={applyReferenceFilters} 
+                disabled={isProcessing}
+                className="search-button"
+              >
+                검색
+              </button>
+              
+              <button 
+                onClick={showAllReferences} 
+                disabled={isProcessing}
+                className="show-all-button"
+              >
+                전체 조회
+              </button>
+              
+              <button 
+                onClick={clearReferenceFilters} 
+                disabled={isProcessing}
+                className="clear-filters-button"
+              >
+                필터 초기화
+              </button>
+            </div>
+          </div>
           
           <div className="references-controls">
             <button onClick={toggleSelectAllReferences} disabled={isProcessing}>
-              {selectedReferences.size === references.length ? '전체 해제' : '전체 선택'}
+              {selectedReferences.size === filteredReferences.length && filteredReferences.length > 0 ? '전체 해제' : '전체 선택'}
             </button>
             <button onClick={handleDeleteAllReferences} disabled={isProcessing}>
               전체 삭제
@@ -684,10 +943,15 @@ export default function AdminPanel() {
           </div>
 
           <div className="references-list">
-            {references.map((reference) => {
-              const parsed = parseDescription(reference.description);
-              return (
-                <div key={reference.id} className="reference-item">
+            {filteredReferences.length === 0 ? (
+              <div className="empty-results">
+                검색 조건에 맞는 참고자료가 없습니다.
+              </div>
+            ) : (
+              filteredReferences.map((reference) => {
+                const parsed = parseDescription(reference.description);
+                return (
+                  <div key={reference.id} className="reference-item">
                   <div className="reference-header">
                     <input
                       type="checkbox"
@@ -753,7 +1017,8 @@ export default function AdminPanel() {
                   </div>
                 </div>
               );
-            })}
+              })
+            )}
           </div>
         </section>
       </main>
