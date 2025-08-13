@@ -36,7 +36,7 @@ interface ParsedDescription {
   }>;
 }
 
-export default function AdminPanel() {
+export default function DataManagementPanel() {
   const [dataSourceType, setDataSourceType] = useState<'markdown' | 'website'>('markdown');
   const [websiteUrl, setWebsiteUrl] = useState('');
   const [markdownFiles, setMarkdownFiles] = useState<FileList | null>(null);
@@ -651,7 +651,7 @@ export default function AdminPanel() {
   return (
     <div className="admin-panel">
       <header className="admin-header">
-        <h1>BrainBeaver 관리자</h1>
+        <h1>BrainBeaver 데이터 관리</h1>
         <button onClick={goToKnowledgeGraph} className="nav-button">
           지식그래프 보기
         </button>
