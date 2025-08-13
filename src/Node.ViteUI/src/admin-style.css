@@ -753,6 +753,51 @@ section h2 {
   line-height: 1.5;
 }
 
+/* Parsing error info styles */
+.parsing-error-info {
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 12px 0;
+}
+
+.parsing-error-info p {
+  margin: 0 0 8px 0;
+  color: #856404;
+  font-weight: 500;
+}
+
+.parsing-error-info details {
+  margin-top: 8px;
+}
+
+.parsing-error-info summary {
+  cursor: pointer;
+  color: #6c757d;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.parsing-error-info summary:hover {
+  color: #495057;
+}
+
+.raw-data {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  padding: 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: #495057;
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-height: 200px;
+  overflow-y: auto;
+  margin: 0;
+}
+
 /* Empty state for references */
 .references-list:empty::after {
   content: '아직 웹 검색 참고자료가 없습니다.';

@@ -111,6 +111,63 @@ export default function AdminPanel() {
     }
   }, [concepts]);
 
+  const normalizeJsonString = (jsonStr: string): string => {
+    // Remove any leading/trailing whitespace
+    let normalized = jsonStr.trim();
+    
+    // Handle edge case where the string might be wrapped in quotes
+    if ((normalized.startsWith('"') && normalized.endsWith('"')) ||
+        (normalized.startsWith("'") && normalized.endsWith("'"))) {
+      normalized = normalized.slice(1, -1);
+    }
+    
+    // Replace problematic quotes step by step
+    // 1. First, protect content inside double quotes (if any)
+    let protectedStrings: string[] = [];
+    let stringIndex = 0;
+    
+    // Protect existing double-quoted strings
+    normalized = normalized.replace(/"([^"\\\\]*(\\\\.[^"\\\\]*)*)"/g, (match) => {
+      const placeholder = `___STRING_${stringIndex++}___`;
+      protectedStrings.push(match);
+      return placeholder;
+    });
+    
+    // 2. Now handle single-quoted strings - convert them to double quotes
+    normalized = normalized.replace(/'([^'\\\\]*(\\\\.[^'\\\\]*)*)'/g, (match, content) => {
+      const placeholder = `___STRING_${stringIndex++}___`;
+      // Convert single quotes to double quotes and escape internal double quotes
+      const escaped = content.replace(/"/g, '\\"');
+      protectedStrings.push(`"${escaped}"`);
+      return placeholder;
+    });
+    
+    // 3. Replace any remaining single quotes with double quotes (these should be structural)
+    normalized = normalized.replace(/'/g, '"');
+    
+    // 4. Restore protected strings
+    for (let i = protectedStrings.length - 1; i >= 0; i--) {
+      normalized = normalized.replace(`___STRING_${i}___`, protectedStrings[i]);
+    }
+    
+    // Fix common JSON formatting issues
+    normalized = normalized
+      // Remove trailing commas before closing brackets/braces
+      .replace(/,(\s*[}\]])/g, '$1')
+      // Fix spacing issues
+      .replace(/:\s*/g, ':')
+      .replace(/,\s*/g, ',')
+      // Remove any invalid commas at the start
+      .replace(/\[\s*,/g, '[')
+      .replace(/{\s*,/g, '{')
+      // Fix boolean values
+      .replace(/:\s*True\b/g, ': true')
+      .replace(/:\s*False\b/g, ': false')
+      .replace(/:\s*None\b/g, ': null');
+    
+    return normalized;
+  };
+
   const parseDescription = (description: string): ParsedDescription => {
     const parts = description.split('//').map(part => part.trim());
     
@@ -120,16 +177,109 @@ export default function AdminPanel() {
 
     parts.forEach(part => {
       if (part.startsWith('악마의대변인')) {
-        counterArgument = part.replace('악마의대변인 :', '').trim();
+        counterArgument = part.replace(/^악마의대변인\s*:?\s*/, '').trim();
       } else if (part.startsWith('최종검토의견')) {
-        finalReview = part.replace('최종검토의견:', '').trim();
+        finalReview = part.replace(/^최종검토의견\s*:?\s*/, '').trim();
       } else if (part.startsWith('관련근거문서')) {
         try {
-          const jsonStr = part.replace('관련근거문서:', '').trim();
+          let jsonStr = part.replace(/^관련근거문서\s*:?\s*/, '').trim();
+          
+          // Log original string for debugging
+          console.log('Original JSON string (first 300 chars):', jsonStr.substring(0, 300) + '...');
+          
+          // Apply normalization
+          jsonStr = normalizeJsonString(jsonStr);
+          
+          console.log('Normalized JSON string (first 300 chars):', jsonStr.substring(0, 300) + '...');
+          
           const parsed = JSON.parse(jsonStr);
           webSearchResults = Array.isArray(parsed) ? parsed : [];
+          
+          console.log('Successfully parsed web search results:', webSearchResults.length, 'items');
         } catch (error) {
-          console.error('Failed to parse web search results:', error);
+          console.error('Primary parsing failed:', error);
+          console.error('Problematic JSON string (first 500 chars):', part.substring(0, 500) + '...');
+          
+          // Try multiple alternative parsing approaches
+          let success = false;
+          
+          // Method 1: Extract array pattern with regex
+          if (!success) {
+            try {
+              const arrayMatch = part.match(/\[[\s\S]*\]/);
+              if (arrayMatch) {
+                let extractedJson = arrayMatch[0];
+                extractedJson = normalizeJsonString(extractedJson);
+                console.log('Attempting regex extraction method 1...');
+                const parsed = JSON.parse(extractedJson);
+                webSearchResults = Array.isArray(parsed) ? parsed : [];
+                console.log('Successfully parsed with regex method 1:', webSearchResults.length, 'items');
+                success = true;
+              }
+            } catch (regexError) {
+              console.error('Regex method 1 failed:', regexError);
+            }
+          }
+          
+          // Method 2: More aggressive string cleaning
+          if (!success) {
+            try {
+              let cleanStr = part.replace(/^관련근거문서\s*:?\s*/, '').trim();
+              
+              // Remove any non-JSON prefix/suffix
+              const startIdx = cleanStr.indexOf('[');
+              const endIdx = cleanStr.lastIndexOf(']');
+              
+              if (startIdx !== -1 && endIdx !== -1 && endIdx > startIdx) {
+                cleanStr = cleanStr.substring(startIdx, endIdx + 1);
+                cleanStr = normalizeJsonString(cleanStr);
+                console.log('Attempting aggressive cleaning method...');
+                const parsed = JSON.parse(cleanStr);
+                webSearchResults = Array.isArray(parsed) ? parsed : [];
+                console.log('Successfully parsed with aggressive cleaning:', webSearchResults.length, 'items');
+                success = true;
+              }
+            } catch (cleanError) {
+              console.error('Aggressive cleaning method failed:', cleanError);
+            }
+          }
+          
+          // Method 3: Manual parsing as fallback
+          if (!success) {
+            try {
+              console.log('Attempting manual parsing fallback...');
+              // Look for persona/decision/detailed patterns
+              const manualResults = [];
+              const personaMatches = part.matchAll(/'persona':\s*'([^']*?)'/g);
+              const decisionMatches = part.matchAll(/'decision':\s*'([^']*?)'/g);
+              const detailedMatches = part.matchAll(/'detailed':\s*'([^']*?)'/g);
+              
+              const personas = Array.from(personaMatches, m => m[1]);
+              const decisions = Array.from(decisionMatches, m => m[1]);
+              const detaileds = Array.from(detailedMatches, m => m[1]);
+              
+              for (let i = 0; i < Math.max(personas.length, decisions.length, detaileds.length); i++) {
+                manualResults.push({
+                  persona: personas[i] || '',
+                  decision: decisions[i] || '',
+                  detailed: detaileds[i] || ''
+                });
+              }
+              
+              if (manualResults.length > 0) {
+                webSearchResults = manualResults;
+                console.log('Successfully parsed with manual fallback:', webSearchResults.length, 'items');
+                success = true;
+              }
+            } catch (manualError) {
+              console.error('Manual parsing fallback failed:', manualError);
+            }
+          }
+          
+          if (!success) {
+            console.error('All parsing methods failed, setting empty results');
+            webSearchResults = [];
+          }
         }
       }
     });
@@ -573,16 +723,29 @@ export default function AdminPanel() {
                     
                     <div className="web-search-results">
                       <h5>🌐 웹 검색 결과 ({parsed.webSearchResults.length}개)</h5>
+                      {parsed.webSearchResults.length === 0 && (
+                        <div className="parsing-error-info">
+                          <p>⚠️ JSON 파싱에 실패했습니다. 개발자 콘솔을 확인해주세요.</p>
+                          <details>
+                            <summary>원본 데이터 확인</summary>
+                            <pre className="raw-data">{reference.description.split('//').find(p => p.includes('관련근거문서'))?.substring(0, 500) + '...'}</pre>
+                          </details>
+                        </div>
+                      )}
                       <div className="search-results-grid">
                         {parsed.webSearchResults.map((result, index) => (
                           <div key={index} className="search-result-item">
                             <div className="result-header">
-                              <span className="persona-badge">{result.persona}</span>
+                              <span className="persona-badge" title={result.persona}>
+                                {result.persona.length > 100 ? result.persona.substring(0, 100) + '...' : result.persona}
+                              </span>
                               <span className={`decision-badge ${result.decision.toLowerCase()}`}>
-                                {result.decision === 'True' ? '찬성' : '반대'}
+                                {result.decision === 'True' || result.decision === 'true' ? '찬성' : '반대'}
                               </span>
                             </div>
-                            <p className="result-detailed">{result.detailed}</p>
+                            <p className="result-detailed" title={result.detailed}>
+                              {result.detailed.length > 500 ? result.detailed.substring(0, 500) + '...' : result.detailed}
+                            </p>
                           </div>
                         ))}
                       </div>
