@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import ConfirmDialog from './confirm-dialog';
 
 interface Document {
   id: number;
@@ -29,6 +30,8 @@ export default function AdminPanel() {
   const [processingMessage, setProcessingMessage] = useState('');
   const [selectedItems, setSelectedItems] = useState<Set<number>>(new Set());
   const [currentProcessAbortController, setCurrentProcessAbortController] = useState<AbortController | null>(null);
+  const [showDeleteAllDialog, setShowDeleteAllDialog] = useState(false);
+  const [showRelationshipMappingDialog, setShowRelationshipMappingDialog] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -87,7 +90,7 @@ export default function AdminPanel() {
       if (dataSourceType === 'website') {
         datasourcepath = websiteUrl;
       } else {
-        // For markdown files, we'll need to implement file upload to server
+        // TODO: For markdown files, we'll need to implement file upload to server
         // For now, simulate with a path
         datasourcepath = '/uploaded/markdown/path';
       }
@@ -151,7 +154,11 @@ export default function AdminPanel() {
 
   const handleRelationshipMapping = async () => {
     if (isProcessing) return;
+    setShowRelationshipMappingDialog(true);
+  };
 
+  const confirmRelationshipMapping = async () => {
+    setShowRelationshipMappingDialog(false);
     setIsProcessing(true);
     setProcessingProgress(0);
     setProcessingMessage('Creating relationship mappings...');
@@ -219,7 +226,12 @@ export default function AdminPanel() {
 
   const handleDeleteAllConcepts = async () => {
     if (isProcessing) return;
+    setShowDeleteAllDialog(true);
+  };
 
+  const confirmDeleteAllConcepts = async () => {
+    setShowDeleteAllDialog(false);
+    
     try {
       await axios.delete('http://localhost:8112/api/concepts');
       await loadConcepts();
@@ -399,6 +411,28 @@ export default function AdminPanel() {
           </div>
         </section>
       </main>
+
+      <ConfirmDialog
+        isOpen={showDeleteAllDialog}
+        title="전체 삭제 확인"
+        message="모든 지식 단위를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다."
+        confirmText="삭제"
+        cancelText="취소"
+        confirmButtonStyle="danger"
+        onConfirm={confirmDeleteAllConcepts}
+        onCancel={() => setShowDeleteAllDialog(false)}
+      />
+
+      <ConfirmDialog
+        isOpen={showRelationshipMappingDialog}
+        title="연관관계 매핑 확인"
+        message="지식 단위들 간의 연관관계를 매핑하시겠습니까? 기존 연관관계는 초기화될 수 있습니다."
+        confirmText="진행"
+        cancelText="취소"
+        confirmButtonStyle="primary"
+        onConfirm={confirmRelationshipMapping}
+        onCancel={() => setShowRelationshipMappingDialog(false)}
+      />
     </div>
   );
 }

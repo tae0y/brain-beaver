@@ -2,6 +2,7 @@
 // cosmos v2 : https://cosmograph-org.github.io/cosmos/?path=/docs/welcome-to-cosmos--docs
 import { createRoot } from 'react-dom/client';
 import VaulDrawer from './drawer';
+import Menu from './menu';
 import { useLoading, LoaderProvider, Circles } from '@agney/react-loading'
 import React, { useState, useEffect } from 'react';
 import './style.css';
@@ -67,6 +68,12 @@ const drawerContainer = document.createElement('div');
 drawerContainer.id = 'drawer-root';
 document.body.appendChild(drawerContainer);
 const drawerRoot = createRoot(drawerContainer);
+
+const menuContainer = document.createElement('div');
+menuContainer.id = 'menu-root';
+appDiv.appendChild(menuContainer);
+const menuRoot = createRoot(menuContainer);
+menuRoot.render(<Menu />);
 
 
 /*********************************************************************************************
