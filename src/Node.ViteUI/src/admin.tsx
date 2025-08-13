@@ -19,24 +19,45 @@ interface Concept {
   create_time: string;
 }
 
+interface Reference {
+  id: number;
+  concept_id: number;
+  description: string;
+  concept?: Concept;
+}
+
+interface ParsedDescription {
+  counterArgument: string;
+  finalReview: string;
+  webSearchResults: Array<{
+    persona: string;
+    decision: string;
+    detailed: string;
+  }>;
+}
+
 export default function AdminPanel() {
   const [dataSourceType, setDataSourceType] = useState<'markdown' | 'website'>('markdown');
   const [websiteUrl, setWebsiteUrl] = useState('');
   const [markdownFiles, setMarkdownFiles] = useState<FileList | null>(null);
   const [documents, setDocuments] = useState<Document[]>([]);
   const [concepts, setConcepts] = useState<Concept[]>([]);
+  const [references, setReferences] = useState<Reference[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [processingProgress, setProcessingProgress] = useState(0);
   const [processingMessage, setProcessingMessage] = useState('');
   const [selectedItems, setSelectedItems] = useState<Set<number>>(new Set());
+  const [selectedReferences, setSelectedReferences] = useState<Set<number>>(new Set());
   const [currentProcessAbortController, setCurrentProcessAbortController] = useState<AbortController | null>(null);
   const [showDeleteAllDialog, setShowDeleteAllDialog] = useState(false);
+  const [showDeleteAllReferencesDialog, setShowDeleteAllReferencesDialog] = useState(false);
   const [showRelationshipMappingDialog, setShowRelationshipMappingDialog] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     loadDocuments();
     loadConcepts();
+    loadReferences();
   }, []);
 
   const loadDocuments = async () => {
@@ -66,6 +87,54 @@ export default function AdminPanel() {
     } catch (error) {
       console.error('Failed to load concepts:', error);
     }
+  };
+
+  const loadReferences = async () => {
+    try {
+      const response = await axios.get('http://localhost:8112/api/references');
+      if (response.data.status === 'success') {
+        const referencesWithConcepts = response.data.data.map((ref: Reference) => {
+          const concept = concepts.find(c => c.id === ref.concept_id);
+          return { ...ref, concept };
+        });
+        setReferences(referencesWithConcepts);
+      }
+    } catch (error) {
+      console.error('Failed to load references:', error);
+    }
+  };
+
+  // Reload references when concepts change to populate concept data
+  useEffect(() => {
+    if (concepts.length > 0) {
+      loadReferences();
+    }
+  }, [concepts]);
+
+  const parseDescription = (description: string): ParsedDescription => {
+    const parts = description.split('//').map(part => part.trim());
+    
+    let counterArgument = '';
+    let finalReview = '';
+    let webSearchResults: ParsedDescription['webSearchResults'] = [];
+
+    parts.forEach(part => {
+      if (part.startsWith('악마의대변인')) {
+        counterArgument = part.replace('악마의대변인 :', '').trim();
+      } else if (part.startsWith('최종검토의견')) {
+        finalReview = part.replace('최종검토의견:', '').trim();
+      } else if (part.startsWith('관련근거문서')) {
+        try {
+          const jsonStr = part.replace('관련근거문서:', '').trim();
+          const parsed = JSON.parse(jsonStr);
+          webSearchResults = Array.isArray(parsed) ? parsed : [];
+        } catch (error) {
+          console.error('Failed to parse web search results:', error);
+        }
+      }
+    });
+
+    return { counterArgument, finalReview, webSearchResults };
   };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -240,6 +309,29 @@ export default function AdminPanel() {
     }
   };
 
+  const handleDeleteAllReferences = async () => {
+    if (isProcessing) return;
+    setShowDeleteAllReferencesDialog(true);
+  };
+
+  const confirmDeleteAllReferences = async () => {
+    setShowDeleteAllReferencesDialog(false);
+    
+    try {
+      await axios.delete('http://localhost:8112/api/references');
+      await loadReferences();
+    } catch (error) {
+      console.error('Failed to delete references:', error);
+    }
+  };
+
+  const handleDeleteReference = async (referenceId: number) => {
+    if (isProcessing) return;
+    // Note: Backend doesn't have individual delete endpoint for references
+    // This would need to be implemented
+    console.log('Delete reference:', referenceId);
+  };
+
   const toggleSelectAll = () => {
     if (selectedItems.size === concepts.length) {
       setSelectedItems(new Set());
@@ -256,6 +348,24 @@ export default function AdminPanel() {
       newSelected.add(id);
     }
     setSelectedItems(newSelected);
+  };
+
+  const toggleSelectAllReferences = () => {
+    if (selectedReferences.size === references.length) {
+      setSelectedReferences(new Set());
+    } else {
+      setSelectedReferences(new Set(references.map(r => r.id)));
+    }
+  };
+
+  const toggleSelectReference = (id: number) => {
+    const newSelected = new Set(selectedReferences);
+    if (newSelected.has(id)) {
+      newSelected.delete(id);
+    } else {
+      newSelected.add(id);
+    }
+    setSelectedReferences(newSelected);
   };
 
   const goToKnowledgeGraph = () => {
@@ -410,6 +520,79 @@ export default function AdminPanel() {
             ))}
           </div>
         </section>
+
+        <section className="references-section">
+          <h2>웹 검색 참고자료 ({references.length}개)</h2>
+          
+          <div className="references-controls">
+            <button onClick={toggleSelectAllReferences} disabled={isProcessing}>
+              {selectedReferences.size === references.length ? '전체 해제' : '전체 선택'}
+            </button>
+            <button onClick={handleDeleteAllReferences} disabled={isProcessing}>
+              전체 삭제
+            </button>
+          </div>
+
+          <div className="references-list">
+            {references.map((reference) => {
+              const parsed = parseDescription(reference.description);
+              return (
+                <div key={reference.id} className="reference-item">
+                  <div className="reference-header">
+                    <input
+                      type="checkbox"
+                      checked={selectedReferences.has(reference.id)}
+                      onChange={() => toggleSelectReference(reference.id)}
+                      disabled={isProcessing}
+                    />
+                    <div className="reference-concept-info">
+                      <h4>관련 지식: {reference.concept?.title || `ID ${reference.concept_id}`}</h4>
+                      {reference.concept && (
+                        <p className="concept-summary">{reference.concept.summary}</p>
+                      )}
+                    </div>
+                    <button 
+                      onClick={() => handleDeleteReference(reference.id)}
+                      disabled={isProcessing}
+                      className="delete-button"
+                    >
+                      삭제
+                    </button>
+                  </div>
+                  
+                  <div className="reference-content">
+                    <div className="counter-argument">
+                      <h5>🔥 악마의 대변인</h5>
+                      <p>{parsed.counterArgument}</p>
+                    </div>
+                    
+                    <div className="final-review">
+                      <h5>📝 최종 검토 의견</h5>
+                      <p>{parsed.finalReview}</p>
+                    </div>
+                    
+                    <div className="web-search-results">
+                      <h5>🌐 웹 검색 결과 ({parsed.webSearchResults.length}개)</h5>
+                      <div className="search-results-grid">
+                        {parsed.webSearchResults.map((result, index) => (
+                          <div key={index} className="search-result-item">
+                            <div className="result-header">
+                              <span className="persona-badge">{result.persona}</span>
+                              <span className={`decision-badge ${result.decision.toLowerCase()}`}>
+                                {result.decision === 'True' ? '찬성' : '반대'}
+                              </span>
+                            </div>
+                            <p className="result-detailed">{result.detailed}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
       </main>
 
       <ConfirmDialog
@@ -432,6 +615,17 @@ export default function AdminPanel() {
         confirmButtonStyle="primary"
         onConfirm={confirmRelationshipMapping}
         onCancel={() => setShowRelationshipMappingDialog(false)}
+      />
+
+      <ConfirmDialog
+        isOpen={showDeleteAllReferencesDialog}
+        title="참고자료 전체 삭제 확인"
+        message="모든 웹 검색 참고자료를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다."
+        confirmText="삭제"
+        cancelText="취소"
+        confirmButtonStyle="danger"
+        onConfirm={confirmDeleteAllReferences}
+        onCancel={() => setShowDeleteAllReferencesDialog(false)}
       />
     </div>
   );
