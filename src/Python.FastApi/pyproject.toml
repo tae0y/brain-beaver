@@ -204,3 +204,9 @@ dependencies = [
     "wrapt==1.17.2",
     "zipp==3.21.0",
 ]
+
+[project.optional-dependencies]
+dev = [
+    "radon>=6.0.1",
+    "xenon>=0.9.3"
+]
