@@ -2,25 +2,23 @@ name: test-backend (uv + smoke)
 
 on:
   pull_request:
+    paths:
+      - "src/Python.FastAPI/**"
+      - "pyproject.toml"
+      - "uv.lock"
+      - "requirements.txt"
+      - ".github/workflows/**"
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
     env:
-      # app.py가 있는 경로를 파이썬 모듈 경로에 추가
-      PYTHONPATH: src/Python.FastAPI
+      PYTHONPATH: src/Python.FastApi
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: 디렉터리 확인 (src 및 src/Python.FastAPI)
-        run: |
-          echo "현재 작업 디렉터리: $(pwd)"
-          ls -al
-          ls -al src || echo "src 디렉터리 없음"
-          ls -al src/Python.FastAPI || echo "src/Python.FastAPI 디렉터리 없음"
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -43,7 +41,7 @@ jobs:
 
       - name: Sync dependencies with uv
         run: |
-          cd src/Python.FastAPI
+          cd $PYTHONPATH
           if [ -f "pyproject.toml" ]; then
             if [ -f "uv.lock" ]; then
               uv sync --frozen
@@ -59,5 +57,5 @@ jobs:
 
       - name: Run smoke tests
         run: |
-          cd src/Python.FastAPI
+          cd $PYTHONPATH
           uv run pytest -q tests/unit/test_app_smoke.py
