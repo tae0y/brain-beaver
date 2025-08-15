@@ -30,7 +30,7 @@
     ```bash
     # 설정 템플릿 복사
     cd $REPOSITORY_ROOT/src/Python.FastAPI/properties/
-    cp secret.sample.properties secret.properties
+    cp secret.sample.properties secret.propertie
     vim secret.properties
     ```
     > OpenAI 키는 선택사항이며, Ollama로 대체할 수 있습니다.
@@ -43,8 +43,8 @@
     > Docker가 설치되어 있어야 합니다. [Docker 설치 가이드](https://docs.docker.com/desktop/setup/install/mac-install/)를 참고하세요.
 
 4. 다음 앱URL로 접속합니다. 각 관리자 계정 정보는 `docker-compose.yml` 파일에서 확인합니다.
-    - UI:beaver: http://localhost:5173
-    - Backend:brain: http://localhost:8112/docs
-    - DBAdmin:gear: http://localhost:5050
-    - DockerAdmin:whale: http://localhost:9000
-    - Scheduler⏰ http://localhost:8080 (데이터백업)
+    - UI :beaver: http://localhost:5173
+    - Backend :brain: http://localhost:8112/docs
+    - DBAdmin :gear: http://localhost:5050
+    - DockerAdmin :whale: http://localhost:9000
+    - Scheduler ⏰ http://localhost:8080 (데이터백업)
