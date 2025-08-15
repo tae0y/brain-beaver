@@ -20,6 +20,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # TODO: Github repo secrets에서 가져오기
+      - name: Configure secrets
+        run: |
+          cp $PYTHONPATH/properties/secret.sample.properties $PYTHONPATH/properties/secret.properties
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
