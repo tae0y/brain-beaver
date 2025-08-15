@@ -1,14 +1,13 @@
 name: CI (uv + smoke)
 
 on:
-  push:
+  pull_request:
     paths:
       - "src/Python.FastAPI/**"
       - "pyproject.toml"
       - "uv.lock"
       - "requirements.txt"
       - ".github/workflows/**"
-  pull_request:
 
 jobs:
   test:
