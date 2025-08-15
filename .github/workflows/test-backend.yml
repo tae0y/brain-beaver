@@ -2,12 +2,6 @@ name: test-backend (uv + smoke)
 
 on:
   pull_request:
-    paths:
-      - "src/Python.FastAPI/**"
-      - "pyproject.toml"
-      - "uv.lock"
-      - "requirements.txt"
-      - ".github/workflows/**"
 
 jobs:
   test:
