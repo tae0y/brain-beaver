@@ -2,7 +2,11 @@ FROM python:3.12
 
 WORKDIR /SRC
 
-COPY ./configs/py.conf/requirements.txt ./requirements.txt
+# pyproject.toml 복사
+COPY src/Python.FastApi/pyproject.toml ./pyproject.toml
 
-RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install fastapi uvicorn
+# uv 설치
+RUN pip install uv
+
+# uv sync로 패키지 설치
+RUN uv sync
