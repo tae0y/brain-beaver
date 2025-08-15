@@ -42,6 +42,7 @@ jobs:
 
       - name: Sync dependencies with uv
         run: |
+          cd $PYTHONPATH
           if [ -f "pyproject.toml" ]; then
             if [ -f "uv.lock" ]; then
               uv sync --frozen
@@ -57,4 +58,5 @@ jobs:
 
       - name: Run smoke tests
         run: |
-          uv run pytest -q src/Python.FastAPI/tests/unit/test_app_smoke.py
+          cd $PYTHONPATH
+          uv run pytest -q tests/unit/test_app_smoke.py
