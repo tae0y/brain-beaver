@@ -1,4 +1,4 @@
-name: CI (uv + smoke)
+name: test-backend (uv + smoke)
 
 on:
   pull_request:
@@ -42,7 +42,7 @@ jobs:
 
       - name: Sync dependencies with uv
         run: |
-          cd $PYTHONPATH
+          cd src/Python.FastAPI
           if [ -f "pyproject.toml" ]; then
             if [ -f "uv.lock" ]; then
               uv sync --frozen
@@ -58,5 +58,5 @@ jobs:
 
       - name: Run smoke tests
         run: |
-          cd $PYTHONPATH
+          cd src/Python.FastAPI
           uv run pytest -q tests/unit/test_app_smoke.py
