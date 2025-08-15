@@ -1,0 +1,66 @@
+name: test-backend (uv + smoke)
+
+on:
+  pull_request:
+    paths:
+      - "src/Python.FastAPI/**"
+      - "pyproject.toml"
+      - "uv.lock"
+      - "requirements.txt"
+      - ".github/workflows/**"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    env:
+      PYTHONPATH: src/Python.FastApi
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # TODO: Github repo secrets에서 가져오기
+      - name: Configure secrets
+        run: |
+          cp $PYTHONPATH/properties/secret.sample.properties $PYTHONPATH/properties/secret.properties
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Cache uv
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/uv
+          key: ${{ runner.os }}-uv-${{ hashFiles('uv.lock', 'pyproject.toml', 'requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-uv-
+
+      - name: Sync dependencies with uv
+        run: |
+          cd $PYTHONPATH
+          if [ -f "pyproject.toml" ]; then
+            if [ -f "uv.lock" ]; then
+              uv sync --frozen
+            else
+              uv sync
+            fi
+          elif [ -f "requirements.txt" ]; then
+            uv pip sync requirements.txt
+          else
+            echo "No pyproject.toml or requirements.txt found." >&2
+            exit 1
+          fi
+
+      - name: Run smoke tests
+        run: |
+          cd $PYTHONPATH
+          uv run pytest -q tests/unit/test_app_smoke.py
