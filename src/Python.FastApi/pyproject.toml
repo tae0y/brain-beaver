@@ -204,15 +204,3 @@ dependencies = [
     "wrapt==1.17.2",
     "zipp==3.21.0",
 ]
-
-[dependency-groups]
-dev = [
-    "bandit>=1.8.6",
-    "flake8>=7.3.0",
-    "flake8-cognitive-complexity>=0.1.0",
-    "hypothesis>=6.138.1",
-    "pytest>=8.4.1",
-    "pytest-cov>=6.2.1",
-    "radon>=6.0.1",
-    "xenon>=0.9.3",
-]
