@@ -209,6 +209,6 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "radon>=6.0.1",
-    "xenon>=0.9.3"
+    "xenon>=0.9.3",
 ]
 
