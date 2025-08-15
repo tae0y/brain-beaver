@@ -39,6 +39,7 @@ secret.properties
 # --------------------------------------------
 # Dev env
 .vscode
+!.vscode/mcp.json
 
 # --------------------------------------------
 # Python Defaults
