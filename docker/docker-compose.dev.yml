@@ -1,0 +1,104 @@
+services:
+  bws_container_admin:
+    container_name: bws_container_admin
+    build:
+      context: .
+      dockerfile: Dockerfile-dockeradmin
+    ports:
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./volumes/portainer_volume:/data
+
+  bws_db:
+    container_name: bws_db
+    build:
+      context: .
+      dockerfile: Dockerfile-bwsdb
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: bwsdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./volumes/postgresql_volume:/var/lib/postgresql/data
+      - ./configs/initdb.d:/docker-entrypoint-initdb.d
+
+  bws_db_admin:
+    container_name: bws_db_admin
+    build:
+      context: .
+      dockerfile: Dockerfile-bwsdbadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: root@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5050:80"
+    volumes:
+      - ./volumes/pgadmin_volume:/var/lib/pgadmin
+
+  bws_mq:
+    container_name: bws_mq
+    build:
+      context: .
+      dockerfile: Dockerfile-bwsmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - ./configs/mq.conf/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - ./volumes/rabbitmq_volume:/var/lib/rabbitmq
+
+  bws_backend:
+    container_name: bws_backend
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile-pythonfastapi
+    restart: no # loki 플러그인 적용후 컨테이너 무한 재시작 증상
+    ports:
+      - 8112:8111
+    volumes:
+      # 개발용: 소스 파일을 볼륨으로 마운트하여 실시간 변경사항 반영
+      - ../src/Python.FastApi:/SRC
+      - /SRC/.venv
+      - /SRC/__pycache__
+    depends_on:
+      - bws_db
+      - bws_mq
+    environment:
+      - OTEL_PYTHON_LOG_CORRELATION=true
+      - OLLAMA_HOST=http://host.docker.internal:11434 # Use Host network for Ollama
+    command: uv run uvicorn app:app --host 0.0.0.0 --port 8111 --reload
+
+  bws_vite:
+    container_name: bws_vite
+    build:
+      context: .
+      dockerfile: Dockerfile-bwsvite
+    ports:
+      - 5173:5173
+    volumes:
+      # 개발용: 소스 파일을 볼륨으로 마운트하여 실시간 변경사항 반영
+      - ../src/Node.ViteUI:/app
+      - /app/node_modules
+    depends_on:
+      - bws_backend
+    command: npm run dev --host
+
+  bws_backup:
+    container_name: bws_backup
+    build:
+      context: .
+      dockerfile : Dockerfile-backup
+    ports:
+      - 8080:8080
+    volumes:
+      - ./volumes/jenkins_volume:/var/jenkins_home/
+      - ./configs/backup.conf/job.sh/:/job.sh/ #chmod +x
+      - ./volumes/pgadmin_volume/:/backup/in/pgadmin/
+      - ./volumes/portainer_volume/:/backup/in/portainer/
+      - ./volumes/postgresql_volume/:/backup/in/postgresql/
+      - ./volumes/rabbitmq_volume/:/backup/in/rabbitmq/
+      - ../backup:/backup/out/
+    restart: on-failure

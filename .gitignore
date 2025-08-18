@@ -3,6 +3,7 @@
 backup/**
 docker/data/**
 docker/volumes/**
+docker/docker-compose.yml.backup
 restore/**
 
 # --------------------------------------------
