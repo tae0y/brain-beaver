@@ -1,13 +1,12 @@
 import os
 import sys
-import configparser
 
 class Constants:
     """
-    다음 설정파일을 읽어 상수로 사용하는 싱글톤.
-
-    /properties/config.properties
-    /properties/secret.properties
+    환경변수를 읽어 상수로 사용하는 싱글톤.
+    
+    모든 설정값은 환경변수를 통해 주입받습니다.
+    개발 시에는 .env 파일을 사용할 수 있습니다.
     """
     _instance = None
 
@@ -67,50 +66,71 @@ class Constants:
 
     def load_constants(self):
         """
-        secret.properties 파일 로드 (app.py가 실행되는 위치 기준으로 설정)
+        환경변수로부터 설정값을 로드합니다.
+        개발 시에는 .env 파일이 있다면 자동으로 로드합니다.
+        민감한 정보는 기본값을 제공하지 않으며, 비민감한 설정은 적절한 기본값을 제공합니다.
         """
-        secret = configparser.ConfigParser()
-        secret.read('properties/secret.properties') #app.py가 실행되는 위치 기준으로 설정
-
+        
+        # 개발 편의를 위해 .env 파일이 있다면 로드 (python-dotenv 없이 간단 구현)
+        self._load_dotenv_if_exists()
+        
+        # ---------- Secret Configurations (민감한 설정) ----------
         # DB
-        self.db_connection_string = secret.get('DB', 'CONNECTION_STRING')
+        self.db_connection_string = os.getenv('DB_CONNECTION_STRING', '')
 
         # GooglePSE
-        self.google_pse_api_url = secret.get('GooglePSE', 'API_URL')
-        self.google_pse_api_key = secret.get('GooglePSE', 'API_KEY')
-        self.google_pse_cx = secret.get('GooglePSE', 'CX')
-        self.google_pse_datarestict = secret.get('GooglePSE', 'DATARESTRICT')
-        self.google_pse_filter = secret.get('GooglePSE', 'FILTER')
-        self.google_pse_h1 = secret.get('GooglePSE', 'H1')
-        self.google_pse_num = secret.get('GooglePSE', 'NUM')
-        self.google_pse_safe = secret.get('GooglePSE', 'SAFE')
+        self.google_pse_api_url = os.getenv('GOOGLE_PSE_API_URL', '')
+        self.google_pse_api_key = os.getenv('GOOGLE_PSE_API_KEY', '')
+        self.google_pse_cx = os.getenv('GOOGLE_PSE_CX', '')
+        self.google_pse_datarestict = os.getenv('GOOGLE_PSE_DATARESTRICT', '')
+        self.google_pse_filter = os.getenv('GOOGLE_PSE_FILTER', '')
+        self.google_pse_h1 = os.getenv('GOOGLE_PSE_H1', '')
+        self.google_pse_num = os.getenv('GOOGLE_PSE_NUM', '')
+        self.google_pse_safe = os.getenv('GOOGLE_PSE_SAFE', '')
 
         # NaverAPI
-        self.naver_client_id = secret.get('NaverAPI', 'CLIENT_ID')
-        self.naver_client_secret = secret.get('NaverAPI', 'CLIENT_SECRET')
-        self.naver_webkr_url = secret.get('NaverAPI', 'WEBKR_URL')
+        self.naver_client_id = os.getenv('NAVER_CLIENT_ID', '')
+        self.naver_client_secret = os.getenv('NAVER_CLIENT_SECRET', '')
+        self.naver_webkr_url = os.getenv('NAVER_WEBKR_URL', 'https://openapi.naver.com/v1/search/webkr.json?query=')
 
         # OpenAI
-        self.openai_api_key = secret.get('OpenAI', 'API_KEY')
+        self.openai_api_key = os.getenv('OPENAI_API_KEY', '')
 
         # RabbitMQ
-        self.rabbitmq_user = secret.get('RabbitMQ', 'USER')
-        self.rabbitmq_passwd = secret.get('RabbitMQ', 'PASSWD')
+        self.rabbitmq_user = os.getenv('RABBITMQ_USER', 'admin')
+        self.rabbitmq_passwd = os.getenv('RABBITMQ_PASSWD', 'nimda')
 
-        """
-        config.properties 파일 로드 (app.py가 실행되는 위치 기준으로 설정)
-        """
-        config = configparser.ConfigParser()
-        config.read('properties/config.properties') #app.py가 실행되는 위치 기준으로 설정
-
+        # ---------- Non-Secret Configurations (비민감한 설정) ----------
         # Thread
-        self.thread_global_thread_pool = int(config.get('Thread', 'GLOBAL_THREAD_POOL'))
+        self.thread_global_thread_pool = int(os.getenv('THREAD_GLOBAL_THREAD_POOL', '10'))
 
         # Ollama
-        self.ollama_max_queue = int(config.get('Ollama', 'MAX_QUEUE'))
-        self.ollama_num_parallel = int(config.get('Ollama', 'NUM_PARALLEL'))
+        self.ollama_max_queue = int(os.getenv('OLLAMA_MAX_QUEUE', '100'))
+        self.ollama_num_parallel = int(os.getenv('OLLAMA_NUM_PARALLEL', '10'))
 
         # DB
-        self.db_echo_truefalse = config.getboolean('DB', 'ECHO_TRUEFALSE')
-        self.db_pool_size = int(config.get('DB', 'POOL_SIZE'))
-        self.db_max_overflow = int(config.get('DB', 'MAX_OVERFLOW'))
+        self.db_echo_truefalse = os.getenv('DB_ECHO_TRUEFALSE', 'False').lower() in ('true', '1', 'yes', 'on')
+        self.db_pool_size = int(os.getenv('DB_POOL_SIZE', '50'))
+        self.db_max_overflow = int(os.getenv('DB_MAX_OVERFLOW', '0'))
+
+    def _load_dotenv_if_exists(self):
+        """
+        .env 파일이 존재한다면 환경변수로 로드합니다.
+        외부 의존성 없이 간단하게 구현했습니다.
+        """
+        env_file = '.env'
+        if os.path.exists(env_file):
+            try:
+                with open(env_file, 'r', encoding='utf-8') as f:
+                    for line in f:
+                        line = line.strip()
+                        if line and not line.startswith('#') and '=' in line:
+                            key, value = line.split('=', 1)
+                            key = key.strip()
+                            value = value.strip().strip('"').strip("'")  # Remove quotes
+                            # Only set if not already set in environment
+                            if key not in os.environ:
+                                os.environ[key] = value
+            except Exception as e:
+                # Silently ignore errors in .env loading
+                pass
