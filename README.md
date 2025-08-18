@@ -26,14 +26,15 @@
     REPOSITORY_ROOT=$(git rev-parse --show-toplevel)
     ```
 
-2. OpenAI(Optional), Naver검색 API(Required) 키를 발급받아 설정합니다.
+2. OpenAI(Optional), Naver검색 API(Required) 키를 환경변수로 설정합니다.
     ```bash
     # 설정 템플릿 복사
-    cd $REPOSITORY_ROOT/src/Python.FastAPI/properties/
-    cp secret.sample.properties secret.propertie
-    vim secret.properties
+    cd $REPOSITORY_ROOT/src/Python.FastAPI/
+    cp .env.sample .env
+    vim .env
     ```
     > OpenAI 키는 선택사항이며, Ollama로 대체할 수 있습니다.
+    > 환경변수 방식으로 변경되어 이제 컨테이너 런타임에 안전하게 주입할 수 있습니다.
 
 3. docker 폴더로 이동하여 컨테이너를 기동합니다.
     ```bash
