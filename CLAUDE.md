@@ -56,9 +56,10 @@ No automated test suite is currently configured. Manual testing through API docs
 ## Configuration
 
 ### Required Setup
-1. Copy `secret.sample.properties` to `secret.properties`
-2. Configure Naver Search API credentials (CLIENT_ID, CLIENT_SECRET) 
+1. Copy `.env.sample` to `.env` in the `src/Python.FastAPI/` directory
+2. Configure Naver Search API credentials (NAVER_CLIENT_ID, NAVER_CLIENT_SECRET) 
 3. Optionally configure OpenAI API key (can use Ollama instead)
+4. All configuration values are now injected via environment variables for improved security
 
 ### Service Ports
 - Frontend: 5173
