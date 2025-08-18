@@ -29,18 +29,25 @@
 2. OpenAI(Optional), Naver검색 API(Required) 키를 발급받아 설정합니다.
     ```bash
     # 설정 템플릿 복사
-    cd $REPOSITORY_ROOT/src/Python.FastAPI/properties/
-    cp secret.sample.properties secret.propertie
+    cd $REPOSITORY_ROOT/src/Python.FastApi/properties/
+    cp secret.sample.properties secret.properties
     vim secret.properties
     ```
     > OpenAI 키는 선택사항이며, Ollama로 대체할 수 있습니다.
 
-3. docker 폴더로 이동하여 컨테이너를 기동합니다.
+3. docker 폴더로 이동하여 개발용 컨테이너를 기동합니다.
     ```bash
     cd $REPOSITORY_ROOT/docker
+    
+    # 개발용 (기본값, 소스 파일 볼륨 마운트)
     docker compose up -d
+    
+    # 또는 명시적으로 개발용 지정
+    docker compose -f docker-compose.dev.yml up -d
     ```
     > Docker가 설치되어 있어야 합니다. [Docker 설치 가이드](https://docs.docker.com/desktop/setup/install/mac-install/)를 참고하세요.
+    
+    **운영용 배포**를 위해서는 [Docker 설정 가이드](docker/README.md)를 참고하세요.
 
 4. 다음 앱URL로 접속합니다. 각 관리자 계정 정보는 `docker-compose.yml` 파일에서 확인합니다.
     - UI :beaver: http://localhost:5173

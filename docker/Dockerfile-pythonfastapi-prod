@@ -1,0 +1,21 @@
+FROM python:3.12
+
+WORKDIR /SRC
+
+# pyproject.toml 복사
+COPY src/Python.FastApi/pyproject.toml ./pyproject.toml
+
+# uv 설치
+RUN pip install uv
+
+# uv sync로 패키지 설치
+RUN uv sync
+
+# 운영용: 소스 코드를 이미지에 포함
+COPY src/Python.FastApi/ ./
+
+# 포트 노출
+EXPOSE 8111
+
+# 운영용 실행 명령 (reload 없음)
+CMD ["uv", "run", "uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8111"]

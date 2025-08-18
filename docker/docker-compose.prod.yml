@@ -1,0 +1,100 @@
+services:
+  bws_container_admin:
+    container_name: bws_container_admin_prod
+    image: brain-beaver/container-admin:latest
+    build:
+      context: .
+      dockerfile: Dockerfile-dockeradmin
+    ports:
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./volumes/portainer_volume:/data
+
+  bws_db:
+    container_name: bws_db_prod
+    image: brain-beaver/db:latest
+    build:
+      context: .
+      dockerfile: Dockerfile-bwsdb
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: bwsdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./volumes/postgresql_volume:/var/lib/postgresql/data
+      - ./configs/initdb.d:/docker-entrypoint-initdb.d
+
+  bws_db_admin:
+    container_name: bws_db_admin_prod
+    image: brain-beaver/db-admin:latest
+    build:
+      context: .
+      dockerfile: Dockerfile-bwsdbadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: root@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5050:80"
+    volumes:
+      - ./volumes/pgadmin_volume:/var/lib/pgadmin
+
+  bws_mq:
+    container_name: bws_mq_prod
+    image: brain-beaver/mq:latest
+    build:
+      context: .
+      dockerfile: Dockerfile-bwsmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - ./configs/mq.conf/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - ./volumes/rabbitmq_volume:/var/lib/rabbitmq
+
+  bws_backend:
+    container_name: bws_backend_prod
+    image: brain-beaver/backend:latest
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile-pythonfastapi-prod
+    restart: unless-stopped
+    ports:
+      - 8112:8111
+    depends_on:
+      - bws_db
+      - bws_mq
+    environment:
+      - OTEL_PYTHON_LOG_CORRELATION=true
+      - OLLAMA_HOST=http://host.docker.internal:11434
+
+  bws_vite:
+    container_name: bws_vite_prod
+    image: brain-beaver/frontend:latest
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile-bwsvite-prod
+    ports:
+      - 5173:5173
+    depends_on:
+      - bws_backend
+
+  bws_backup:
+    container_name: bws_backup_prod
+    image: brain-beaver/backup:latest
+    build:
+      context: .
+      dockerfile : Dockerfile-backup
+    ports:
+      - 8080:8080
+    volumes:
+      - ./volumes/jenkins_volume:/var/jenkins_home/
+      - ./configs/backup.conf/job.sh/:/job.sh/ #chmod +x
+      - ./volumes/pgadmin_volume/:/backup/in/pgadmin/
+      - ./volumes/portainer_volume/:/backup/in/portainer/
+      - ./volumes/postgresql_volume/:/backup/in/postgresql/
+      - ./volumes/rabbitmq_volume/:/backup/in/rabbitmq/
+      - ../backup:/backup/out/
+    restart: unless-stopped

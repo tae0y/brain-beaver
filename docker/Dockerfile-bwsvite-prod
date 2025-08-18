@@ -1,0 +1,41 @@
+FROM node:23.5.0-alpine3.21
+
+RUN apk update
+
+# 한글 폰트 설치
+RUN apk --update add fontconfig
+RUN mkdir -p /usr/share/fonts/nanumfont
+RUN wget http://cdn.naver.com/naver/NanumFont/fontfiles/NanumFont_TTF_ALL.zip
+RUN unzip NanumFont_TTF_ALL.zip -d /usr/share/fonts/nanumfont
+RUN fc-cache -f && rm -rf /var/cache/*
+
+# 언어 설정
+ENV LANG=ko_KR.UTF-8 \
+    LANGUAGE=ko_KR.UTF-8
+
+# 시간대 설정
+RUN apk --no-cache add tzdata && \
+        cp /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
+        echo "Asia/Seoul" > /etc/timezone
+
+WORKDIR /app
+
+# nestjs 설정
+RUN npm install -g npm
+
+# 운영용: package.json 복사 및 의존성 설치
+COPY src/Node.ViteUI/package*.json ./
+RUN rm -rf node_modules
+RUN npm install
+
+# 운영용: 소스 코드를 이미지에 포함
+COPY src/Node.ViteUI/ ./
+
+# 운영용: 빌드 실행
+RUN npm run build
+
+# 포트 노출
+EXPOSE 5173
+
+# 운영용: 프로덕션 서버 실행
+CMD ["npm", "run", "preview", "--", "--host", "0.0.0.0", "--port", "5173"]
